@@ -17,7 +17,7 @@ module tb ();
   wire [7:0] uio_out;
   wire [7:0] uio_oe;
 
-  tt_um_Enjimneering_full_adder adder (
+  tt_um_Enjimneering_STT8 stt8 (
   // Include power ports for the Gate Level test:
   `ifdef GL_TEST
         .VPWR(1'b1),
@@ -39,12 +39,7 @@ module tb ();
     $dumpvars(0, tb);
     #1;
 
-  for (j =0 ; j<8; j= j+1 ) begin
-          ui_in = j;
-          #20;
-      end
-
-  $display("Test Complete!");
+    $display("Test Complete!");
 
 
   end
