@@ -2,6 +2,12 @@
 //Author(s): James Ashie Kotey 
 //Last Updated:  8/5/24
 
+/* Full Adder Test Circuit
+IN: A B C
+OUT: Carry Sum
+{Carry, Sum}  = A + B + C
+*/
+
 module FullAdder(a,b,c, sum, carry);
     
     //Ports
