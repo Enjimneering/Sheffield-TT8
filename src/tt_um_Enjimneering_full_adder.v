@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Your Name
+ * Copyright (c) 2024 James Ashie Kotey
  * SPDX-License-Identifier: Apache-2.0
  */
 
