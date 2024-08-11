@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 `timescale 1ns / 1ns
-`include "VGA_top.v"  // reference  to top module not needed in sim
+`include "VGA_Top.v"  // reference  to top module not needed in sim
 
 module VGA_Testbench;
 
@@ -47,27 +47,26 @@ wire [5:0] RGB_OUT;
 
     CLK        = 0;                       // start clk from zero.           
     RESET      = 1;                       // send reset signal.
-    DATA_IN    = 'b110000;                // change this to change output color - RR GG BB
-    
-    $fdisplay(output_file,"%0t ns: %b %b %b %b %b", $time , H_SYNC, V_SYNC, RGB[5:4], RGB[3:2], RGB[1:0]); // print line to log.
+    DATA_IN    = 'b001100;                // change this to change output color - RR GG BB
+
+    $fdisplay(output_file,"%0t ns: %b %b %b %b %b", $time , H_SYNC, V_SYNC, RGB_OUT[5:4], RGB_OUT[3:2], RGB_OUT[1:0]); // print line to log.
+   
     #40 RESET  = 0; // 40ns Clock = 25 MHz
-    $fdisplay(output_file,"%0t ns: %b %b %b %b %b", $time , H_SYNC, V_SYNC, RGB[5:4], RGB[3:2], RGB[1:0]); 
+    $fdisplay(output_file,"%0t ns: %b %b %b %b %b", $time , H_SYNC, V_SYNC, RGB_OUT[5:4], RGB_OUT[3:2], RGB_OUT[1:0]); 
 
-
-    for ( i = 0; i < 419200 ; i = i + 1 ) begin // loop for 1 full frame (800 * 524)
-        #40 $fdisplay(output_file,"%0t ns: %b %b %b %b %b ", $time, H_SYNC, V_SYNC, RGB[5:4], RGB[3:2], RGB[1:0]);
+    for ( i = 0; i < 419202 ; i = i + 1 ) begin // loop for 1 full frame (800 * 524)
+        #40 $fdisplay(output_file,"%0t ns: %b %b %b %b %b ", $time, H_SYNC, V_SYNC, RGB_OUT[5:4], RGB_OUT[3:2], RGB_OUT[1:0]);
+        #40 $fdisplay(output_file, "%0t ns: %b %b %b %b %b", $time, H_SYNC, V_SYNC, RGB_OUT[5:4], RGB_OUT[3:2], RGB_OUT[1:0]);
     end
 
     $fclose(output_file);
     $display("Simulation Complete :D");
-
+    $finish();
     end
 
     always begin // generate 25MHZ clk signal.
        #40  CLK = ~CLK;
     end
-
-   
 
 
 endmodule
