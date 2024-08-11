@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 /* 
      Project: TinyTapeStation
-    Author(s):      James Ashie Kotey, Abdulatif Balbi
+    Author(s):      James Ashie Kotey, Abdulatif Babli
     Create Date:    10/08/2024
     Module Name:    VGA_Testbench
     Summary:        6 control for 640x480 60Hz VGA 6-bit RGB 
