@@ -36,7 +36,9 @@ module VGA_Top(
         .reset(reset),  
         .enable_pixel(video_enable),
         .h_sync(h_sync_in),
-        .v_sync(v_sync_in)
+        .v_sync(v_sync_in),
+        .pixel_x(),
+        .pixel_y()
     );
 
     //Color Logic
