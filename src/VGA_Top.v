@@ -1,48 +1,57 @@
+/*
+
+Project: TinyTapeStation
+Engineer(s) : James Ashie Kotey
+Module: VGA Top Unit
+
+Summary: The VGA sync unit uses the x and y pixel coordinates from the horizontal and vertical
+counter to control the vsync and hsync output pulse.
+
+Description =========================================
+
+
+*/
+    
+
 `include "VGA_Sync.v"
 
 module VGA_Top(
 
-//INPUTS ============================================ // 
-
-input wire pixel_clk,
-input wire reset,
-input wire [15:0] color_data,
-
-//From Timing Circuit
-input wire h_sync_in,
-input wire v_sync_in,
-
-// OUTPUTS ======================================== // 
-
-output reg [15:0] rgb,
-output reg h_sync,
-output reg v_sync 
+    input wire         pixel_clk,    // CLK
+    input wire         reset,        // RESET
+    input wire  [7:0]  color_data,   // COLOR DATA - FROM GRAPHICS CONTROLLER
+    output reg  [7:0]  rgb_out,      // PIXEL COLOR OUTPUT
+    output reg         h_sync,       // HSYNC OUT
+    output reg         v_sync        // VSYNC OUT
 
 );
 
-input video_enable;
+    //Internal signals 
 
-VGA_Sync sync(
-.clk(pixel_clk),
-.reset(reset),  
-.enable_pixel(video_enable),
-.h_sync(h_sync_in),
-.v_sync(v_sync_in)
-);
+    wire video_enable;
+    wire h_sync_in, v_sync_in;
 
-//Pass-through Logic
-always @(posedge pixel_clk ) begin
-    
-if (video_enable) 
-    rgb = color_data;
-else begin
-    rgb = 0;
-end
+    VGA_Sync sync(
+        .clk(pixel_clk),
+        .reset(reset),  
+        .enable_pixel(video_enable),
+        .h_sync(h_sync_in),
+        .v_sync(v_sync_in)
+    );
 
-h_sync <= h_sync_in;
-v_sync <= v_sync_in;
+    //Color Logic
+    always @(posedge pixel_clk ) begin
+        
+        if (video_enable) 
+            rgb_out = color_data;
+        else begin
+            rgb_out = 0;
+        end
 
-end
+        h_sync <= h_sync_in;
+        v_sync <= v_sync_in;
+
+    end
 
 endmodule
 

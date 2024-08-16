@@ -42,8 +42,7 @@ The sync pulses are enabled when the current pixel is in the retrace or active a
     
 
 
-// TODO: Create Buffer System to previent glitches
-
+// TODO: Create Buffer System to previent glitches??
 
 `include "vertical_counter.v"
 `include "horizontal_counter.v"
@@ -51,15 +50,15 @@ The sync pulses are enabled when the current pixel is in the retrace or active a
 module VGA_Sync(
     
     //CONTROL SIGNALS
-    input wire clk,             //25MHz CLK
-    input wire reset,           //RESET PULSE 
+    input wire         clk,           //25MHz CLK
+    input wire         reset,         //RESET PULSE 
 
     //OUTPUTS
-    output reg   h_sync,        // H_SYNC PULSE
-    output reg   v_sync,        // V_SYNC PULSE
-    output reg   enable_pixel,  // VIDEO ENABLE
-    output reg [9:0] pixel_x,   // PIXEL_X
-    output reg [9:0] pixel_y    // PIXEL_Y
+    output reg         h_sync,        // H_SYNC PULSE
+    output reg         v_sync,        // V_SYNC PULSE
+    output reg         enable_pixel,  // VIDEO ENABLE
+    output reg  [9:0]  pixel_x,       // PIXEL_X
+    output reg  [9:0]  pixel_y        // PIXEL_Y
 
 );
 
@@ -80,8 +79,8 @@ module VGA_Sync(
     parameter V_MAX = V_RETRACE + V_BACK_PORCH + V_WIDTH + V_FRONT_PORCH - 1;       // 523
 
     //Position Counters and buffers
-    reg  [9:0] h_count_reg , v_count_reg;
-    wire [9:0] h_count_next , v_count_next;
+    reg  [9:0] h_count_reg, v_count_reg;
+    wire [9:0] h_count_next, v_count_next;
 
     //Output registers and buffers
     reg   v_sync_reg , h_sync_reg;
