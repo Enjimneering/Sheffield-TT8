@@ -44,8 +44,8 @@ The sync pulses are enabled when the current pixel is in the retrace or active a
 
 // TODO: Create Buffer System to previent glitches??
 
-`include "vertical_counter.v"
-`include "horizontal_counter.v"
+//`include "vertical_counter.v" - removed for TT Build
+//`include "horizontal_counter.v" - removed for TT Build
 
 module VGA_Sync(
     

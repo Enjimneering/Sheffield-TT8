@@ -13,7 +13,7 @@ Description =========================================
 */
     
 
-`include "VGA_Sync.v"
+//`include "VGA_Sync.v" - Removed for TT Build
 
 module VGA_Top(
 
