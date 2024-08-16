@@ -20,7 +20,7 @@ module Vertical_Counter(
 
     parameter V_MAX = 524;
 
-    always @(*) begin
+    always @*   begin
 
         if (reset) begin // RESET PULSE
             v_count_value <= 0;
