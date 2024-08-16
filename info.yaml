@@ -20,8 +20,8 @@ project:
     - "tt_um_Enjimneering_STT8.v"
     - "VGA_Top.v"
     - "VGA_Sync.v"
-    - "Vertical_Counter.v"
-    - "Horizontal_Counter.v"
+    - "vertical_counter.v"
+    - "horizontal_counter.v"
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
