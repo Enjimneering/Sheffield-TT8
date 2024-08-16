@@ -20,12 +20,13 @@ module Vertical_Counter(
 
     parameter V_MAX = 524;
 
-    always @(posedge pixel_clk or reset) begin
+    always @(*) begin
+
         if (reset) begin // RESET PULSE
             v_count_value <= 0;
         end 
     
-        else begin  // CLK PULSE
+        if (pixel_clk) begin  // CLK PULSE
 
             if (v_count_value >= V_MAX) begin // Next cycle is end of the frame (bottom right)
                 v_count_value <= 0;
