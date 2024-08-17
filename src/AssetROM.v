@@ -31,8 +31,8 @@ function [7:0] romData;
     end
 
     case(charc_Func)
-        4'b0000: begin                        // Heart                   
-            case(newIndex)                  
+        4'b0000: begin
+            case(newIndex)
             3'b000: romData = 8'b11111111;
             3'b001: romData = 8'b10011001;
             3'b010: romData = 8'b00000000;
@@ -44,7 +44,7 @@ function [7:0] romData;
             endcase
         end
 
-        4'b0001: begin                       // Sword Vertical
+        4'b0001: begin  //SwordVertical:
             case(newIndex)
             3'b000: romData = 8'b11101111;
             3'b001: romData = 8'b11101111;
@@ -57,8 +57,8 @@ function [7:0] romData;
             endcase
         end
 
-        4'b0010: begin                     
-            case(newIndex)    
+        4'b0010: begin 
+            case(newIndex)
             3'b000: romData = 8'b11111111;
             3'b001: romData = 8'b11000011;
             3'b010: romData = 8'b10110000;
