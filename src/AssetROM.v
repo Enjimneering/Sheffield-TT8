@@ -6,19 +6,16 @@ module AssetROM(
     input reset,
     input wire [1:0] direction,
     input wire [3:0] charc,
-    input wire [3:0] index_in,
+    input wire [2:0] index,
     
     output reg [7:0] data
     );
 
-localparam UP = 3'b000;
-localparam RIGHT = 3'b001;
-localparam DOWN = 3'b010;
-localparam LEFT = 3'b011;
+localparam UP = 2'b00;
+localparam RIGHT = 2'b01;
+localparam DOWN = 2'b10;
+localparam LEFT = 2'b11;
 
-wire index;
-
-assign index = index_in[2:0];
 
 function [7:0] romData;
     input [3:0] charc_Func;
@@ -160,8 +157,6 @@ function [7:0] romData;
 endfunction
 
 reg [7:0] temp;
-
-
 
 always @(*) begin
     if (direction == UP)begin
