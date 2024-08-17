@@ -94,23 +94,23 @@ module DetectAndCombinationUnit(
 
         end
         
-endfunction
+    endfunction
 
 
-function [8:0] detector; //If the position of the pointer needs to be displayed, return the row label; otherwise, return 4'hF (an invalid identifier).
-    input [13:0] entity;
-    input [9:0] ptH_Position;
-    input [9:0] ptV_Position;
-    begin
-    
-    if (inRange(entity[7:0], ptH_Position, ptV_Position)==1 && entity[13:10] != 4'b1111) begin
-            detector = {((ptV_Position % TILE_LEN_PIXEL)/UPSCALE_FACTOR), entity[13:10],entity[9:8]};
-        end else begin
-            detector = 9'b111111111; // 'h1FF
+    function [8:0] detector; //If the position of the pointer needs to be displayed, return the row label; otherwise, return 4'hF (an invalid identifier).
+        input [13:0] entity;
+        input [9:0] ptH_Position;
+        input [9:0] ptV_Position;
+        begin
+        
+        if (inRange(entity[7:0], ptH_Position, ptV_Position)==1 && entity[13:10] != 4'b1111) begin
+                detector = {((ptV_Position % TILE_LEN_PIXEL)/UPSCALE_FACTOR), entity[13:10],entity[9:8]};
+            end else begin
+                detector = 9'b111111111; // 'h1FF
+            end
         end
-    end
 
-endfunction
+    endfunction
 
 // always @(*) begin
 // $display("Inside module: Range = %b \n", inRange(entity_1[7:0], counter_H, counter_V)==1 && entity_1[13:10] != 4'b1111);
@@ -145,4 +145,5 @@ assign out_entity = detector(entity_1, counter_H, counter_V)
 //     $display("Inside module: a = %b",  out_entity);
     
 // end
+
 endmodule
