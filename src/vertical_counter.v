@@ -19,7 +19,8 @@ module Vertical_Counter(
 );
 
     parameter V_MAX = 524;
-
+    
+    // CAN only use a single event as a condition in an always block- otherwise, it won't synthesize.
     always @(posedge pixel_clk) begin
 
         if (reset) begin // RESET PULSE

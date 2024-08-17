@@ -19,7 +19,8 @@ module Horizontal_Counter(
     
     parameter H_MAX = 799;
     
-    always @(posedge pixel_clk or reset) begin
+    // CAN only use a single event as a condition in an always block- otherwise, it won't synthesize.
+    always @(posedge pixel_clk) begin
     
         if (reset) begin // RESET PULSE
             h_count_value <= 0;
