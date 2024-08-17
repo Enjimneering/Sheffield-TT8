@@ -111,7 +111,7 @@ wire [8:0] out_Item;
 
 
 
-DetectAndCombination det(
+DetectionCombinationUnit det(
     .clk(clk),
     .reset(reset),
     .item_1(item_1),
