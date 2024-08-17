@@ -1,130 +1,148 @@
+/*
+
+Project: TinyTapeStation
+Engineer(s) : Bowen Shi
+Module: Frame Builder DCU 
+Create Date: 2024/08/17 20:47:46
+
+Summary: 
+
+Description =========================================
+
+The Entity Detector-Combination Unit can display up to 9 entities on screen at once.
+
+Entity structure:
+
+    [13:10]  Entity ID
+    [9:8]  Orientation
+    [7:0]  Tile Location
+
+    Unused entities (off-screen) have an ID of 4'hf
+
+Screen Coordinates:
+
+    In line with the coordinate system adopted by VGA Scanlines, the horizontal increases from right to left and  
+    the vertical coordinate increases from top to bottom.
+
+    (0,0)----------------> x  
+      | 
+      |
+      |
+      v 
+      y         
+*/
+
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 2024/08/17 20:47:46
-// Design Name: 
-// Module Name: DetectAndCombination
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
-
-module DetectAndCombination(
+module DetectAndCombinationUnit(
+    
     input clk,
     input reset,
-    input wire [13:0] item_1,  //Item input form: ([13:10] Item ID [9:8] Orientation,[7:0] Location(tile)).
-    input wire [13:0] item_2,  //Simultaneously supports up to 9 objects in the scene.
-    input wire [13:0] item_3,  //Set the item ID to 4'hf for unused channels.
-    input wire [13:0] item_4,
-    input wire [13:0] item_5,
-    input wire [13:0] item_6,
-    input wire [13:0] item_7,
-    input wire [13:0] item_8,
-    input wire [13:0] item_9,
-    input wire [9:0] counter_V,
-    input wire [9:0] counter_H,
-
-    output wire [8:0]out_Item
-    //output reg [8:0]out_Item
+    input wire  [13:0]  entity_1,  
+    input wire  [13:0]  entity_2,  
+    input wire  [13:0]  entity_3,  
+    input wire  [13:0]  entity_4,
+    input wire  [13:0]  entity_5,
+    input wire  [13:0]  entity_6,
+    input wire  [13:0]  entity_7,
+    input wire  [13:0]  entity_8,
+    input wire  [13:0]  entity_9,
+    input wire  [9:0]   counter_V,
+    input wire  [9:0]   counter_H,
+    output wire [8:0 ]  out_entity
+    
+    //output reg  [8:0]  entity_output_reg
     );
 
+    //Screen Size Paramaters
 
-localparam BUFFERLEN = 8;
-localparam UPSCALE = 5;
-localparam TILESIZE = 8;
-localparam TILE_LEN_PIXEL = 40;
-localparam SCREENSIZE_H = 16;
-localparam SCREENSIZE_V = 12;
+    localparam BUFFER_LEN = 8;
+    localparam UPSCALE_FACTOR = 5;
+    localparam TILE_SIZE = 8;
+    localparam TILE_LEN_PIXEL = TILE_SIZE * UPSCALE_FACTOR;
+    localparam SCREEN_SIZE_H = 16;
+    localparam SCREEN_SIZE_V = 12;
 
 
-function [6:0] item_Position_Pixel_H; //Calculate the item horizontal position in pixel
-    input [7:0] item_Position;
-    begin
-    
-    item_Position_Pixel_H = (item_Position % SCREENSIZE_H) * TILE_LEN_PIXEL;
+    function [6:0] entity_Position_Pixel_H; //Calculate the entity horizontal position in pixels
+        input [7:0] entity_Position;
+        begin
+            entity_Position_Pixel_H = (entity_Position % SCREEN_SIZE_H) * TILE_LEN_PIXEL;
+        end
 
-    end
-endfunction
+    endfunction
 
-function [4:0] item_Position_Pixel_V; //Calculate the item vertical position in pixel
-    input [7:0] item_Position;
-    begin
+    function [4:0] entity_Position_Pixel_V; //Calculate the entity vertical position in pixels
+        input [7:0] entity_Position;
+        begin
 
-    item_Position_Pixel_V = (item_Position / SCREENSIZE_H) * TILE_LEN_PIXEL;
+        entity_Position_Pixel_V = (entity_Position / SCREEN_SIZE_H) * TILE_LEN_PIXEL;
 
-    end
-endfunction
+        end
+    endfunction
 
-function inRange; //If the item within the loading area(40 Pixel or 1 tile length)
-    input [7:0] item_Position;
-    input [9:0] ptH_Position;
-    input [9:0] ptV_Position;
-    begin
-    
-    inRange = ptH_Position >= item_Position_Pixel_H(item_Position) && ptH_Position < (item_Position_Pixel_H(item_Position) + TILE_LEN_PIXEL) && ptV_Position >= item_Position_Pixel_V(item_Position) && ptV_Position < item_Position_Pixel_V(item_Position) + TILE_LEN_PIXEL;
-    // 
-    //   
-    //                      
-    //                     |-----------> The horizontal coordinate increases in this direction.
-    //                     | Screen
-    //                     |
-    //                     v 
-    //     The vertical coordinate increases in this direction.
-    //                     
+    function inRange; //If the entity is within the loading area (40 Pixel or 1 tile length)
+        input [7:0] entity_Position;
+        input [9:0] ptH_Position;
+        input [9:0] ptV_Position;
+        begin
+        
+        inRange = ptH_Position >= entity_Position_Pixel_H(entity_Position) 
+        && ptH_Position < (entity_Position_Pixel_H(entity_Position) + TILE_LEN_PIXEL) 
+        && ptV_Position >= entity_Position_Pixel_V(entity_Position) 
+        && ptV_Position < entity_Position_Pixel_V(entity_Position) + TILE_LEN_PIXEL;
 
-    end
-    
+        end
+        
 endfunction
 
 
 function [8:0] detector; //If the position of the pointer needs to be displayed, return the row label; otherwise, return 4'hF (an invalid identifier).
-    input [13:0] item;
+    input [13:0] entity;
     input [9:0] ptH_Position;
     input [9:0] ptV_Position;
     begin
     
-    if (inRange(item[7:0], ptH_Position, ptV_Position)==1 && item[13:10] != 4'b1111) begin
-            detector = {((ptV_Position % TILE_LEN_PIXEL)/UPSCALE), item[13:10],item[9:8]};
+    if (inRange(entity[7:0], ptH_Position, ptV_Position)==1 && entity[13:10] != 4'b1111) begin
+            detector = {((ptV_Position % TILE_LEN_PIXEL)/UPSCALE_FACTOR), entity[13:10],entity[9:8]};
         end else begin
-            detector = 9'b111111111;
+            detector = 9'b111111111; // 'h1FF
         end
     end
 
 endfunction
 
 // always @(*) begin
-// $display("Inside module: Range = %b \n", inRange(item_1[7:0], counter_H, counter_V)==1 && item_1[13:10] != 4'b1111);
-// $display("Inside module: 1 = %b \n",  detector(item_1, counter_H, counter_V));
-// $display("Inside module: 2 = %b \n",  detector(item_2, counter_H, counter_V));
-// $display("Inside module: 3 = %b \n",  detector(item_3, counter_H, counter_V));
-// $display("Inside module: 4 = %b \n",  detector(item_4, counter_H, counter_V));
-// $display("Inside module: 5 = %b \n",  detector(item_5, counter_H, counter_V));
-// $display("Inside module: 6 = %b \n",  detector(item_6, counter_H, counter_V));
-// $display("Inside module: 7 = %b \n",  detector(item_7, counter_H, counter_V));
-// $display("Inside module: 8 = %b \n",  detector(item_8, counter_H, counter_V));
-// $display("Inside module: 9 = %b \n",  detector(item_9, counter_H, counter_V));
+// $display("Inside module: Range = %b \n", inRange(entity_1[7:0], counter_H, counter_V)==1 && entity_1[13:10] != 4'b1111);
+// $display("Inside module: 1 = %b \n",  detector(entity_1, counter_H, counter_V));
+// $display("Inside module: 2 = %b \n",  detector(entity_2, counter_H, counter_V));
+// $display("Inside module: 3 = %b \n",  detector(entity_3, counter_H, counter_V));
+// $display("Inside module: 4 = %b \n",  detector(entity_4, counter_H, counter_V));
+// $display("Inside module: 5 = %b \n",  detector(entity_5, counter_H, counter_V));
+// $display("Inside module: 6 = %b \n",  detector(entity_6, counter_H, counter_V));
+// $display("Inside module: 7 = %b \n",  detector(entity_7, counter_H, counter_V));
+// $display("Inside module: 8 = %b \n",  detector(entity_8, counter_H, counter_V));
+// $display("Inside module: 9 = %b \n",  detector(entity_9, counter_H, counter_V));
 
 // end
 
-//BigAnd and_5_item( detector(item_1, counter_H, counter_V) , detector(item_2, counter_H, counter_V) , detector(item_3, counter_H, counter_V) , detector(item_4, counter_H, counter_V) , detector(item_5, counter_H, counter_V) , detector(item_6, counter_H, counter_V) , detector(item_7, counter_H, counter_V) , detector(item_8, counter_H, counter_V) , detector(item_9, counter_H, counter_V), out_Item);
-assign out_Item = detector(item_1, counter_H, counter_V) & detector(item_2, counter_H, counter_V) & detector(item_3, counter_H, counter_V) & detector(item_4, counter_H, counter_V) & detector(item_5, counter_H, counter_V) & detector(item_6, counter_H, counter_V) & detector(item_7, counter_H, counter_V) & detector(item_8, counter_H, counter_V) & detector(item_9, counter_H, counter_V);
+//BigAnd and_5_entity( detector(entity_1, counter_H, counter_V) , detector(entity_2, counter_H, counter_V) , detector(entity_3, counter_H, counter_V) , detector(entity_4, counter_H, counter_V) , detector(entity_5, counter_H, counter_V) , detector(entity_6, counter_H, counter_V) , detector(entity_7, counter_H, counter_V) , detector(entity_8, counter_H, counter_V) , detector(entity_9, counter_H, counter_V), out_entity);
+
+assign out_entity = detector(entity_1, counter_H, counter_V) 
+    & detector(entity_2, counter_H, counter_V) 
+    & detector(entity_3, counter_H, counter_V) 
+    & detector(entity_4, counter_H, counter_V) 
+    & detector(entity_5, counter_H, counter_V) 
+    & detector(entity_6, counter_H, counter_V) 
+    & detector(entity_7, counter_H, counter_V) 
+    & detector(entity_8, counter_H, counter_V) 
+    & detector(entity_9, counter_H, counter_V);
 
 // always@(*) begin
-//     out_Item = detector(item_1, counter_H, counter_V) & detector(item_2, counter_H, counter_V) & detector(item_3, counter_H, counter_V) & detector(item_4, counter_H, counter_V) & detector(item_5, counter_H, counter_V) & detector(item_6, counter_H, counter_V) & detector(item_7, counter_H, counter_V) & detector(item_8, counter_H, counter_V) & detector(item_9, counter_H, counter_V);
+//     out_entity = detector(entity_1, counter_H, counter_V) & detector(entity_2, counter_H, counter_V) & detector(entity_3, counter_H, counter_V) & detector(entity_4, counter_H, counter_V) & detector(entity_5, counter_H, counter_V) & detector(entity_6, counter_H, counter_V) & detector(entity_7, counter_H, counter_V) & detector(entity_8, counter_H, counter_V) & detector(entity_9, counter_H, counter_V);
 // end
-// always@(posedge clk, out_Item) begin
-//     $display("Inside module: a = %b",  out_Item);
+// always@(posedge clk, out_entity) begin
+//     $display("Inside module: a = %b",  out_entity);
     
 // end
 endmodule
