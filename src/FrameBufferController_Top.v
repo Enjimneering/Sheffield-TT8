@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 
-module FramBufferController_Top(
+module FrameBufferController_Top(
     input clk,  
     input reset,    
     input wire [7:0] goat,
