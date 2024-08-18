@@ -159,10 +159,72 @@ endfunction
 reg [7:0] temp;
 
 always @(*) begin
+    // if (direction == UP)begin
+    //     data = romData(charc, index, 1'b0);
+    // end else if (direction == DOWN) begin
+    //     data = romData(charc, index, 1'b1);
+    // end else if (direction == RIGHT) begin
+    //     temp = romData(charc,3'b000, 1'b1 );
+    //     data[0] = temp[~index];
+    //     temp = romData(charc,3'b001, 1'b1 );
+    //     data[1] = temp[~index];
+    //     temp = romData(charc,3'b010, 1'b1 );
+    //     data[2] = temp[~index];
+    //     temp = romData(charc,3'b011, 1'b1 );
+    //     data[3] = temp[~index];
+    //     temp = romData(charc,3'b100, 1'b1 );
+    //     data[4] = temp[~index];
+    //     temp = romData(charc,3'b101, 1'b1 );
+    //     data[5] = temp[~index];
+    //     temp = romData(charc,3'b110, 1'b1 );
+    //     data[6] = temp[~index];
+    //     temp = romData(charc,3'b111, 1'b1 );
+    //     data[7] = temp[~index];
+    // end else if (direction == LEFT) begin
+    //     temp = romData(charc,3'b000, 1'b0 );
+    //     data[0] = temp[~index];
+    //     temp = romData(charc,3'b001, 1'b0 );
+    //     data[1] = temp[~index];
+    //     temp = romData(charc,3'b010, 1'b0 );
+    //     data[2] = temp[~index];
+    //     temp = romData(charc,3'b011, 1'b0 );
+    //     data[3] = temp[~index];
+    //     temp = romData(charc,3'b100, 1'b0 );
+    //     data[4] = temp[~index];
+    //     temp = romData(charc,3'b101, 1'b0 );
+    //     data[5] = temp[~index];
+    //     temp = romData(charc,3'b110, 1'b0 );
+    //     data[6] = temp[~index];
+    //     temp = romData(charc,3'b111, 1'b0 );
+    //     data[7] = temp[~index];
+    // end else begin
+    //     data = romData(4'hf, 3'b000, 1'b0 );
+    // end
+//------------------------------------------------------------------
     if (direction == UP)begin
-        data = romData(charc, index, 1'b0);
-    end else if (direction == DOWN) begin
-        data = romData(charc, index, 1'b1);
+        case(index)
+            3'b000: temp = romData(charc,3'b000, 1'b0 );
+            3'b001: temp = romData(charc,3'b001, 1'b0 );
+            3'b010: temp = romData(charc,3'b010, 1'b0 );
+            3'b011: temp = romData(charc,3'b011, 1'b0 );
+            3'b100: temp = romData(charc,3'b100, 1'b0 );
+            3'b101: temp = romData(charc,3'b101, 1'b0 );
+            3'b110: temp = romData(charc,3'b110, 1'b0 );
+            3'b111: temp = romData(charc,3'b111, 1'b0 );
+        endcase
+        data = temp;
+    end else if(direction == DOWN)begin
+        case(index)
+            3'b000: temp = romData(charc,3'b000, 1'b1 );
+            3'b001: temp = romData(charc,3'b001, 1'b1 );
+            3'b010: temp = romData(charc,3'b010, 1'b1 );
+            3'b011: temp = romData(charc,3'b011, 1'b1 );
+            3'b100: temp = romData(charc,3'b100, 1'b1 );
+            3'b101: temp = romData(charc,3'b101, 1'b1 );
+            3'b110: temp = romData(charc,3'b110, 1'b1 );
+            3'b111: temp = romData(charc,3'b111, 1'b1 );
+        endcase
+        data = temp;
     end else if (direction == RIGHT) begin
         temp = romData(charc,3'b000, 1'b1 );
         data[0] = temp[~index];
@@ -201,5 +263,6 @@ always @(*) begin
         data = romData(4'hf, 3'b000, 1'b0 );
     end
 end
+
 
 endmodule
