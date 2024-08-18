@@ -34,7 +34,7 @@ Screen Coordinates:
 
 `timescale 1ns / 1ps
 
-module DetectAndCombinationUnit(
+module DetectionCombinationUnit(
     
     input clk,
     input reset,
