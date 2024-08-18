@@ -70,7 +70,7 @@ function [7:0] romData;
             endcase
         end
 
-        4'b0011: begin  //Dragon_1
+        4'b0011: begin  //Gnome_2
             case(newIndex) 
             3'b000: romData = 8'b11111011;
             3'b001: romData = 8'b11100011;
