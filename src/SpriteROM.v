@@ -213,16 +213,16 @@ module SpriteROM(
         
         if(read_enable) begin
     
-            if (direction == UP) begin                      // Normal Operation
+            if (orientation == UP) begin                      // Normal Operation
                 case(line_index)
-                    3'b000: temp = romData(charc,3'b000, 1'b0 );
-                    3'b001: temp = romData(charc,3'b001, 1'b0 );
-                    3'b010: temp = romData(charc,3'b010, 1'b0 );
-                    3'b011: temp = romData(charc,3'b011, 1'b0 );
-                    3'b100: temp = romData(charc,3'b100, 1'b0 );
-                    3'b101: temp = romData(charc,3'b101, 1'b0 );
-                    3'b110: temp = romData(charc,3'b110, 1'b0 );
-                    3'b111: temp = romData(charc,3'b111, 1'b0 );
+                    3'b000: temp = romData(sprite_ID,3'b000, 1'b0 );
+                    3'b001: temp = romData(sprite_ID,3'b001, 1'b0 );
+                    3'b010: temp = romData(sprite_ID,3'b010, 1'b0 );
+                    3'b011: temp = romData(sprite_ID,3'b011, 1'b0 );
+                    3'b100: temp = romData(sprite_ID,3'b100, 1'b0 );
+                    3'b101: temp = romData(sprite_ID,3'b101, 1'b0 );
+                    3'b110: temp = romData(sprite_ID,3'b110, 1'b0 );
+                    3'b111: temp = romData(sprite_ID,3'b111, 1'b0 );
                 endcase
                 data = temp;
             end 
@@ -246,16 +246,16 @@ module SpriteROM(
                 data[7] = temp[~line_index];
             end 
 
-            else if(direction == DOWN) begin                // Top row to bottom row (Reflection on the line y = 0)
-                case(index)
-                    3'b000: temp = romData(charc,3'b000, 1'b1 );
-                    3'b001: temp = romData(charc,3'b001, 1'b1 );
-                    3'b010: temp = romData(charc,3'b010, 1'b1 );
-                    3'b011: temp = romData(charc,3'b011, 1'b1 );
-                    3'b100: temp = romData(charc,3'b100, 1'b1 );
-                    3'b101: temp = romData(charc,3'b101, 1'b1 );
-                    3'b110: temp = romData(charc,3'b110, 1'b1 );
-                    3'b111: temp = romData(charc,3'b111, 1'b1 );
+            else if(orientation == DOWN) begin                // Top row to bottom row (Reflection on the line y = 0)
+                case(line_index)
+                    3'b000: temp = romData(sprite_ID,3'b000, 1'b1 );
+                    3'b001: temp = romData(sprite_ID,3'b001, 1'b1 );
+                    3'b010: temp = romData(sprite_ID,3'b010, 1'b1 );
+                    3'b011: temp = romData(sprite_ID,3'b011, 1'b1 );
+                    3'b100: temp = romData(sprite_ID,3'b100, 1'b1 );
+                    3'b101: temp = romData(sprite_ID,3'b101, 1'b1 );
+                    3'b110: temp = romData(sprite_ID,3'b110, 1'b1 );
+                    3'b111: temp = romData(sprite_ID,3'b111, 1'b1 );
                 endcase
                 data = temp;
             end
