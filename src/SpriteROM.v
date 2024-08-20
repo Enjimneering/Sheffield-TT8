@@ -261,7 +261,7 @@ module SpriteROM(
             end
 
   
-            else if (orientation == LEFT) begin                         //  (Rotate 90 degrees clockwise around the center point and then reflected on the line x = 0)
+            else if (orientation == LEFT) begin                         //  (Rotate 90 degrees clockwise around the center point and reflect on the line x = 0)
                 temp = romData(sprite_ID, 3'b000, 1'b1 );   
                 data[0] = temp[~line_index];                
                 temp = romData(sprite_ID, 3'b001, 1'b1 );
