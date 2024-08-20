@@ -129,7 +129,7 @@ DetectionCombinationUnit det(
 
 // assign out_entity = detector(entity_1, counter_H, counter_V) & detector(entity_2, counter_H, counter_V) & detector(entity_3, counter_H, counter_V) & detector(entity_4, counter_H, counter_V) & detector(entity_5, counter_H, counter_V) & detector(entity_6, counter_H, counter_V) & detector(entity_7, counter_H, counter_V) & detector(entity_8, counter_H, counter_V) & detector(entity_9, counter_H, counter_V);
 
-AssetROM Rom(
+SpriteROM Rom(
     .clk(clk),
     .reset(reset),
     .direction(out_entity[1:0]),
