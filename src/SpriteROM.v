@@ -28,9 +28,9 @@ Orientation Selection:
     The ROM Can be read from in four differernt ways in order to output the imagine in a differenet orientations.
 
     UP    = 0  - No change
-    RIGHT = 1  - Reflection on y = x
-    DOWN  = 2  - Reflection on y = 0
-    LEFT  = 3  - Reflection on y = -x
+    RIGHT = 1  - Rotated 90 Degrees clockwise around the centre.
+    DOWN  = 2  - Reflected on the line y = 0
+    LEFT  = 3  - Rotated 90 Degrees clockwise around the centre, then reflected on the line x = 0
     
 
 Sprite Storage:
@@ -82,7 +82,7 @@ module SpriteROM(
 
         case(_spriteID)     
             4'b0000: begin
-                case(_newIndex)        //Heart
+                case(_newIndex)       //Heart
                 3'b000: romData = 8'b11111111;
                 3'b001: romData = 8'b10011001;
                 3'b010: romData = 8'b00000000;
@@ -135,40 +135,40 @@ module SpriteROM(
 
             4'b0100: begin    //Dragon_Wing_Up
                 case(_newIndex)
-                3'b000: romData = 8'b11001111;
-                3'b001: romData = 8'b11100011;
-                3'b010: romData = 8'b01000010;
-                3'b011: romData = 8'b00000000;
-                3'b100: romData = 8'b00000000;
-                3'b101: romData = 8'b00000000;
-                3'b110: romData = 8'b00000101;
-                3'b111: romData = 8'b10011111;
+                3'b000: romData = 8'b11000011;
+                3'b001: romData = 8'b11100001;
+                3'b010: romData = 8'b10000011;
+                3'b011: romData = 8'b10000001;
+                3'b100: romData = 8'b00000001;
+                3'b101: romData = 8'b01000000;
+                3'b110: romData = 8'b11100001;
+                3'b111: romData = 8'b11000001;
                 endcase
             end
 
             4'b0101: begin  //Dragon_Wing_Down
                 case(_newIndex)
-                3'b000: romData = 8'b11111111;
-                3'b001: romData = 8'b10000011;
-                3'b010: romData = 8'b01000010;
-                3'b011: romData = 8'b00000000;
-                3'b100: romData = 8'b00000000;
-                3'b101: romData = 8'b00000000;
-                3'b110: romData = 8'b00000101;
-                3'b111: romData = 8'b10011111;
+                3'b000: romData = 8'b11000011;
+                3'b001: romData = 8'b11100001;
+                3'b010: romData = 8'b11000011;
+                3'b011: romData = 8'b10000001;
+                3'b100: romData = 8'b10000000;
+                3'b101: romData = 8'b10000000;
+                3'b110: romData = 8'b10000001;
+                3'b111: romData = 8'b11000001;
                 endcase
             end
 
             4'b0110: begin      // Dragon_Head
                 case(_newIndex)
-                3'b000: romData = 8'b10111111;
-                3'b001: romData = 8'b11000111;
-                3'b010: romData = 8'b00110000;
-                3'b011: romData = 8'b00011000;
-                3'b100: romData = 8'b00000000;
-                3'b101: romData = 8'b10000001;
-                3'b110: romData = 8'b11000111;
-                3'b111: romData = 8'b11111111;
+                3'b000: romData = 8'b11000111;
+                3'b001: romData = 8'b11000011;
+                3'b010: romData = 8'b11000011;
+                3'b011: romData = 8'b10010001;
+                3'b100: romData = 8'b10110001;
+                3'b101: romData = 8'b10100001;
+                3'b110: romData = 8'b01000011;
+                3'b111: romData = 8'b11000111;
                 endcase
             end
 
@@ -213,7 +213,7 @@ module SpriteROM(
         
         if(read_enable) begin
     
-            if (orientation == UP) begin                      // Normal Operation
+            if (orientation == UP) begin                                // Normal Operation
                 case(line_index)
                     3'b000: temp = romData(sprite_ID,3'b000, 1'b0 );
                     3'b001: temp = romData(sprite_ID,3'b001, 1'b0 );
@@ -227,7 +227,41 @@ module SpriteROM(
                 data = temp;
             end 
 
-            else if (orientation == RIGHT) begin            // Bottom left pixel to top right (Rotate 90 degrees clockwise around the center point)
+            else if (orientation == RIGHT) begin                        // (Rotate 90 degrees clockwise around the center point)
+                            temp = romData(sprite_ID, 3'b000, 1'b0 );
+                            data[0] = temp[~line_index];
+                            temp = romData(sprite_ID, 3'b001, 1'b0 );
+                            data[1] = temp[~line_index];
+                            temp = romData(sprite_ID, 3'b010, 1'b0 );
+                            data[2] = temp[~line_index];
+                            temp = romData(sprite_ID, 3'b011, 1'b0 );
+                            data[3] = temp[~line_index];
+                            temp = romData(sprite_ID, 3'b100, 1'b0 );
+                            data[4] = temp[~line_index];
+                            temp = romData(sprite_ID, 3'b101, 1'b0 );
+                            data[5] = temp[~line_index];
+                            temp = romData(sprite_ID, 3'b110, 1'b0 );
+                            data[6] = temp[~line_index];
+                            temp = romData(sprite_ID, 3'b111, 1'b0 );
+                            data[7] = temp[~line_index];
+                        end
+
+            else if(orientation == DOWN) begin                           // Top row to bottom row (Reflection on the line y = 0)
+                case(line_index)
+                    3'b000: temp = romData(sprite_ID,3'b000, 1'b1 );
+                    3'b001: temp = romData(sprite_ID,3'b001, 1'b1 );
+                    3'b010: temp = romData(sprite_ID,3'b010, 1'b1 );
+                    3'b011: temp = romData(sprite_ID,3'b011, 1'b1 );
+                    3'b100: temp = romData(sprite_ID,3'b100, 1'b1 );
+                    3'b101: temp = romData(sprite_ID,3'b101, 1'b1 );
+                    3'b110: temp = romData(sprite_ID,3'b110, 1'b1 );
+                    3'b111: temp = romData(sprite_ID,3'b111, 1'b1 );
+                endcase
+                data = temp;
+            end
+
+  
+            else if (orientation == LEFT) begin                         //  (Rotate 90 degrees clockwise around the center point and then reflected on the line x = 0)
                 temp = romData(sprite_ID, 3'b000, 1'b1 );   
                 data[0] = temp[~line_index];                
                 temp = romData(sprite_ID, 3'b001, 1'b1 );
@@ -245,41 +279,7 @@ module SpriteROM(
                 temp = romData(sprite_ID, 3'b111, 1'b1 );
                 data[7] = temp[~line_index];
             end 
-
-            else if(orientation == DOWN) begin                // Top row to bottom row (Reflection on the line y = 0)
-                case(line_index)
-                    3'b000: temp = romData(sprite_ID,3'b000, 1'b1 );
-                    3'b001: temp = romData(sprite_ID,3'b001, 1'b1 );
-                    3'b010: temp = romData(sprite_ID,3'b010, 1'b1 );
-                    3'b011: temp = romData(sprite_ID,3'b011, 1'b1 );
-                    3'b100: temp = romData(sprite_ID,3'b100, 1'b1 );
-                    3'b101: temp = romData(sprite_ID,3'b101, 1'b1 );
-                    3'b110: temp = romData(sprite_ID,3'b110, 1'b1 );
-                    3'b111: temp = romData(sprite_ID,3'b111, 1'b1 );
-                endcase
-                data = temp;
-            end
-
-  
-            else if (orientation == LEFT) begin             // Top left pixel to bottom Left (Reflection on the line y = -x)
-                temp = romData(sprite_ID, 3'b000, 1'b0 );
-                data[0] = temp[~line_index];
-                temp = romData(sprite_ID, 3'b001, 1'b0 );
-                data[1] = temp[~line_index];
-                temp = romData(sprite_ID, 3'b010, 1'b0 );
-                data[2] = temp[~line_index];
-                temp = romData(sprite_ID, 3'b011, 1'b0 );
-                data[3] = temp[~line_index];
-                temp = romData(sprite_ID, 3'b100, 1'b0 );
-                data[4] = temp[~line_index];
-                temp = romData(sprite_ID, 3'b101, 1'b0 );
-                data[5] = temp[~line_index];
-                temp = romData(sprite_ID, 3'b110, 1'b0 );
-                data[6] = temp[~line_index];
-                temp = romData(sprite_ID, 3'b111, 1'b0 );
-                data[7] = temp[~line_index];
-            end
-
+        
             else begin
                 data = romData(4'hf, 3'b000, 1'b0 );
             end
