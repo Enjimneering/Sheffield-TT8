@@ -4,6 +4,7 @@
 module FrameBufferController_Top(
     input clk,  
     input reset,    
+                                 // i(range(1:8)) entities[i+13,(i-1)*14]
     input wire [13:0] entity_1,  //entity input form: ([13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
     input wire [13:0] entity_2,  //Simultaneously supports up to 9 objects in the scene.
     input wire [13:0] entity_3,  //Set the entity ID to 4'hf for unused channels.
@@ -12,7 +13,7 @@ module FrameBufferController_Top(
     input wire [13:0] entity_6,
     input wire [13:0] entity_7,
     input wire [13:0] entity_8,
-    input wire [13:0] entity_9,
+
     input wire [9:0] counter_V,
     input wire [9:0] counter_H,
 
@@ -104,7 +105,7 @@ function currentColour; //Select the value that needs to be displayed from the b
 endfunction
 
 wire [8:0] out_entity;
-
+wire read_enable;
 
 
 DetectionCombinationUnit det(
@@ -122,7 +123,7 @@ DetectionCombinationUnit det(
     .counter_V(counter_V),
     .counter_H(counter_H),
     
-
+    .read_enable(read_enable),
     .out_entity(out_entity)
 );
 
@@ -132,9 +133,10 @@ DetectionCombinationUnit det(
 SpriteROM Rom(
     .clk(clk),
     .reset(reset),
-    .direction(out_entity[1:0]),
-    .charc(out_entity[5:2]),
-    .index(out_entity[8:6]),
+    .read_enable(read_enable),
+    .orientation(out_entity[1:0]),
+    .sprite_ID(out_entity[5:2]),
+    .line_index(out_entity[8:6]),
 
     .data(buffer)
 );

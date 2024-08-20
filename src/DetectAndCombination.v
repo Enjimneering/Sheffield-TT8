@@ -49,8 +49,9 @@ module DetectionCombinationUnit(
     input wire  [13:0]  entity_9,
     input wire  [9:0]   counter_V,
     input wire  [9:0]   counter_H,
-    output wire [8:0 ]  out_entity
-    
+
+    output reg [8:0]  out_entity,
+    output reg read_enable
     //output reg  [8:0]  entity_output_reg
     );
 
@@ -62,6 +63,7 @@ module DetectionCombinationUnit(
     localparam TILE_LEN_PIXEL = TILE_SIZE * UPSCALE_FACTOR;
     localparam SCREEN_SIZE_H = 16;
     localparam SCREEN_SIZE_V = 12;
+    localparam PRECHECKLEN = 8;
 
 
     function [6:0] entity_Position_Pixel_H; //Calculate the entity horizontal position in pixels
@@ -87,8 +89,8 @@ module DetectionCombinationUnit(
         input [9:0] ptV_Position;
         begin
         
-        inRange = ptH_Position >= entity_Position_Pixel_H(entity_Position) 
-        && ptH_Position < (entity_Position_Pixel_H(entity_Position) + TILE_LEN_PIXEL) 
+        inRange = ptH_Position + PRECHECKLEN >= entity_Position_Pixel_H(entity_Position) 
+        && ptH_Position + PRECHECKLEN < (entity_Position_Pixel_H(entity_Position) + TILE_LEN_PIXEL) 
         && ptV_Position >= entity_Position_Pixel_V(entity_Position) 
         && ptV_Position < entity_Position_Pixel_V(entity_Position) + TILE_LEN_PIXEL;
 
@@ -128,15 +130,44 @@ module DetectionCombinationUnit(
 
 //BigAnd and_5_entity( detector(entity_1, counter_H, counter_V) , detector(entity_2, counter_H, counter_V) , detector(entity_3, counter_H, counter_V) , detector(entity_4, counter_H, counter_V) , detector(entity_5, counter_H, counter_V) , detector(entity_6, counter_H, counter_V) , detector(entity_7, counter_H, counter_V) , detector(entity_8, counter_H, counter_V) , detector(entity_9, counter_H, counter_V), out_entity);
 
-assign out_entity = detector(entity_1, counter_H, counter_V) 
-    & detector(entity_2, counter_H, counter_V) 
-    & detector(entity_3, counter_H, counter_V) 
-    & detector(entity_4, counter_H, counter_V) 
-    & detector(entity_5, counter_H, counter_V) 
-    & detector(entity_6, counter_H, counter_V) 
-    & detector(entity_7, counter_H, counter_V) 
-    & detector(entity_8, counter_H, counter_V) 
-    & detector(entity_9, counter_H, counter_V);
+
+wire [3:0]entity_Current;
+wire buffer_Reset;
+
+FrameBufferController_Counter #(8) Counter(
+    .clk(clk),
+    .reset(reset),
+
+    .buffer_Reset(buffer_Reset),
+    .buffer_Counter(entity_Current)
+);
+reg [13:0]temp = 9'b111111111;
+
+always @(posedge clk ) begin
+    
+    case(entity_Current) 
+    3'd0: temp <=entity_1;
+    3'd1: temp <= entity_2;
+    3'd2: temp <= entity_3;
+    3'd3: temp <= entity_4;
+    3'd4: temp <= entity_5;
+    3'd5: temp <= entity_6;
+    3'd6: temp <= entity_7;
+    3'd7: temp <= entity_8;
+    //default: out_entity <= out_entity;
+    endcase
+    if (entity_Current != 0) begin
+        out_entity <= out_entity & detector(temp, counter_H, counter_V);
+    end else begin
+        out_entity <= 9'b111111111 & detector(temp, counter_H, counter_V);
+    end
+
+    if (buffer_Reset)begin
+        read_enable <= 1;
+    end else begin
+        read_enable <= 0;
+    end
+end
 
 // always@(*) begin
 //     out_entity = detector(entity_1, counter_H, counter_V) & detector(entity_2, counter_H, counter_V) & detector(entity_3, counter_H, counter_V) & detector(entity_4, counter_H, counter_V) & detector(entity_5, counter_H, counter_V) & detector(entity_6, counter_H, counter_V) & detector(entity_7, counter_H, counter_V) & detector(entity_8, counter_H, counter_V) & detector(entity_9, counter_H, counter_V);
