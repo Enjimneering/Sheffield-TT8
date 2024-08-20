@@ -77,7 +77,7 @@ module ROM_Testbench;
                         LINE_INDEX = line_index;
                         #20;
 
-                        $fwrite(output_file,"\t");
+                        $fwrite(output_file,"\t"); //   show the ./X view
 
                          for (pixel = 7; pixel > -1 ; pixel = pixel - 1) begin   // read from MSB to LSB 
 
@@ -88,7 +88,7 @@ module ROM_Testbench;
 
                         end
 
-                        $fwrite(output_file,"    ");  //Show the Bitmap
+                        $fwrite(output_file,"    ");  //Show the bitmap 
 
                         for (pixel = 7; pixel > -1 ; pixel = pixel - 1) begin   // read from MSB to LSB 
 
