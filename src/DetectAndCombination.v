@@ -45,11 +45,12 @@ module DetectionCombinationUnit(
     input wire  [13:0]  entity_5,
     input wire  [13:0]  entity_6,
     input wire  [13:0]  entity_7,
-    input wire  [13:0]  entity_8,
-    input wire  [13:0]  entity_9,
+    input wire  [13:0]  entity_8_Flip,
+    input wire  [13:0]  entity_9_Flip,
     input wire  [9:0]   counter_V,
     input wire  [9:0]   counter_H,
-    output wire [8:0 ]  out_entity
+
+    output wire [8:0]  out_entity
     
     //output reg  [8:0]  entity_output_reg
     );
@@ -110,6 +111,7 @@ module DetectionCombinationUnit(
             end
         end
 
+
     endfunction
 
 // always @(*) begin
@@ -127,6 +129,11 @@ module DetectionCombinationUnit(
 // end
 
 //BigAnd and_5_entity( detector(entity_1, counter_H, counter_V) , detector(entity_2, counter_H, counter_V) , detector(entity_3, counter_H, counter_V) , detector(entity_4, counter_H, counter_V) , detector(entity_5, counter_H, counter_V) , detector(entity_6, counter_H, counter_V) , detector(entity_7, counter_H, counter_V) , detector(entity_8, counter_H, counter_V) , detector(entity_9, counter_H, counter_V), out_entity);
+// wire [9:0] FlipEntity_8 = detector(entity_8_Flip, counter_H, counter_V);
+// wire [9:0] FlipEntity_9 = detector(entity_9_Flip, counter_H, counter_V);
+
+
+
 
 assign out_entity = detector(entity_1, counter_H, counter_V) 
     & detector(entity_2, counter_H, counter_V) 
@@ -134,9 +141,10 @@ assign out_entity = detector(entity_1, counter_H, counter_V)
     & detector(entity_4, counter_H, counter_V) 
     & detector(entity_5, counter_H, counter_V) 
     & detector(entity_6, counter_H, counter_V) 
-    & detector(entity_7, counter_H, counter_V) 
-    & detector(entity_8, counter_H, counter_V) 
-    & detector(entity_9, counter_H, counter_V);
+    & detector(entity_7, counter_H, counter_V)
+    & detector(entity_8_Flip, counter_H, counter_V)
+    & detector(entity_9_Flip, counter_H, counter_V);
+
 
 // always@(*) begin
 //     out_entity = detector(entity_1, counter_H, counter_V) & detector(entity_2, counter_H, counter_V) & detector(entity_3, counter_H, counter_V) & detector(entity_4, counter_H, counter_V) & detector(entity_5, counter_H, counter_V) & detector(entity_6, counter_H, counter_V) & detector(entity_7, counter_H, counter_V) & detector(entity_8, counter_H, counter_V) & detector(entity_9, counter_H, counter_V);

@@ -11,14 +11,13 @@ module FrameBufferController_Top(
     input wire [13:0] entity_5,
     input wire [13:0] entity_6,
     input wire [13:0] entity_7,
-    input wire [13:0] entity_8,
-    input wire [13:0] entity_9,
+    input wire [13:0] entity_8_Flip,
+    input wire [13:0] entity_9_Flip,
     input wire [9:0] counter_V,
     input wire [9:0] counter_H,
 
     output reg colour // 0-black 1-white
     );
-
 
 localparam BUFFERLEN = 8;
 localparam UPSCALE = 5;
@@ -94,7 +93,7 @@ function currentColour; //Select the value that needs to be displayed from the b
     begin
     
     if(entity[5:2] != 4'b1111) begin
-        currentColour = buffer_line[(ptH_Position - entity_Position_Pixel_H(entity[7:0]))/5]; // 1 - White 0 - black
+        currentColour = buffer_line[(ptH_Position % TILE_LEN_PIXEL)/UPSCALE]; // 1 - White 0 - black
     end else begin
         currentColour = 1;
     end
@@ -117,8 +116,8 @@ DetectionCombinationUnit det(
     .entity_5(entity_5),
     .entity_6(entity_6),
     .entity_7(entity_7),
-    .entity_8(entity_8),
-    .entity_9(entity_9),
+    .entity_8_Flip(entity_8_Flip),
+    .entity_9_Flip(entity_9_Flip),
     .counter_V(counter_V),
     .counter_H(counter_H),
     
@@ -132,16 +131,15 @@ DetectionCombinationUnit det(
 SpriteROM Rom(
     .clk(clk),
     .reset(reset),
-    .direction(out_entity[1:0]),
-    .charc(out_entity[5:2]),
-    .index(out_entity[8:6]),
+    .orientation(out_entity[1:0]),
+    .sprite_ID(out_entity[5:2]),
+    .line_index(out_entity[8:6]),
 
     .data(buffer)
 );
 
 always@(*) begin
-    $display("Inside module: buffer = %b", out_entity);
-
+    $display("buffer = %b", buffer);
 end
 
 always@(*) begin

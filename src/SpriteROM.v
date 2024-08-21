@@ -48,7 +48,7 @@ module SpriteROM(
     
     input            clk,
     input            reset,
-    input wire       read_enable,
+    // input wire       read_enable,
     input wire [1:0] orientation,
     input wire [3:0] sprite_ID,
     input wire [2:0] line_index,
@@ -61,6 +61,7 @@ module SpriteROM(
     localparam DOWN   = 2'b10;
     localparam LEFT   = 2'b11;
 
+    // assign read_enable = 1'b1;
 
     function [7:0] romData;
         
@@ -211,7 +212,7 @@ module SpriteROM(
 
     always @(*) begin // impliment the 4 orientations
         
-        if(read_enable) begin
+        // if(read_enable) begin
     
             if (orientation == UP) begin                                // Normal Operation
                 case(line_index)
@@ -248,14 +249,14 @@ module SpriteROM(
 
             else if(orientation == DOWN) begin                           // Top row to bottom row (Reflection on the line y = 0)
                 case(line_index)
-                    3'b000: temp = romData(sprite_ID,3'b000, 1'b1 );
-                    3'b001: temp = romData(sprite_ID,3'b001, 1'b1 );
-                    3'b010: temp = romData(sprite_ID,3'b010, 1'b1 );
-                    3'b011: temp = romData(sprite_ID,3'b011, 1'b1 );
-                    3'b100: temp = romData(sprite_ID,3'b100, 1'b1 );
-                    3'b101: temp = romData(sprite_ID,3'b101, 1'b1 );
-                    3'b110: temp = romData(sprite_ID,3'b110, 1'b1 );
-                    3'b111: temp = romData(sprite_ID,3'b111, 1'b1 );
+                    3'b000: temp = romData(sprite_ID,3'b000, 1'b0 );
+                    3'b001: temp = romData(sprite_ID,3'b001, 1'b0 );
+                    3'b010: temp = romData(sprite_ID,3'b010, 1'b0 );
+                    3'b011: temp = romData(sprite_ID,3'b011, 1'b0 );
+                    3'b100: temp = romData(sprite_ID,3'b100, 1'b0 );
+                    3'b101: temp = romData(sprite_ID,3'b101, 1'b0 );
+                    3'b110: temp = romData(sprite_ID,3'b110, 1'b0 );
+                    3'b111: temp = romData(sprite_ID,3'b111, 1'b0 );
                 endcase
                 data = temp;
             end
@@ -288,6 +289,6 @@ module SpriteROM(
 
         end
 
-    end
+    // end
 
 endmodule
