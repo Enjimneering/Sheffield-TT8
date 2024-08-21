@@ -41,7 +41,7 @@ Sprite Storage:
 
 */
 
-`timescale 1ns / 1ps
+//Modules with a timescale cannot be synthesized
 
 
 module SpriteROM(
