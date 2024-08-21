@@ -16,25 +16,15 @@ module tt_um_Enjimneering_STT8 (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-  wire SPRITE_OUT;
-
-  VGA_Top vga(
-    .pixel_clk(clk),        
-    .reset(rst_n),         
-    .color_data(ui_in),      // COLOR DATA - FROM GRAPHICS CONTROLLER
-    .rgb_out(uo_out),     
-    .h_sync(uio_out[0]),     
-    .v_sync(uio_out[1])        
-  );
 
   SpriteROM spriteROM(
       .clk(clk),
       .reset(rst_n),
       .read_enable(ui_in[0]),
       .orientation(ui_in[2:1]),
-      .sprite_ID(ui_in[2:1]),
-      .line_index(ui_in[5:3]),
-      .data(SPRITE_OUT)
+      .sprite_ID(ui_in[5:3]),
+      .line_index({uio_in[0] , ui_in[7:6]}),
+      .data(uo_out)
   );
   
   // All output pins must be assigned. If not used, assign to 0.
