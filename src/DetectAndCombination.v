@@ -65,20 +65,20 @@ module DetectionCombinationUnit(
     localparam SCREEN_SIZE_V = 12;
 
 
-    function [6:0] entity_Position_Pixel_H; //Calculate the entity horizontal position in pixels
-        input [7:0] entity_Position;
+    function [9:0] entity_Position_Pixel_H; //Calculate the entity horizontal position in pixels
+        input [8:0] entity_Position;
         begin
-            entity_Position_Pixel_H = (entity_Position % SCREEN_SIZE_H) * TILE_LEN_PIXEL;
+            //entity_Position_Pixel_H = (entity_Position % SCREEN_SIZE_H) * TILE_LEN_PIXEL;
+            entity_Position_Pixel_H = entity_Position[3:0] * TILE_LEN_PIXEL;
         end
 
     endfunction
 
-    function [4:0] entity_Position_Pixel_V; //Calculate the entity vertical position in pixels
-        input [7:0] entity_Position;
+    function [9:0] entity_Position_Pixel_V; //Calculate the entity vertical position in pixels
+        input [8:0] entity_Position;
         begin
-
-        entity_Position_Pixel_V = (entity_Position / SCREEN_SIZE_H) * TILE_LEN_PIXEL;
-
+        // entity_Position_Pixel_V = (entity_Position / SCREEN_SIZE_H) * TILE_LEN_PIXEL;
+        entity_Position_Pixel_V = entity_Position[7:4] * TILE_LEN_PIXEL;
         end
     endfunction
 
@@ -114,6 +114,22 @@ module DetectionCombinationUnit(
 
     endfunction
 
+    function [8:0] detector_Flip; //If the position of the pointer needs to be displayed, return the row label; otherwise, return 4'hF (an invalid identifier).
+        input [13:0] entity;
+        input [9:0] ptH_Position;
+        input [9:0] ptV_Position;
+        begin
+        
+        if (inRange(entity[7:0], ptH_Position, ptV_Position)==1 && entity[13:10] != 4'b1111) begin
+                detector_Flip = {~(3'b111&((ptV_Position % TILE_LEN_PIXEL)/UPSCALE_FACTOR)), entity[13:10],entity[9:8]};
+            end else begin
+                detector_Flip = 9'b111111111; // 'h1FF
+            end
+        end
+
+
+    endfunction
+
 // always @(*) begin
 // $display("Inside module: Range = %b \n", inRange(entity_1[7:0], counter_H, counter_V)==1 && entity_1[13:10] != 4'b1111);
 // $display("Inside module: 1 = %b \n",  detector(entity_1, counter_H, counter_V));
@@ -133,7 +149,9 @@ module DetectionCombinationUnit(
 // wire [9:0] FlipEntity_9 = detector(entity_9_Flip, counter_H, counter_V);
 
 
-
+// always@(*) begin
+//     $display("Inside module: a = %b",  entity_Position_Pixel_H(entity_1[7:0]));
+// end
 
 assign out_entity = detector(entity_1, counter_H, counter_V) 
     & detector(entity_2, counter_H, counter_V) 
@@ -142,16 +160,13 @@ assign out_entity = detector(entity_1, counter_H, counter_V)
     & detector(entity_5, counter_H, counter_V) 
     & detector(entity_6, counter_H, counter_V) 
     & detector(entity_7, counter_H, counter_V)
-    & detector(entity_8_Flip, counter_H, counter_V)
-    & detector(entity_9_Flip, counter_H, counter_V);
+    & detector_Flip(entity_8_Flip, counter_H, counter_V)
+    & detector_Flip(entity_9_Flip, counter_H, counter_V);
 
 
 // always@(*) begin
 //     out_entity = detector(entity_1, counter_H, counter_V) & detector(entity_2, counter_H, counter_V) & detector(entity_3, counter_H, counter_V) & detector(entity_4, counter_H, counter_V) & detector(entity_5, counter_H, counter_V) & detector(entity_6, counter_H, counter_V) & detector(entity_7, counter_H, counter_V) & detector(entity_8, counter_H, counter_V) & detector(entity_9, counter_H, counter_V);
 // end
-// always@(posedge clk, out_entity) begin
-//     $display("Inside module: a = %b",  out_entity);
-    
-// end
+
 
 endmodule

@@ -138,9 +138,9 @@ SpriteROM Rom(
     .data(buffer)
 );
 
-always@(*) begin
-    $display("buffer = %b", buffer);
-end
+// always@(*) begin
+//     $display("buffer = %b", buffer);
+// end
 
 always@(*) begin
     colour = currentColour(buffer, out_entity, counter_H);
