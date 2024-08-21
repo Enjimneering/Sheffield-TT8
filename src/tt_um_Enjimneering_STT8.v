@@ -24,6 +24,17 @@ module tt_um_Enjimneering_STT8 (
    .h_sync(uio_out[0]),     
    .v_sync(uio_out[1])        
 );
+
+SpriteROM spriteROM(
+    .clk(clk),
+    .reset(rst_n),
+    .read_enable(),
+    .orientation(),
+    .sprite_ID(),
+    .line_index(),
+    .data()
+
+);
   
   // All output pins must be assigned. If not used, assign to 0.
   assign uio_out[7:2]  = 0;
