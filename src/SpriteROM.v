@@ -209,7 +209,7 @@ module SpriteROM(
 
     reg [7:0] temp;
 
-    always @(*) begin // impliment the 4 orientations
+    always @(posedge clk) begin // impliment the 4 orientations
         
         if(read_enable) begin
     
