@@ -36,6 +36,7 @@ module DetectionCombinationUnit(
     
     input clk,
     input reset,
+    
     input wire  [13:0]  entity_1,  
     input wire  [13:0]  entity_2,  
     input wire  [13:0]  entity_3,  

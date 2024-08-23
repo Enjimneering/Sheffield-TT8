@@ -3,6 +3,7 @@ module FrameBuffer_Top (
     
     input clk,  
     input reset,    
+    
     input wire [13:0] entity_1,  //entity input form: ([13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
     input wire [13:0] entity_2,  //Simultaneously supports up to 9 objects in the scene.
     input wire [13:0] entity_3,  //Set the entity ID to 4'hf for unused channels.
@@ -127,6 +128,7 @@ DetectionCombinationUnit det(
 SpriteROM Rom(
     .clk(clk),
     .reset(reset),
+
     .orientation(out_entity[1:0]),
     .sprite_ID(out_entity[5:2]),
     .line_index(out_entity[8:6]),
@@ -138,7 +140,7 @@ SpriteROM Rom(
 //     $display("buffer = %b", buffer);
 // end
 
-always@(*) begin
+always@(posedge clk) begin
     colour = currentColour(buffer, out_entity, counter_H);
 end
 
