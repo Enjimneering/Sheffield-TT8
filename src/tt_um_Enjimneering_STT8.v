@@ -20,16 +20,17 @@ module tt_um_Enjimneering_STT8 (
 
     FrameBuffer_Top frameBuffer (
     .clk(clk),  
-    .reset(rst_n),    
-    .entity_2({4'hf, 2'b00 , ui_in}),  //Simultaneously supports up to 9 objects in the scene.
-    .entity_1({4'hf, 2'b00 , uio_in}),  //entity input form: ([13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
-    .entity_3({4'hf, 2'b00 , ui_in}),  //Set the entity ID to 4'hf for unused channels.
-    .entity_4({4'hf, 2'b00 , uio_in}),
-    .entity_5({4'hf, 2'b00 , ui_in}),
-    .entity_6({4'hf, 2'b00 , uio_in}),
-    .entity_7({4'hf, 2'b00 , ui_in}),
-    .entity_8_Flip({4'hf, 2'b00 , uio_in}),
-    .entity_9_Flip({4'hf, 2'b00 , ui_in}),
+    .reset(rst_n),   
+     
+    .entity_2(ui_in),  //Simultaneously supports up to 9 objects in the scene.
+    .entity_1(ui_in),  // tity input form: ([13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
+    .entity_3(ui_in),  //Set the entity ID to 4'hf for unused channels.
+    .entity_4(ui_in),
+    .entity_5(uio_in),
+    .entity_6(ui_in),
+    .entity_7(uio_in),
+    .entity_8_Flip(uio_in),
+    .entity_9_Flip(uio_in),
     .counter_V(10'b0),
     .counter_H(10'b0),
     .colour(uo_out[0])
