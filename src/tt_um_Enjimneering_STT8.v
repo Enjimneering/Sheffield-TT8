@@ -28,11 +28,11 @@ module tt_um_Enjimneering_STT8 (
   );
   
   // All output pins must be assigned. If not used, assign to 0.
-  assign uio_out[7:2]  = 0;
+  assign uio_out[7:0]  = 0;
   assign uio_oe        = 'b0000_0011;
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{uio_in ,ena, 1'b0};
+  wire _unused = &{ena, 1'b0};
     
 endmodule
 
