@@ -130,7 +130,7 @@ SpriteROM Rom(
     .orientation(out_entity[1:0]),
     .sprite_ID(out_entity[5:2]),
     .line_index(out_entity[8:6]),
-    .read_enable(1)
+    .read_enable(1),
     .data(buffer),
 );
 
