@@ -38,7 +38,7 @@ module tt_um_Enjimneering_STT8 (
    VGA_Top vga(
 
     .pixel_clk(clk),    // CLK
-    .reset(reset_n),        // RESET
+    .reset(rst_n),        // RESET
     .color_data(FRAME_BUF_COL_OUT),   // COLOR DATA - FROM GRAPHICS CONTROLLER
     .rgb_out(uio_out),      // PIXEL COLOR OUTPUT
     .h_sync(uo_out[0]),       // HSYNC OUT
