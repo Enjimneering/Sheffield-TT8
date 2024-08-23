@@ -52,6 +52,7 @@ module tt_um_Enjimneering_STT8 (
   //assign uio_out[7:0]  = 0;
   assign uio_oe        = 'b0000_0011;
   assign uo_out [7:1]  = 0;
+  assign uio_out [7:1]  = 0;
   // List all unused inputs to prevent warnings
   wire _unused = &{ena, 1'b0};
     
