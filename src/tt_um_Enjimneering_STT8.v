@@ -17,6 +17,7 @@ module tt_um_Enjimneering_STT8 (
 );
 
     wire FRAME_BUF_COL_OUT;
+
     wire [13:0] entityInput = {uio_in[3:0] , ui_in[1:0], uio_in};
     wire [13:0] entityInput2 = {ui_in[3:0] , uio_in[1:0], uio_in};
     wire [9:0]  counterInputH = {ui_in, uio_in[7:6]};
@@ -38,9 +39,8 @@ module tt_um_Enjimneering_STT8 (
     .entity_9_Flip(entityInput),
     .counter_V(counterInputV),
     .counter_H(counterInputH),
-    .colour(uo_out[0])
+    .colour(FRAME_BUF_COL_OUT)
     );
-
 
 
    VGA_Top vga(
@@ -59,8 +59,7 @@ module tt_um_Enjimneering_STT8 (
   // All output pins must be assigned. If not used, assign to 0.
   //assign uio_out[7:0]  = 0;
   assign uio_oe         = 'b0000_0011;
-  assign uo_out  [7:1]  = 0;
-  assign uio_out        = 0;
+  assign uo_out  [7:2]  = 0;
   // List all unused inputs to prevent warnings
   wire _unused = &{ena, 1'b0};
     
