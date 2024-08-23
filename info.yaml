@@ -22,9 +22,9 @@ project:
     - "VGA_Sync.v"
     - "vertical_counter.v"
     - "horizontal_counter.v"
-    - "SpriteROM.v"
-    - "DetectionCombinationUnit.v"
     - "FrameBufferController_Top.v"
+    - "DetectionCombinationUnit.v"
+    - "SpriteROM.v"
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:

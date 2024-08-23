@@ -5,7 +5,7 @@
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = tt_um_Enjimneering_STT8.v VGA_Top.v VGA_Sync.v vertical_counter.v horizontal_counter.v SpriteROM.v DetectionCombinationUnit.v FrameBufferController.v
+PROJECT_SOURCES = tt_um_Enjimneering_STT8.v VGA_Top.v VGA_Sync.v vertical_counter.v horizontal_counter.v SpriteROM.v DetectionCombinationUnit.v FrameBufferController_Top.v
 
 ifneq ($(GATES),yes)
 
