@@ -17,8 +17,10 @@ module tt_um_Enjimneering_STT8 (
 );
 
     wire FRAME_BUF_COL_OUT;
-    wire entityInput = {4'hf , 2'b00, ui_in};
-    wire entityInput2 = {4'hf , 2'b00, uio_in};
+    wire [13:0] entityInput = {uio_in[3:0] , ui_in[1:0], uio_in};
+    wire [13:0] entityInput2 = {ui_in[3:0] , uio_in[1:0], uio_in};
+    wire [9:0]  counterInputH = {ui_in, uio_in[7:6]};
+    wire [9:0]  counterInputV = {uio_in, ui_in[4:3]};
 
 
     FrameBuffer_Top frameBuffer (
@@ -34,8 +36,8 @@ module tt_um_Enjimneering_STT8 (
     .entity_7(entityInput2),
     .entity_8_Flip(entityInput2),
     .entity_9_Flip(entityInput),
-    .counter_V(10'b0),
-    .counter_H(10'b0),
+    .counter_V(counterInputV),
+    .counter_H(counterInputH),
     .colour(uo_out[0])
     );
 
