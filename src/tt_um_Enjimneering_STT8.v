@@ -8,7 +8,7 @@
 module tt_um_Enjimneering_STT8 (
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
-    input  wire [7:0] uio_in,   // IOs: Input path
+    input  wire [7:0] C,   // IOs: Input path
     output wire [7:0] uio_out,  // IOs: Output path
     output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
     input  wire       ena,      // will go high when the design is enabled
@@ -16,19 +16,38 @@ module tt_um_Enjimneering_STT8 (
     input  wire       rst_n     // reset_n - low to reset
 );
 
+  wire FRAME_BUF_COL_OUT;
 
-  SpriteROM spriteROM(
-      .clk(clk),
-      .reset(rst_n),
-      .read_enable(ui_in[0]),
-      .orientation(ui_in[2:1]),
-      .sprite_ID(ui_in[6:3]),
-      .line_index({uio_in[0] , ui_in[7:6]}),
-      .data(uo_out)
-  );
-  
+   FrameBufferController_Top frameBuffer(
+    .clk(clk),  
+    .reset(rst_n),    
+    .entity_2({4'hf, 2'b00 , ui_in}),  //Simultaneously supports up to 9 objects in the scene.
+    .entity_1({4'hf, 2'b00 , ui_in}),  //entity input form: ([13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
+    .entity_3({4'hf, 2'b00 , ui_in}),  //Set the entity ID to 4'hf for unused channels.
+    .entity_4({4'hf, 2'b00 , ui_in}),
+    .entity_5({4'hf, 2'b00 , ui_in}),
+    .entity_6({4'hf, 2'b00 , ui_in}),
+    .entity_7({4'hf, 2'b00 , ui_in}),
+    .entity_8_Flip({4'hf, 2'b00 , ui_in}),
+    .entity_9_Flip({4'hf, 2'b00 , ui_in}),
+    .counter_V({4'hf, 2'b00 , ui_in}),
+    .counter_H({4'hf, 2'b00 , ui_in}),
+    .colour(FRAME_BUF_COL_OUT)
+    );
+
+   VGA_Top vga(
+
+    .pixel_clk(clk),    // CLK
+    .reset(reset_n),        // RESET
+    .color_data(FRAME_BUF_COL_OUT),   // COLOR DATA - FROM GRAPHICS CONTROLLER
+    .rgb_out(uio_out),      // PIXEL COLOR OUTPUT
+    .h_sync(uo_out[0]),       // HSYNC OUT
+    .v_sync(uo_out[1])      // VSYNC OUT
+
+);
+
   // All output pins must be assigned. If not used, assign to 0.
-  assign uio_out[7:0]  = 0;
+  //assign uio_out[7:0]  = 0;
   assign uio_oe        = 'b0000_0011;
 
   // List all unused inputs to prevent warnings
