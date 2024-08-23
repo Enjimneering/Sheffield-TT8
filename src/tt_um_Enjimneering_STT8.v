@@ -42,7 +42,7 @@ module tt_um_Enjimneering_STT8 (
     );
 
 
-/*
+
    VGA_Top vga(
 
     .pixel_clk(clk),    // CLK
@@ -53,7 +53,9 @@ module tt_um_Enjimneering_STT8 (
     .v_sync(uo_out[1])      // VSYNC OUT
 
 );
-*/
+
+
+
   // All output pins must be assigned. If not used, assign to 0.
   //assign uio_out[7:0]  = 0;
   assign uio_oe         = 'b0000_0011;
