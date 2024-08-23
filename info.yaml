@@ -24,7 +24,7 @@ project:
     - "horizontal_counter.v"
     - "SpriteROM.v"
     - "DetectionCombinationUnit.v"
-    - "FrameBufferController.v"
+    - "FrameBufferController_Top.v"
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
