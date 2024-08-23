@@ -22,7 +22,7 @@ module tt_um_Enjimneering_STT8 (
       .reset(rst_n),
       .read_enable(ui_in[0]),
       .orientation(ui_in[2:1]),
-      .sprite_ID(ui_in[5:3]),
+      .sprite_ID(ui_in[6:3]),
       .line_index({uio_in[0] , ui_in[7:6]}),
       .data(uo_out)
   );
