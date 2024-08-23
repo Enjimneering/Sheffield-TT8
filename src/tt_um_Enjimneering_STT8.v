@@ -32,7 +32,7 @@ module tt_um_Enjimneering_STT8 (
     .entity_9_Flip({4'hf, 2'b00 , ui_in}),
     .counter_V(10'b0),
     .counter_H(10'b0),
-    .colour(FRAME_BUF_COL_OUT)
+    .colour(uo_out[0])
     );
 
 
@@ -51,7 +51,7 @@ module tt_um_Enjimneering_STT8 (
   // All output pins must be assigned. If not used, assign to 0.
   //assign uio_out[7:0]  = 0;
   assign uio_oe        = 'b0000_0011;
-  assign uo_out [7:2]   = 0;
+  assign uo_out [7:1]  = 0;
   // List all unused inputs to prevent warnings
   wire _unused = &{ena, 1'b0};
     
