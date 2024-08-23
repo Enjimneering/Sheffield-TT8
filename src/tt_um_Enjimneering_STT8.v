@@ -18,7 +18,7 @@ module tt_um_Enjimneering_STT8 (
 
     wire FRAME_BUF_COL_OUT;
 
-   FrameBuffer_Top frameBuffer(
+    FrameBuffer_Top frameBuffer (
     .clk(clk),  
     .reset(rst_n),    
     .entity_2({4'hf, 2'b00 , ui_in}),  //Simultaneously supports up to 9 objects in the scene.
@@ -35,6 +35,8 @@ module tt_um_Enjimneering_STT8 (
     .colour(FRAME_BUF_COL_OUT)
     );
 
+
+/*
    VGA_Top vga(
 
     .pixel_clk(clk),    // CLK
@@ -45,7 +47,7 @@ module tt_um_Enjimneering_STT8 (
     .v_sync(uo_out[1])      // VSYNC OUT
 
 );
-
+*/
   // All output pins must be assigned. If not used, assign to 0.
   //assign uio_out[7:0]  = 0;
   assign uio_oe        = 'b0000_0011;
