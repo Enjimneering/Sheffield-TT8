@@ -16,9 +16,9 @@ module tt_um_Enjimneering_STT8 (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-  wire FRAME_BUF_COL_OUT;
+    wire FRAME_BUF_COL_OUT;
 
-   FrameBufferController_Top frameBuffer(
+   FrameBuffer_Top frameBuffer(
     .clk(clk),  
     .reset(rst_n),    
     .entity_2({4'hf, 2'b00 , ui_in}),  //Simultaneously supports up to 9 objects in the scene.
