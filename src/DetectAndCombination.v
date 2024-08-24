@@ -66,7 +66,7 @@ module DetectionCombinationUnit(
 
 
     function [9:0] entity_Position_Pixel_H; //Calculate the entity horizontal position in pixels
-        input [8:0] entity_Position;
+        input [7:0] entity_Position;
         begin
             //entity_Position_Pixel_H = (entity_Position % SCREEN_SIZE_H) * TILE_LEN_PIXEL;
             entity_Position_Pixel_H = entity_Position[3:0] * TILE_LEN_PIXEL;
