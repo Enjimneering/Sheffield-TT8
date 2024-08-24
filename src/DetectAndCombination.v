@@ -75,7 +75,7 @@ module DetectionCombinationUnit(
     endfunction
 
     function [9:0] entity_Position_Pixel_V; //Calculate the entity vertical position in pixels
-        input [8:0] entity_Position;
+        input [7:0] entity_Position;
         begin
         // entity_Position_Pixel_V = (entity_Position / SCREEN_SIZE_H) * TILE_LEN_PIXEL;
         entity_Position_Pixel_V = entity_Position[7:4] * TILE_LEN_PIXEL;
