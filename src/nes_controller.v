@@ -81,11 +81,11 @@ module nes_controller
 					latch = 1;
 					
 					// count 12 us
-					if(count_reg < 1200)
+					if(count_reg < 600)
 						count_next = count_reg + 1;
 					
 					// once 12 us passed
-					else if(count_reg == 1200)
+					else if(count_reg == 600)
 						begin
 						count_next = 0; // reset latch_count
 						state_next = read_A_wait; // go to read_A_wait state
@@ -96,11 +96,11 @@ module nes_controller
 					begin
 					A_next = data; // read A
 					
-					if(count_reg < 600) // count clk cycles for 6 us
+					if(count_reg < 300) // count clk cycles for 6 us
 						count_next = count_reg + 1;
 						
 					// once 6 us passed
-					else if(count_reg == 600)
+					else if(count_reg == 300)
 						begin
 						count_next = 0; // reset latch_count
 						state_next = read_B; // go to read_B state
@@ -110,21 +110,21 @@ module nes_controller
 			read_B:	
 					begin
 					// count clk cycles for 12 us
-					if(count_reg < 1200)
+					if(count_reg < 600)
 						count_next = count_reg + 1;
 					
 					// nes_clk state
-					if(count_reg <= 600)
+					if(count_reg <= 300)
 						nes_clk = 1;
-					else if(count_reg > 600)
+					else if(count_reg > 300)
 						nes_clk = 0;
 					
 					// read B
-					if(count_reg == 600)
+					if(count_reg == 300)
 						B_next = data;
 					
 					// state over
-					if(count_reg == 1200)
+					if(count_reg == 600)
 						begin
 						count_next = 0; // reset latch_count
 						state_next = read_select; // go to read_select state
@@ -134,21 +134,21 @@ module nes_controller
 			read_select:	
 					begin
 					// count clk cycles for 12 us
-					if(count_reg < 1200)
+					if(count_reg < 600)
 						count_next = count_reg + 1;
 					
 					// nes_clk state
-					if(count_reg <= 600)
+					if(count_reg <= 300)
 						nes_clk = 1;
-					else if(count_reg > 600)
+					else if(count_reg > 300)
 						nes_clk = 0;
 					
 					// read select
-					if(count_reg == 600)
+					if(count_reg == 300)
 						select_next = data;
 					
 					// state over
-					if(count_reg == 1200)
+					if(count_reg == 600)
 						begin
 						count_next = 0; // reset latch_count
 						state_next = read_start; // go to read_start state
@@ -158,21 +158,21 @@ module nes_controller
 			read_start:	
 					begin
 					// count clk cycles for 12 us
-					if(count_reg < 1200)
+					if(count_reg < 600)
 						count_next = count_reg + 1;
 					
 					// nes_clk state
-					if(count_reg <= 600)
+					if(count_reg <= 300)
 						nes_clk = 1;
-					else if(count_reg > 600)
+					else if(count_reg > 300)
 						nes_clk = 0;
 					
 					// read start
-					if(count_reg == 600)
+					if(count_reg == 300)
 						start_next = data;
 					
 					// state over
-					if(count_reg == 1200)
+					if(count_reg == 600)
 						begin
 						count_next = 0; // reset latch_count
 						state_next = read_up; // go to read_up state
@@ -182,21 +182,21 @@ module nes_controller
 			read_up:	
 					begin
 					// count clk cycles for 12 us
-					if(count_reg < 1200)
+					if(count_reg < 600)
 						count_next = count_reg + 1;
 					
 					// nes_clk state
-					if(count_reg <= 600)
+					if(count_reg <= 300)
 						nes_clk = 1;
-					else if(count_reg > 600)
+					else if(count_reg > 300)
 						nes_clk = 0;
 					
 					// read up
-					if(count_reg == 600)
+					if(count_reg == 300)
 						up_next = data;
 					
 					// state over
-					if(count_reg == 1200)
+					if(count_reg == 600)
 						begin
 						count_next = 0; // reset latch_count
 						state_next = read_down; // go to read_down state
@@ -206,21 +206,21 @@ module nes_controller
 			read_down:	
 					begin
 					// count clk cycles for 12 us
-					if(count_reg < 1200)
+					if(count_reg < 600)
 						count_next = count_reg + 1;
 					
 					// nes_clk state
-					if(count_reg <= 600)
+					if(count_reg <= 300)
 						nes_clk = 1;
-					else if(count_reg > 600)
+					else if(count_reg > 300)
 						nes_clk = 0;
 					
 					// read down
-					if(count_reg == 600)
+					if(count_reg == 300)
 						down_next = data;
 					
 					// state over
-					if(count_reg == 1200)
+					if(count_reg == 600)
 						begin
 						count_next = 0; // reset latch_count
 						state_next = read_left; // go to read_left state
@@ -230,21 +230,21 @@ module nes_controller
 			read_left:	
 					begin
 					// count clk cycles for 12 us
-					if(count_reg < 1200)
+					if(count_reg < 600)
 						count_next = count_reg + 1;
 					
 					// nes_clk state
-					if(count_reg <= 600)
+					if(count_reg <= 300)
 						nes_clk = 1;
-					else if(count_reg > 600)
+					else if(count_reg > 300)
 						nes_clk = 0;
 					
 					// read left
-					if(count_reg == 600)
+					if(count_reg == 300)
 						left_next = data;
 					
 					// state over
-					if(count_reg == 1200)
+					if(count_reg == 600)
 						begin
 						count_next = 0; // reset latch_count
 						state_next = read_right; // go to read_right state
@@ -254,21 +254,21 @@ module nes_controller
 			read_right:	
 					begin
 					// count clk cycles for 12 us
-					if(count_reg < 1200)
+					if(count_reg < 600)
 						count_next = count_reg + 1;
 					
 					// nes_clk state
-					if(count_reg <= 600)
+					if(count_reg <= 300)
 						nes_clk = 1;
-					else if(count_reg > 600)
+					else if(count_reg > 300)
 						nes_clk = 0;
 					
 					// read right
-					if(count_reg == 600)
+					if(count_reg == 300)
 						right_next = data;
 					
 					// state over
-					if(count_reg == 1200)
+					if(count_reg == 600)
 						begin
 						count_next = 0; // reset latch_count
 						state_next = latch_en; // go to latch_en state
