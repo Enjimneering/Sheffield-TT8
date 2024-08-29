@@ -230,14 +230,25 @@ module dragon (
         input [7:0] _lastLocation;
         input [7:0] _newLocation;
         
-        begin
-            
-            
+     reg [3:0] last_x, last_y, new_x, new_y;
 
+    begin
+        // Extract last and new X and Y coordinates
+        last_y = _lastLocation[7:4];
+        last_x = _lastLocation[3:0];
+        new_y = _newLocation[7:4];
+        new_x = _newLocation[3:0];
 
-
-        end
-
+        // Determine direction based on movement
+        if (new_x > last_x)
+            NextDirection = RIGHT;
+        else if (new_x < last_x)
+            NextDirection = LEFT;
+        else if (new_y > last_y)
+            NextDirection = DOWN;
+        else if (new_y < last_y)
+            NextDirection = UP;
+    end
     endfunction
 
 
