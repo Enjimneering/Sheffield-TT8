@@ -191,10 +191,37 @@ module dragon (
     function [7:0] NextLocation;    // Decide the next tile the dragon's head will move to
         input [7:0] _currentLocation;
         input [7:0] _targetTile;
+    reg [3:0] current_x, current_y, target_x, target_y , next_x, next_y;
+ 
 
-        begin
-            
-        end
+    begin
+        // Extract current X and Y coordinates
+        current_y = _currentLocation[7:4];
+        current_x = _currentLocation[3:0];
+
+        // Extract target X and Y coordinates
+        target_y = _targetTile[7:4];
+        target_x = _targetTile[3:0];
+
+        // Determine next X coordinate
+        if (current_x < target_x)
+            next_x = current_x + 1;
+        else if (current_x > target_x)
+            next_x = current_x - 1;
+        else
+            next_x = current_x;  // No change in X coordinate
+
+        // Determine next Y coordinate
+        if (current_y < target_y)
+            next_y = current_y + 1;
+        else if (current_y > target_y)
+            next_y = current_y - 1;
+        else
+            next_y = current_y;  // No change in Y coordinate
+
+        // Combine next X and Y coordinates into the next location
+        NextLocation = {next_y, next_x};
+    end
     
     endfunction
 
