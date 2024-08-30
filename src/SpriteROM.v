@@ -13,15 +13,6 @@ Description =========================================
 
 Sprite List:
 
-    0: Heart
-    1: Sword
-    2: Gnome_Idle_1
-    3: Gnome_Idle_2
-    4: Dragon_Wing_Up
-    5: Dragon_Wing_Down
-    6: Dragon_Head
-    7: Sheep_Idle_1
-    8: Sheep_Idle_2
 
 Orientation Selection:
 
@@ -29,7 +20,7 @@ Orientation Selection:
 
     UP    = 0  - No change
     RIGHT = 1  - Rotated 90 Degrees clockwise around the centre.
-    DOWN  = 2  - Rotated 180 Degrees
+    DOWN  = 2  - Rotated 180 Degrees around the centre
     LEFT  = 3  - Rotated 90 Degrees clockwise around the centre, then reflected on the line x = 0
     
 
@@ -41,10 +32,7 @@ Sprite Storage:
 
 */
 
-`timescale 1ns / 1ps
-
-
-module SpriteROM(
+module SpriteROM (
     
     input            clk,
     input            reset,
@@ -54,7 +42,7 @@ module SpriteROM(
     input wire [2:0] line_index,
     
     output reg [7:0] data
-);
+    );
 
     localparam UP     = 2'b00;
     localparam RIGHT  = 2'b01;
@@ -225,7 +213,14 @@ module SpriteROM(
                     3'b110: temp = romData(sprite_ID,3'b110, 1'b0 );
                     3'b111: temp = romData(sprite_ID,3'b111, 1'b0 );
                 endcase
-                data = temp;
+                data[0] = temp[7];
+                data[1] = temp[6];
+                data[2] = temp[5];
+                data[3] = temp[4];
+                data[4] = temp[3];
+                data[5] = temp[2];
+                data[6] = temp[1];
+                data[7] = temp[0];
             end 
 
             else if (orientation == RIGHT) begin                        // (Rotate 90 degrees clockwise around the center point)
@@ -247,7 +242,7 @@ module SpriteROM(
                 data[7] = temp[~line_index];
             end
 
-            else if(orientation == DOWN) begin                           // Top row to bottom row (Reflection on the line y = 0)
+         else if(orientation == DOWN) begin                           // Reflect 180 Degrees
                 case(line_index)
                     3'b000: temp = romData(sprite_ID,3'b000, 1'b1 );
                     3'b001: temp = romData(sprite_ID,3'b001, 1'b1 );
@@ -258,18 +253,11 @@ module SpriteROM(
                     3'b110: temp = romData(sprite_ID,3'b110, 1'b1 );
                     3'b111: temp = romData(sprite_ID,3'b111, 1'b1 );
                 endcase
-                data[0] = temp[7];
-                data[1] = temp[6];
-                data[2] = temp[5];
-                data[3] = temp[4];
-                data[4] = temp[3];
-                data[5] = temp[2];
-                data[6] = temp[1];
-                data[7] = temp[0];
+                data = temp;
             end
 
   
-            else if (orientation == LEFT) begin                         //  (Rotate 90 degrees clockwise around the center point and reflect on the line x = 0)
+            else if (orientation == LEFT) begin                        //  (Rotate 90 degrees clockwise around the center point and reflect on the line x = 0)
                 temp = romData(sprite_ID, 3'b000, 1'b0 );      
                 data[0] = temp[~line_index];
                 temp = romData(sprite_ID, 3'b001, 1'b0 );
