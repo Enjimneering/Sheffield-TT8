@@ -1,7 +1,7 @@
 /*
 
 Project: TinyTapeStation
-Engineer(s) : 
+Engineer(s) : Abdulatif Babli, James Ashie Kotey, Anubhav Avinash
 Module: Dragon Movement Logic
 Create Date: 26/08/2024 
 
@@ -33,12 +33,12 @@ Outputs
 
 // Define Behaviour States 
 
-module dragon (
+module dragon_head (
 
     input wire         frame_clk,
     input wire         rst,
 
-    input wire  [7:0]  player_location,
+    input wire  [7:0]  player_location,`
     input wire  [7:0]  sheep_location,
 
 
@@ -85,143 +85,133 @@ module dragon (
     reg game_over;         
 
 
-    // TODO: ABED - work on all of these functions, Anu has started you off with the select target logic
-
     function [7:0] SelectTarget;   // Calculate the closest entity to the dragon - return the target location
     
         input [7:0] _playerLocation;
         input [7:0] _sheepLocation;
         input [1:0] _currentState;
+    
+        begin
+        
+            case (_currentState)
 
-        //README
+            CONTEST_STATE:
+            begin  
+                if (_contest_state) begin
 
-        /* Anu -  I  wrote this logic that uses manhatten distances to calculate which entity is closest to the dragon, 
-        if you find a way that is simpler/ will use less logic, feel free to change it - if not, please add the variables 
-        to try and make this work. */
+                    // Extract Y and X coordinates
 
-        case (_currentState)
+                    dragon_head_y = dragon_head_location[7:4]; // Extract the first 4 bits for Y coordinate
+                    dragon_head_x = dragon_head_location[3:0]; // Extract the last 4 bits for X coordinate
 
-        CONTEST_STATE:
-        begin  
-            /*
-            if (_contest_state) begin
+                    sheep_y = _sheepLocation[7:4]; 
+                    sheep_x = _sheepLocation[3:0]; 
 
-                // Extract Y and X coordinates
+                    player_y = _playerLocation[7:4];
+                    player_x = _playerLocation[3:0];
 
-                dragon_head_y = dragon_head_location[7:4]; // Extract the first 4 bits for Y coordinate
-                dragon_head_x = dragon_head_location[3:0]; // Extract the last 4 bits for X coordinate
+                    // Calculate Manhattan distance between the dragon and the sheep (Should be a function)
 
-                sheep_y = _sheepLocation[7:4]; 
-                sheep_x = _sheepLocation[3:0]; 
+                    if (dragon_head_x > sheep_x)
+                        distance_dragon_sheep_x = dragon_head_x - sheep_x;
+                    else
+                        distance_dragon_sheep_x = sheep_x - dragon_head_x;
 
-                player_y = _playerLocation[7:4];
-                player_x = _playerLocation[3:0];
+                    if (dragon_head_y > sheep_y)
+                        distance_dragon_sheep_y = dragon_head_y - sheep_y;
+                    else
+                        distance_dragon_sheep_y = sheep_y - dragon_head_y;
 
-                // Calculate Manhattan distance between the dragon and the sheep (Should be a function)
+                    distance_dragon_sheep = distance_dragon_sheep_x + distance_dragon_sheep_y;
 
-                if (dragon_head_x > sheep_x)
-                    distance_dragon_sheep_x = dragon_head_x - sheep_x;
-                else
-                    distance_dragon_sheep_x = sheep_x - dragon_head_x;
+                    // Calculate Manhattan distance between the dragon and the player
 
-                if (dragon_head_y > sheep_y)
-                    distance_dragon_sheep_y = dragon_head_y - sheep_y;
-                else
-                    distance_dragon_sheep_y = sheep_y - dragon_head_y;
+                    if (dragon_head_x > player_x)
+                        distance_dragon_player_x = dragon_head_x - player_x;
+                    else
+                        distance_dragon_player_x = player_x - dragon_head_x;
 
-                distance_dragon_sheep = distance_dragon_sheep_x + distance_dragon_sheep_y;
+                    if (dragon_head_y > player_y)
+                        distance_dragon_player_y = dragon_head_y - player_y;
+                    else
+                        distance_dragon_player_y = player_y - dragon_head_y;
 
-                // Calculate Manhattan distance between the dragon and the player
+                    distance_dragon_player = distance_dragon_player_x + distance_dragon_player_y;
 
-                if (dragon_head_x > player_x)
-                    distance_dragon_player_x = dragon_head_x - player_x;
-                else
-                    distance_dragon_player_x = player_x - dragon_head_x;
+                    
+                    // return appropriate location 
 
-                if (dragon_head_y > player_y)
-                    distance_dragon_player_y = dragon_head_y - player_y;
-                else
-                    distance_dragon_player_y = player_y - dragon_head_y;
+                    if ( distance_dragon_player < distance_dragon_sheep ) begin
 
-                distance_dragon_player = distance_dragon_player_x + distance_dragon_player_y;
+                        SelectTarget = _player_location;
+                    end
 
-                
-                // return appropriate location 
+                    else begin
 
-                if ( distance_dragon_player < distance_dragon_sheep ) begin
+                        SelectTarget = _sheep_location;
+                    end
 
-                    SelectTarget = _player_location;
+                    
                 end
 
-                else begin
+                    else begin   // If not in contest state
 
-                    SelectTarget = _sheep_location;
-                end
+                        //target randon Tile
+                        SelectTarget = _sheep_location;
 
+                    end
+
+            end
+
+            RETREAT_STATE:  //TODO- ABED
+            begin
                 
             end
 
-                else begin   // If not in contest state
 
-                    //target randon Tile
-                    SelectTarget = _sheep_location;
-
-                end
-
-        */
-
+            endcase
         end
 
-        RETREAT_STATE:
-        begin
-            
-
-        end
-
-
-
-
-
-
-        endcase
-    
     endfunction  
 
 
+    // TODO - ABED - consider that the dragon cannot move diagonally, please change this functiion so that the dragon will 
+    // only move in one axis at a time.
+
     function [7:0] NextLocation;    // Decide the next tile the dragon's head will move to
+        
         input [7:0] _currentLocation;
         input [7:0] _targetTile;
-    reg [3:0] current_x, current_y, target_x, target_y , next_x, next_y;
- 
+        reg [3:0] current_x, current_y, target_x, target_y , next_x, next_y;
+   
+        begin
+            // Extract current X and Y coordinates
+            current_y = _currentLocation[7:4];
+            current_x = _currentLocation[3:0];
 
-    begin
-        // Extract current X and Y coordinates
-        current_y = _currentLocation[7:4];
-        current_x = _currentLocation[3:0];
+            // Extract target X and Y coordinates
+            target_y = _targetTile[7:4];
+            target_x = _targetTile[3:0];
 
-        // Extract target X and Y coordinates
-        target_y = _targetTile[7:4];
-        target_x = _targetTile[3:0];
+            // Determine next X coordinate
+            if (current_x < target_x)
+                next_x = current_x + 1;
+            else if (current_x > target_x)
+                next_x = current_x - 1;
+            else
+                next_x = current_x;  // No change in X coordinate
 
-        // Determine next X coordinate
-        if (current_x < target_x)
-            next_x = current_x + 1;
-        else if (current_x > target_x)
-            next_x = current_x - 1;
-        else
-            next_x = current_x;  // No change in X coordinate
+            // Determine next Y coordinate
+            if (current_y < target_y)
+                next_y = current_y + 1;
+            else if (current_y > target_y)
+                next_y = current_y - 1;
+            else
+                next_y = current_y;  // No change in Y coordinate
 
-        // Determine next Y coordinate
-        if (current_y < target_y)
-            next_y = current_y + 1;
-        else if (current_y > target_y)
-            next_y = current_y - 1;
-        else
-            next_y = current_y;  // No change in Y coordinate
-
-        // Combine next X and Y coordinates into the next location
-        NextLocation = {next_y, next_x};
-    end
+            // Combine next X and Y coordinates into the next location
+            NextLocation = {next_y, next_x};
+        end
     
     endfunction
 
@@ -230,26 +220,30 @@ module dragon (
         input [7:0] _lastLocation;
         input [7:0] _newLocation;
         
-     reg [3:0] last_x, last_y, new_x, new_y;
+        reg [3:0] last_x, last_y, new_x, new_y;
 
-    begin
-        // Extract last and new X and Y coordinates
-        last_y = _lastLocation[7:4];
-        last_x = _lastLocation[3:0];
-        new_y = _newLocation[7:4];
-        new_x = _newLocation[3:0];
+        begin
 
-        // Determine direction based on movement
-        if (new_x > last_x)
-            NextDirection = RIGHT;
-        else if (new_x < last_x)
-            NextDirection = LEFT;
-        else if (new_y > last_y)
-            NextDirection = DOWN;
-        else if (new_y < last_y)
-            NextDirection = UP;
-    end
-    endfunction
+            // Extract last and new X and Y coordinates
+            last_y = _lastLocation[7:4];
+            last_x = _lastLocation[3:0];
+            new_y = _newLocation[7:4];
+            new_x = _newLocation[3:0];
+
+            // Determine direction based on movement
+            if (new_x > last_x)
+                NextDirection = RIGHT;
+
+            else if (new_x < last_x)
+                NextDirection = LEFT;
+
+            else if (new_y > last_y)
+                NextDirection = DOWN;
+
+            else if (new_y < last_y)
+                NextDirection = UP;
+        end
+        endfunction
 
 
     always @(posedge frame_clk) begin
