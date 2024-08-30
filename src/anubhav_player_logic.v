@@ -1,36 +1,48 @@
 /*
 Project: TinyTapeStation
-Engineer(s) : 
+Engineer(s) : Anubhav Avinash, Abdulatif Babli
 Module: Player Logic
 Create Date: 26/08/2024 
 
-Summary: 
+Summary: Player logic controller for movement and attacking.
 
 Description =========================================
 
-Sword Logic Included
-    Sword location is out of the grid so it doesn't affect the collision logic
+Sword Logic 
+    Sword location is initialised outside of the 16x12 active area 
+    so it doesn't affect the collision logic.
     When the player is in the attack state the sword location in front of the player
 
 Inputs 
-    Controller Input
+    Controller Input:
+       
+        A       - Attack
+        B       - Attack
+        UP      - Move UP
+        RIGHT   - Move RIGHT
+        DOWN    - Move DOWN
+        LEFT    - Move LEFT
+
+        START, SELECT - UNUSED
 
     Previous Game State
         Dragon Head Location
         Dragon Head Direction
+
 Outputs
+
     Next State Information
     	New player location
     
-Location Format: 0000_0000  (Y,X)
+    Location Format: 0000_0000  (X,Y) - tiles
 
-(0000,0000)------> X+
-     |
-     |
-     |
-     V
+    (0000,0000)------> X+
+        |
+        |
+        |
+        V
 
-     Y+
+        Y+
 */
 
 // Define Behaviour States 
@@ -81,6 +93,7 @@ module player (
 
         else if (!game_over) current_state = next_state;
     end
+
     // Decide what the current state should be    
     always @(posedge frame_clk) begin
 
