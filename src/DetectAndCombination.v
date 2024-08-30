@@ -138,7 +138,6 @@ module DetectionCombinationUnit(
             end
         end
 
-
     endfunction
 
     function [8:0] detector_Flip; //If the position of the pointer needs to be displayed, return the row label; otherwise, return 4'hF (an invalid identifier).
@@ -153,7 +152,6 @@ module DetectionCombinationUnit(
                 detector_Flip = 9'b111111111; // 'h1FF
             end
         end
-
 
     endfunction
 
