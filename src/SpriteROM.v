@@ -29,7 +29,7 @@ Orientation Selection:
 
     UP    = 0  - No change
     RIGHT = 1  - Rotated 90 Degrees clockwise around the centre.
-    DOWN  = 2  - Reflected on the line y = 0
+    DOWN  = 2  - Rotated 180 Degrees
     LEFT  = 3  - Rotated 90 Degrees clockwise around the centre, then reflected on the line x = 0
     
 
