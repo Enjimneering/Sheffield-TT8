@@ -7,20 +7,31 @@ Refactors by James Ashie Kotey
 Module: Sprite ROM
 Create Date: 2024/08/17 20:47:46
 
-Summary: The SpriteROM stores the 9 game sprites and is able to output them line by line in several differernt or
+Summary: The SpriteROM stores the 9 game sprites and is able to output them line by line in the four 
+programmable orientations.
 
 Description =========================================
 
 Sprite List:
 
+    0: Heart
+    1: Sword
+    2: Gnome_Idle_1
+    3: Gnome_Idle_2
+    4: Dragon_Wing_Up
+    5: Dragon_Wing_Down
+    6: Dragon_Head
+    7: Sheep_Idle_1
+    8: Sheep_Idle_2
+
 
 Orientation Selection:
 
-    The ROM Can be read from in four differernt ways in order to output the imagine in a differenet orientations.
+    The ROM Can be read from in four differernt ways in order to output the imagine in a different orientations.
 
     UP    = 0  - No change
     RIGHT = 1  - Rotated 90 Degrees clockwise around the centre.
-    DOWN  = 2  - Rotated 180 Degrees around the centre
+    DOWN  = 2  - Reflected 180 Degrees.
     LEFT  = 3  - Rotated 90 Degrees clockwise around the centre, then reflected on the line x = 0
     
 
@@ -32,7 +43,7 @@ Sprite Storage:
 
 */
 
-module SpriteROM (
+module SpriteROM(
     
     input            clk,
     input            reset,
@@ -42,7 +53,7 @@ module SpriteROM (
     input wire [2:0] line_index,
     
     output reg [7:0] data
-    );
+);
 
     localparam UP     = 2'b00;
     localparam RIGHT  = 2'b01;
@@ -242,7 +253,7 @@ module SpriteROM (
                 data[7] = temp[~line_index];
             end
 
-         else if(orientation == DOWN) begin                           // Reflect 180 Degrees
+            else if(orientation == DOWN) begin                           // Top row to bottom row (Reflection on the line y = 0)
                 case(line_index)
                     3'b000: temp = romData(sprite_ID,3'b000, 1'b1 );
                     3'b001: temp = romData(sprite_ID,3'b001, 1'b1 );
@@ -257,7 +268,7 @@ module SpriteROM (
             end
 
   
-            else if (orientation == LEFT) begin                        //  (Rotate 90 degrees clockwise around the center point and reflect on the line x = 0)
+            else if (orientation == LEFT) begin                         //  (Rotate 90 degrees clockwise around the center point and reflect on the line x = 0)
                 temp = romData(sprite_ID, 3'b000, 1'b0 );      
                 data[0] = temp[~line_index];
                 temp = romData(sprite_ID, 3'b001, 1'b0 );
