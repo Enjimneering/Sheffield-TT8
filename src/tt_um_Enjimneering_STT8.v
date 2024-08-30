@@ -16,15 +16,22 @@ module tt_um_Enjimneering_STT8 (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-  //Full Adder test circuit implimentation.
-  FullAdder fa (.a(ui_in[0]), .b(ui_in[1]), .c(ui_in[2]), .carry(uo_out[1]), .sum(uo_out[0]));
-
+ VGA_Top vga(
+   .pixel_clk(clk),        
+   .reset(rst_n),         
+   .color_data(ui_in),      // COLOR DATA - FROM GRAPHICS CONTROLLER
+   .rgb_out(uo_out),     
+   .h_sync(uio_out[0]),     
+   .v_sync(uio_out[1])        
+);
+  
   // All output pins must be assigned. If not used, assign to 0.
-  assign uio_out = 0;
-  assign uio_oe  = 0;
-  assign uo_out[7:2] = 0;
+  assign uio_out[7:2]  = 0;
+  assign uio_oe        = 'b0000_0011;
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{uio_in ,ena, clk, rst_n, 1'b0};
+  wire _unused = &{uio_in ,ena, 1'b0};
     
 endmodule
+
+    
