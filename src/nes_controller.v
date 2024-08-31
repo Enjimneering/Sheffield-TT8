@@ -1,5 +1,16 @@
-// Description
+/*
 
+Project: TinyTapeStation
+Original Authro :
+Adapted by Kwashie Andoh
+Module: NES Gamepad Reciever Module
+
+Summary: The NES input receiever module takes input from the NES 7-pin output port and 
+and inputs the individual button states.
+Description =========================================
+
+
+*/
 
 
 module nes_controller
