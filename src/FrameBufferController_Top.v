@@ -30,14 +30,14 @@ localparam SCREENSIZE_V = 12;
 wire [7:0] buffer;
 
 
-function [9:0] entity_Position_Pixel_H; //Calculate the entity horizontal position in pixel
-    input [7:0] entity_Position;
-    begin
+// function [9:0] entity_Position_Pixel_H; //Calculate the entity horizontal position in pixel
+//     input [7:0] entity_Position;
+//     begin
     
-    entity_Position_Pixel_H = (entity_Position % SCREENSIZE_H) * TILE_LEN_PIXEL;
+//     entity_Position_Pixel_H = (entity_Position % SCREENSIZE_H) * TILE_LEN_PIXEL;
 
-    end
-endfunction
+//     end
+// endfunction
 
 // function [4:0] entity_Position_Pixel_V; //Calculate the entity vertical position in pixel
 //     input [7:0] entity_Position;

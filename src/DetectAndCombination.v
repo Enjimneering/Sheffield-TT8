@@ -104,7 +104,7 @@ module DetectionCombinationUnit(
         input [9:0] ptV_Position;
         begin
         
-        if (inRange(entity[7:0], ptH_Position, ptV_Position)==1 && entity[13:10] != 4'b1111) begin
+        if (inRange({entity[3:0],entity[7:4]}, ptH_Position, ptV_Position)==1 && entity[13:10] != 4'b1111) begin
                 detector = {((ptV_Position % TILE_LEN_PIXEL)/UPSCALE_FACTOR), entity[13:10],entity[9:8]};
             end else begin
                 detector = 9'b111111111; // 'h1FF
@@ -120,7 +120,7 @@ module DetectionCombinationUnit(
         input [9:0] ptV_Position;
         begin
         
-        if (inRange(entity[7:0], ptH_Position, ptV_Position)==1 && entity[13:10] != 4'b1111) begin
+        if (inRange({entity[3:0],entity[7:4]}, ptH_Position, ptV_Position)==1 && entity[13:10] != 4'b1111) begin
                 detector_Flip = {~(3'b111&((ptV_Position % TILE_LEN_PIXEL)/UPSCALE_FACTOR)), entity[13:10],entity[9:8]};
             end else begin
                 detector_Flip = 9'b111111111; // 'h1FF
