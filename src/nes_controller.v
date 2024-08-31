@@ -1,3 +1,7 @@
+// Description
+
+
+
 module nes_controller
 	(
 		input wire clk, reset, 
