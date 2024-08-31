@@ -18,7 +18,8 @@ module Snake_Top(
     localparam IDLE = 2'b11;
 
 
-    always @(OrienAndPositon, posedge reset) begin
+    always @(OrienAndPositon) begin // you cant
+        
         if (reset == 0) begin
         case(States) 
             MOVE: begin
