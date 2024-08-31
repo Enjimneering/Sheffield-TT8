@@ -7,7 +7,8 @@ Refactors by James Ashie Kotey
 Module: Sprite ROM
 Create Date: 2024/08/17 20:47:46
 
-Summary: The SpriteROM stores the 9 game sprites and is able to output them line by line in several differernt or
+Summary: The SpriteROM stores the 9 game sprites and is able to output them line by line in the four 
+programmable orientations.
 
 Description =========================================
 
@@ -23,13 +24,14 @@ Sprite List:
     7: Sheep_Idle_1
     8: Sheep_Idle_2
 
+
 Orientation Selection:
 
-    The ROM Can be read from in four differernt ways in order to output the imagine in a differenet orientations.
+    The ROM Can be read from in four differernt ways in order to output the imagine in a different orientations.
 
     UP    = 0  - No change
     RIGHT = 1  - Rotated 90 Degrees clockwise around the centre.
-    DOWN  = 2  - Reflected on the line y = 0
+    DOWN  = 2  - Reflected 180 Degrees.
     LEFT  = 3  - Rotated 90 Degrees clockwise around the centre, then reflected on the line x = 0
     
 
@@ -40,9 +42,6 @@ Sprite Storage:
     1 = Pixel_OFF
 
 */
-
-`timescale 1ns / 1ps
-
 
 module SpriteROM(
     
@@ -225,7 +224,14 @@ module SpriteROM(
                     3'b110: temp = romData(sprite_ID,3'b110, 1'b0 );
                     3'b111: temp = romData(sprite_ID,3'b111, 1'b0 );
                 endcase
-                data = temp;
+                data[0] = temp[7];
+                data[1] = temp[6];
+                data[2] = temp[5];
+                data[3] = temp[4];
+                data[4] = temp[3];
+                data[5] = temp[2];
+                data[6] = temp[1];
+                data[7] = temp[0];
             end 
 
             else if (orientation == RIGHT) begin                        // (Rotate 90 degrees clockwise around the center point)
@@ -258,14 +264,7 @@ module SpriteROM(
                     3'b110: temp = romData(sprite_ID,3'b110, 1'b1 );
                     3'b111: temp = romData(sprite_ID,3'b111, 1'b1 );
                 endcase
-                data[0] = temp[7];
-                data[1] = temp[6];
-                data[2] = temp[5];
-                data[3] = temp[4];
-                data[4] = temp[3];
-                data[5] = temp[2];
-                data[6] = temp[1];
-                data[7] = temp[0];
+                data = temp;
             end
 
   
