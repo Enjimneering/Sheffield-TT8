@@ -86,6 +86,16 @@ module dragon_head (
     reg state_complete; //Signal to move to next state?
     reg game_over;         
 
+    always @(posedge frame_clk or posedge rst) begin
+        if (rst) begin
+            timer <= 8'b0;
+        end else if (timeout) begin
+            timer <= 8'b0;
+        end else begin
+            timer <= timer + 1;
+        end
+    end    
+    
 
     function [7:0] SelectTarget;   // Calculate the closest entity to the dragon - return the target location
     
