@@ -4,11 +4,11 @@
 module Snake_Top(
     input clk,
     input reset,
-    input [1:0] States,
-    input [11:0] OrienAndPositon,
+    input [1:0] States, // MUST be a PULSE
+    input [9:0] OrienAndPositon, 
 
-    output reg [95:0] Dragon, // Every 12 bit represent a body segment, Maximum of 8 segments
-    output reg [2:0] Tail //Pointer of Dragon's Tail
+    output reg [79:0] Dragon, // Every 10 bit represent a body segment, Maximum of 8 segments, a queue
+    output reg [2:0] Tail //Pointer of Dragon's Tail, equal to the length of dragon
     );
 
     //State
@@ -17,24 +17,27 @@ module Snake_Top(
     localparam HIT = 2'b10;
     localparam IDLE = 2'b11;
 
+    //Body describtion length
+    localparam ABODY = 10;
 
-    always @(OrienAndPositon) begin // you cant
+
+    always @(posedge clk) begin
         
         if (reset == 0) begin
         case(States) 
-            MOVE: begin
-                Dragon <= Dragon << 12;
-                Dragon[11:0] <= OrienAndPositon;
+            MOVE: begin 
+                Dragon <= Dragon << ABODY; //Pass each body's position to the next segment
+                Dragon[ABODY-1:0] <= OrienAndPositon; //New position enqueue
                 //Tail <= Tail;
             end
             HEAL: begin
-                Dragon <= Dragon << 12;
-                Dragon[11:0] <= OrienAndPositon;
+                Dragon <= Dragon << ABODY;
+                Dragon[ABODY-1:0] <= OrienAndPositon;
                 Tail <= Tail + 1;
             end
             HIT: begin
-                Dragon <= Dragon << 12;
-                Dragon[11:0] <= OrienAndPositon;
+                Dragon <= Dragon << ABODY;
+                Dragon[ABODY-1:0] <= OrienAndPositon;
                 Tail <= Tail - 1;
             end
             IDLE: begin
