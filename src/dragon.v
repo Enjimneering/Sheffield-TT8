@@ -261,7 +261,7 @@ module dragon_head (
     endfunction
 
 
-    function [2:0] NextDirection;   // Decide on the location the dragon is facing depening on the locations of the tiles it moved from
+        function [1:0] NextDirection;   // Decide on the location the dragon is facing depening on the locations of the tiles it moved from
         input [7:0] _lastLocation;
         input [7:0] _newLocation;
         
