@@ -176,12 +176,31 @@ module dragon_head (
             end
 
             RETREAT_STATE:  //TODO- ABED
-            begin
-                
-            end
+        begin
+            if (dragon_hurt) begin 
+                reg [3:0] player_x, player_y;
+                reg [7:0] top_left, top_right, bottom_left, bottom_right;
+             //   reg [7:0] distance_to_top_left, distance_to_top_right, distance_to_bottom_left, distance_to_bottom_right;
 
 
-            endcase
+                // Define the corner locations assuming that tyhe grid starts from bottom left making it (0,0) 
+                top_left     = 8'b1111_0000;  
+                top_right    = 8'b1111_1111; 
+                bottom_left  = 8'b0000_0000; 
+                bottom_right = 8'b0000_1111;   
+
+
+                // Generate a random number between 0 and 3 to choose a corner
+                random_corner = timer[1:0]; 
+
+                // Select a corner based on the random number
+                case (random_corner)
+                2'b00: SelectTarget = top_left;
+                2'b01: SelectTarget = top_right;
+                2'b10: SelectTarget = bottom_left;
+                2'b11: SelectTarget = bottom_right;
+        endcase
+    end
         end
 
     endfunction  
