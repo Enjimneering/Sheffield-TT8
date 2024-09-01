@@ -288,7 +288,7 @@ module SpriteROM(
             end 
         
             else begin
-                data = romData(4'hf, 3'b000, 1'b0 );
+                data <= romData(4'hf, 3'b000, 1'b0 );
             end
 
         end
