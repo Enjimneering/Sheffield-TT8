@@ -10,7 +10,7 @@ module FrameBuffer_Top (
     input wire [13:0] entity_4,
     input wire [13:0] entity_5,
     input wire [13:0] entity_6,
-    input wire [13:0] entity_7,
+    input wire [13:0] entity_7_Array,
     input wire [13:0] entity_8_Flip,
     input wire [13:0] entity_9_Flip,
     input wire [9:0] counter_V,
