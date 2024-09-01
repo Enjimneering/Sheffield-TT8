@@ -203,6 +203,20 @@ module dragon_head (
     end
         end
 
+                
+        SCATTER_STATE:
+        begin
+            if (dragon_win) begin  // Check if the dragon beats the player to the sheep
+                reg [7:0] random_target;
+
+                // Generate a random target location on the grid
+                    random_target[7:4] = timer[7:4];  // Random Y coordinate
+                    random_target[3:0] = timer[3:0];   // Random X coordinate
+
+                SelectTarget = random_target;  // Set the random target as the next location
+            end
+        end
+
     endfunction  
 
 
