@@ -83,14 +83,14 @@ module SpriteROM(
         case(_spriteID)     
             4'b0000: begin
                 case(_newIndex)       //Heart
-                3'b000: romData = 8'b11111111;
-                3'b001: romData = 8'b10011001;
-                3'b010: romData = 8'b00000000;
-                3'b011: romData = 8'b00100000;
-                3'b100: romData = 8'b00010000;
-                3'b101: romData = 8'b10000001;
-                3'b110: romData = 8'b11000011;
-                3'b111: romData = 8'b11100111;
+                3'b000: romData = 8'b11000111;
+                3'b001: romData = 8'b10000011;
+                3'b010: romData = 8'b10000001;
+                3'b011: romData = 8'b11000000;
+                3'b100: romData = 8'b11001000;
+                3'b101: romData = 8'b10010001;
+                3'b110: romData = 8'b10000011;
+                3'b111: romData = 8'b11000111;
                 endcase
             end
 
@@ -224,27 +224,34 @@ module SpriteROM(
                     3'b110: temp = romData(sprite_ID,3'b110, 1'b0 );
                     3'b111: temp = romData(sprite_ID,3'b111, 1'b0 );
                 endcase
-                data = temp;
+                data[0] <= temp[7];
+                data[1] <= temp[6];
+                data[2] <= temp[5];
+                data[3] <= temp[4];
+                data[4] <= temp[3];
+                data[5] <= temp[2];
+                data[6] <= temp[1];
+                data[7] <= temp[0];
             end 
 
-            else if (orientation == RIGHT) begin                        // (Rotate 90 degrees clockwise around the center point)
-                            temp = romData(sprite_ID, 3'b000, 1'b0 );
-                            data[0] = temp[~line_index];
-                            temp = romData(sprite_ID, 3'b001, 1'b0 );
-                            data[1] = temp[~line_index];
-                            temp = romData(sprite_ID, 3'b010, 1'b0 );
-                            data[2] = temp[~line_index];
-                            temp = romData(sprite_ID, 3'b011, 1'b0 );
-                            data[3] = temp[~line_index];
-                            temp = romData(sprite_ID, 3'b100, 1'b0 );
-                            data[4] = temp[~line_index];
-                            temp = romData(sprite_ID, 3'b101, 1'b0 );
-                            data[5] = temp[~line_index];
-                            temp = romData(sprite_ID, 3'b110, 1'b0 );
-                            data[6] = temp[~line_index];
-                            temp = romData(sprite_ID, 3'b111, 1'b0 );
-                            data[7] = temp[~line_index];
-                        end
+           else if (orientation == RIGHT) begin                        // (Rotate 90 degrees clockwise around the center point)
+                temp = romData(sprite_ID, 3'b000, 1'b1 );   
+                data[0] <= temp[~line_index];                
+                temp = romData(sprite_ID, 3'b001, 1'b1 );
+                data[1] <= temp[~line_index];
+                temp = romData(sprite_ID, 3'b010, 1'b1 );
+                data[2] <= temp[~line_index];
+                temp = romData(sprite_ID, 3'b011, 1'b1 );
+                data[3] <= temp[~line_index];
+                temp = romData(sprite_ID, 3'b100, 1'b1 );
+                data[4] <= temp[~line_index];
+                temp = romData(sprite_ID, 3'b101, 1'b1 );
+                data[5] <= temp[~line_index];
+                temp = romData(sprite_ID, 3'b110, 1'b1 );
+                data[6] <= temp[~line_index];
+                temp = romData(sprite_ID, 3'b111, 1'b1 );
+                data[7] <= temp[~line_index];
+            end
 
             else if(orientation == DOWN) begin                           // Top row to bottom row (Reflection on the line y = 0)
                 case(line_index)
@@ -257,27 +264,27 @@ module SpriteROM(
                     3'b110: temp = romData(sprite_ID,3'b110, 1'b1 );
                     3'b111: temp = romData(sprite_ID,3'b111, 1'b1 );
                 endcase
-                data = temp;
+                data <= temp;
             end
 
   
-            else if (orientation == LEFT) begin                         //  (Rotate 90 degrees clockwise around the center point and then reflected on the line x = 0)
-                temp = romData(sprite_ID, 3'b000, 1'b1 );   
-                data[0] = temp[~line_index];                
-                temp = romData(sprite_ID, 3'b001, 1'b1 );
-                data[1] = temp[~line_index];
-                temp = romData(sprite_ID, 3'b010, 1'b1 );
-                data[2] = temp[~line_index];
-                temp = romData(sprite_ID, 3'b011, 1'b1 );
-                data[3] = temp[~line_index];
-                temp = romData(sprite_ID, 3'b100, 1'b1 );
-                data[4] = temp[~line_index];
-                temp = romData(sprite_ID, 3'b101, 1'b1 );
-                data[5] = temp[~line_index];
-                temp = romData(sprite_ID, 3'b110, 1'b1 );
-                data[6] = temp[~line_index];
-                temp = romData(sprite_ID, 3'b111, 1'b1 );
-                data[7] = temp[~line_index];
+            else if (orientation == LEFT) begin                         //  (Rotate 90 degrees clockwise around the center point and reflect on the line x = 0)
+                temp = romData(sprite_ID, 3'b000, 1'b0 );      
+                data[0] <= temp[~line_index];
+                temp = romData(sprite_ID, 3'b001, 1'b0 );
+                data[1] <= temp[~line_index];
+                temp = romData(sprite_ID, 3'b010, 1'b0 );
+                data[2] <= temp[~line_index];
+                temp = romData(sprite_ID, 3'b011, 1'b0 );
+                data[3] <= temp[~line_index];
+                temp = romData(sprite_ID, 3'b100, 1'b0 );
+                data[4] <= temp[~line_index];
+                temp = romData(sprite_ID, 3'b101, 1'b0 );
+                data[5] <= temp[~line_index];
+                temp = romData(sprite_ID, 3'b110, 1'b0 );
+                data[6] <= temp[~line_index];
+                temp = romData(sprite_ID, 3'b111, 1'b0 );
+                data[7] <= temp[~line_index];
             end 
         
             else begin

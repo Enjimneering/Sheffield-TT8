@@ -29,14 +29,14 @@ module FrameBuffer_Top (
     wire [7:0] buffer;
 
 
-function [6:0] entity_Position_Pixel_H; //Calculate the entity horizontal position in pixel
-    input [7:0] entity_Position;
-    begin
+// function [9:0] entity_Position_Pixel_H; //Calculate the entity horizontal position in pixel
+//     input [7:0] entity_Position;
+//     begin
     
-    entity_Position_Pixel_H = (entity_Position % SCREENSIZE_H) * TILE_LEN_PIXEL;
+//     entity_Position_Pixel_H = (entity_Position % SCREENSIZE_H) * TILE_LEN_PIXEL;
 
-    end
-endfunction
+//     end
+// endfunction
 
 // function [4:0] entity_Position_Pixel_V; //Calculate the entity vertical position in pixel
 //     input [7:0] entity_Position;
@@ -112,7 +112,7 @@ DetectionCombinationUnit det(
     .entity_4(entity_4),
     .entity_5(entity_5),
     .entity_6(entity_6),
-    .entity_7(entity_7),
+    .entity_7_Array(entity_7_Array),
     .entity_8_Flip(entity_8_Flip),
     .entity_9_Flip(entity_9_Flip),
     .counter_V(counter_V),
@@ -140,8 +140,8 @@ SpriteROM Rom(
 //     $display("buffer = %b", buffer);
 // end
 
-always@(posedge clk) begin
-    colour = currentColour(buffer, out_entity, counter_H);
+always@(counter_H) begin
+    colour <= currentColour(buffer, out_entity, counter_H);
 end
 
 
