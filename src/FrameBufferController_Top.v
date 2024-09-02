@@ -5,14 +5,14 @@ module FrameBuffer_Top (
     input reset,    
     
     input wire [13:0] entity_1,  //entity input form: ([13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
-    // input wire [13:0] entity_2,  //Simultaneously supports up to 9 objects in the scene.
-    // input wire [13:0] entity_3,  //Set the entity ID to 4'hf for unused channels.
-    input wire [13:0] entity_4,
-    input wire [13:0] entity_5,
-    input wire [13:0] entity_6,
-    input wire [17:0] entity_7_Array,
-    input wire [13:0] entity_8_Flip,
-    //input wire [13:0] entity_9_Flip,
+    // // input wire [13:0] entity_2,  //Simultaneously supports up to 9 objects in the scene.
+    // // input wire [13:0] entity_3,  //Set the entity ID to 4'hf for unused channels.
+    // input wire [13:0] entity_4,
+    // input wire [13:0] entity_5,
+    // input wire [13:0] entity_6,
+    // input wire [17:0] entity_7_Array,
+    // input wire [13:0] entity_8_Flip,
+    // //input wire [13:0] entity_9_Flip,
     input wire [9:0] counter_V,
     input wire [9:0] counter_H,
 
@@ -107,14 +107,14 @@ DetectionCombinationUnit det(
     .clk(clk),
     .reset(reset),
     .entity_1(entity_1),
-    // .entity_2(entity_2),
-    // .entity_3(entity_3),
-    .entity_4(entity_4),
-    .entity_5(entity_5),
-    .entity_6(entity_6),
-    .entity_7_Array(entity_7_Array),
-    .entity_8_Flip(entity_8_Flip),
-    //.entity_9_Flip(entity_9_Flip),
+    // // .entity_2(entity_2),
+    // // .entity_3(entity_3),
+    // .entity_4(entity_4),
+    // .entity_5(entity_5),
+    // .entity_6(entity_6),
+    // .entity_7_Array(entity_7_Array),
+    // .entity_8_Flip(entity_8_Flip),
+    // // .entity_9_Flip(entity_9_Flip),
     .counter_V(counter_V),
     .counter_H(counter_H),
     
