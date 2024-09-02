@@ -35,7 +35,7 @@ module tt_um_Enjimneering_STT8 (
     .entity_4(entityInput),
     .entity_5(entityInput2),
     .entity_6(entityInput),
-    .entity_7_Array(entityInput3),
+    // .entity_7_Array(entityInput3),
     .entity_8_Flip(entityInput2),
     // .entity_9_Flip(entityInput),
     .counter_V(counterInputV),
