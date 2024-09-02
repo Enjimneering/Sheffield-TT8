@@ -94,109 +94,109 @@ module SpriteROM(
                 endcase
             end
 
-            4'b0001: begin            //Sword
-                case(_newIndex)
-                3'b000: romData = 8'b11101111;
-                3'b001: romData = 8'b11101111;
-                3'b010: romData = 8'b11101111;
-                3'b011: romData = 8'b11101111;
-                3'b100: romData = 8'b11101111;
-                3'b101: romData = 8'b11101111;
-                3'b110: romData = 8'b11000111;
-                3'b111: romData = 8'b11101111;
-                endcase
-            end
+            // 4'b0001: begin            //Sword
+            //     case(_newIndex)
+            //     3'b000: romData = 8'b11101111;
+            //     3'b001: romData = 8'b11101111;
+            //     3'b010: romData = 8'b11101111;
+            //     3'b011: romData = 8'b11101111;
+            //     3'b100: romData = 8'b11101111;
+            //     3'b101: romData = 8'b11101111;
+            //     3'b110: romData = 8'b11000111;
+            //     3'b111: romData = 8'b11101111;
+            //     endcase
+            // end
 
-            4'b0010: begin      //Gnome_Idle_1
-                case(_newIndex)
-                3'b000: romData = 8'b11111111;
-                3'b001: romData = 8'b11000011;
-                3'b010: romData = 8'b10110000;
-                3'b011: romData = 8'b00000011;
-                3'b100: romData = 8'b00110001;
-                3'b101: romData = 8'b00000000;
-                3'b110: romData = 8'b01000001;
-                3'b111: romData = 8'b11111111;
-                endcase
-            end
+            // 4'b0010: begin      //Gnome_Idle_1
+            //     case(_newIndex)
+            //     3'b000: romData = 8'b11111111;
+            //     3'b001: romData = 8'b11000011;
+            //     3'b010: romData = 8'b10110000;
+            //     3'b011: romData = 8'b00000011;
+            //     3'b100: romData = 8'b00110001;
+            //     3'b101: romData = 8'b00000000;
+            //     3'b110: romData = 8'b01000001;
+            //     3'b111: romData = 8'b11111111;
+            //     endcase
+            // end
 
-            4'b0011: begin     //Gnome_Idle_2
-                case(_newIndex)
-                3'b000: romData = 8'b11111011;
-                3'b001: romData = 8'b11100011;
-                3'b010: romData = 8'b11001000;
-                3'b011: romData = 8'b11000011;
-                3'b100: romData = 8'b10001001;
-                3'b101: romData = 8'b10000000;
-                3'b110: romData = 8'b10010001;
-                3'b111: romData = 8'b11111111;
-                endcase
-            end
+            // 4'b0011: begin     //Gnome_Idle_2
+            //     case(_newIndex)
+            //     3'b000: romData = 8'b11111011;
+            //     3'b001: romData = 8'b11100011;
+            //     3'b010: romData = 8'b11001000;
+            //     3'b011: romData = 8'b11000011;
+            //     3'b100: romData = 8'b10001001;
+            //     3'b101: romData = 8'b10000000;
+            //     3'b110: romData = 8'b10010001;
+            //     3'b111: romData = 8'b11111111;
+            //     endcase
+            // end
 
-            4'b0100: begin    //Dragon_Wing_Up
-                case(_newIndex)
-                3'b000: romData = 8'b11000011;
-                3'b001: romData = 8'b11100001;
-                3'b010: romData = 8'b10000011;
-                3'b011: romData = 8'b10000001;
-                3'b100: romData = 8'b00000001;
-                3'b101: romData = 8'b01000000;
-                3'b110: romData = 8'b11100001;
-                3'b111: romData = 8'b11000001;
-                endcase
-            end
+            // 4'b0100: begin    //Dragon_Wing_Up
+            //     case(_newIndex)
+            //     3'b000: romData = 8'b11000011;
+            //     3'b001: romData = 8'b11100001;
+            //     3'b010: romData = 8'b10000011;
+            //     3'b011: romData = 8'b10000001;
+            //     3'b100: romData = 8'b00000001;
+            //     3'b101: romData = 8'b01000000;
+            //     3'b110: romData = 8'b11100001;
+            //     3'b111: romData = 8'b11000001;
+            //     endcase
+            // end
 
-            4'b0101: begin  //Dragon_Wing_Down
-                case(_newIndex)
-                3'b000: romData = 8'b11000011;
-                3'b001: romData = 8'b11100001;
-                3'b010: romData = 8'b11000011;
-                3'b011: romData = 8'b10000001;
-                3'b100: romData = 8'b10000000;
-                3'b101: romData = 8'b10000000;
-                3'b110: romData = 8'b10000001;
-                3'b111: romData = 8'b11000001;
-                endcase
-            end
+            // 4'b0101: begin  //Dragon_Wing_Down
+            //     case(_newIndex)
+            //     3'b000: romData = 8'b11000011;
+            //     3'b001: romData = 8'b11100001;
+            //     3'b010: romData = 8'b11000011;
+            //     3'b011: romData = 8'b10000001;
+            //     3'b100: romData = 8'b10000000;
+            //     3'b101: romData = 8'b10000000;
+            //     3'b110: romData = 8'b10000001;
+            //     3'b111: romData = 8'b11000001;
+            //     endcase
+            // end
 
-            4'b0110: begin      // Dragon_Head
-                case(_newIndex)
-                3'b000: romData = 8'b11000111;
-                3'b001: romData = 8'b11000011;
-                3'b010: romData = 8'b11000011;
-                3'b011: romData = 8'b10010001;
-                3'b100: romData = 8'b10110001;
-                3'b101: romData = 8'b10100001;
-                3'b110: romData = 8'b01000011;
-                3'b111: romData = 8'b11000111;
-                endcase
-            end
+            // 4'b0110: begin      // Dragon_Head
+            //     case(_newIndex)
+            //     3'b000: romData = 8'b11000111;
+            //     3'b001: romData = 8'b11000011;
+            //     3'b010: romData = 8'b11000011;
+            //     3'b011: romData = 8'b10010001;
+            //     3'b100: romData = 8'b10110001;
+            //     3'b101: romData = 8'b10100001;
+            //     3'b110: romData = 8'b01000011;
+            //     3'b111: romData = 8'b11000111;
+            //     endcase
+            // end
 
-            4'b0111: begin     // Sheep_Idle_1
-                case(_newIndex)
-                3'b000: romData = 8'b11001111;
-                3'b001: romData = 8'b10000011;
-                3'b010: romData = 8'b10011000;
-                3'b011: romData = 8'b01111011;
-                3'b100: romData = 8'b01111011;
-                3'b101: romData = 8'b01111000;
-                3'b110: romData = 8'b10111011;
-                3'b111: romData = 8'b11000111;
-                endcase
-            end
+            // 4'b0111: begin     // Sheep_Idle_1
+            //     case(_newIndex)
+            //     3'b000: romData = 8'b11001111;
+            //     3'b001: romData = 8'b10000011;
+            //     3'b010: romData = 8'b10011000;
+            //     3'b011: romData = 8'b01111011;
+            //     3'b100: romData = 8'b01111011;
+            //     3'b101: romData = 8'b01111000;
+            //     3'b110: romData = 8'b10111011;
+            //     3'b111: romData = 8'b11000111;
+            //     endcase
+            // end
 
-            4'b1000: begin     // Sheep_Idle_2
-                case(_newIndex)
-                3'b000: romData = 8'b11100111;
-                3'b001: romData = 8'b11000001;
-                3'b010: romData = 8'b11001100;
-                3'b011: romData = 8'b10111101;
-                3'b100: romData = 8'b10111101;
-                3'b101: romData = 8'b10111100;
-                3'b110: romData = 8'b11011101;
-                3'b111: romData = 8'b11100011;
-                endcase
-            end
+            // 4'b1000: begin     // Sheep_Idle_2
+            //     case(_newIndex)
+            //     3'b000: romData = 8'b11100111;
+            //     3'b001: romData = 8'b11000001;
+            //     3'b010: romData = 8'b11001100;
+            //     3'b011: romData = 8'b10111101;
+            //     3'b100: romData = 8'b10111101;
+            //     3'b101: romData = 8'b10111100;
+            //     3'b110: romData = 8'b11011101;
+            //     3'b111: romData = 8'b11100011;
+            //     endcase
+            // end
 
             default: begin
                 romData = 8'b11111111;  //empty space - unused tile
