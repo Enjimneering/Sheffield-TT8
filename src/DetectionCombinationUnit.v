@@ -38,14 +38,14 @@ module DetectionCombinationUnit(
     input reset,
     
     input wire  [13:0]  entity_1,  
-    input wire  [13:0]  entity_2,  
-    input wire  [13:0]  entity_3,  
+    // input wire  [13:0]  entity_2,  
+    // input wire  [13:0]  entity_3,  
     input wire  [13:0]  entity_4,
     input wire  [13:0]  entity_5,
     input wire  [13:0]  entity_6,
     input wire  [17:0]  entity_7_Array, //[17:4] General entity. [3:0] length of array, array direction is opposite with orientation.
     input wire  [13:0]  entity_8_Flip,
-    input wire  [13:0]  entity_9_Flip,
+    //input wire  [13:0]  entity_9_Flip,
     input wire  [9:0]   counter_V,
     input wire  [9:0]   counter_H,
 
@@ -185,22 +185,22 @@ module DetectionCombinationUnit(
 
 reg [8:0] priority_Out;
 wire [8:0] priority_1 = detector(entity_1, counter_H, counter_V);
-wire [8:0] priority_2 = detector(entity_2, counter_H, counter_V);
-wire [8:0] priority_3 = detector(entity_3, counter_H, counter_V);
+// wire [8:0] priority_2 = detector(entity_2, counter_H, counter_V);
+// wire [8:0] priority_3 = detector(entity_3, counter_H, counter_V);
 wire [8:0] priority_4 = detector(entity_4, counter_H, counter_V);
 wire [8:0] priority_5 = detector(entity_5, counter_H, counter_V);
 wire [8:0] priority_6 = detector(entity_6, counter_H, counter_V);
 wire [8:0] priority_7 = detector_Array(entity_7_Array, counter_H, counter_V);
 wire [8:0] priority_8 = detector_Flip(entity_8_Flip, counter_H, counter_V);
-wire [8:0] priority_9 = detector_Flip(entity_9_Flip, counter_H, counter_V);
+// wire [8:0] priority_9 = detector_Flip(entity_9_Flip, counter_H, counter_V);
 
 always @(posedge clk) begin
     if (priority_1 != 9'b111111111) begin
         priority_Out = priority_1;
-    end else if (priority_2 != 9'b111111111) begin
-        priority_Out = priority_2;
-    end else if (priority_3 != 9'b111111111) begin
-        priority_Out = priority_3;
+    // end else if (priority_2 != 9'b111111111) begin
+    //     priority_Out = priority_2;
+    // end else if (priority_3 != 9'b111111111) begin
+    //     priority_Out = priority_3;
     end else if (priority_4 != 9'b111111111) begin
         priority_Out = priority_4;
     end else if (priority_5 != 9'b111111111) begin
@@ -211,8 +211,8 @@ always @(posedge clk) begin
         priority_Out = priority_7;
     end else if (priority_8 != 9'b111111111) begin
         priority_Out = priority_8;
-    end else if (priority_9 != 9'b111111111) begin
-        priority_Out = priority_9;
+    // end else if (priority_9 != 9'b111111111) begin
+    //     priority_Out = priority_9;
     end else begin
         priority_Out = 9'b11111111;
     end
