@@ -214,24 +214,25 @@ module SpriteROM(
         if(read_enable) begin
     
             if (orientation == UP) begin                                // Normal Operation
-                case(line_index)
-                    3'b000: temp = romData(sprite_ID,3'b000, 1'b0 );
-                    3'b001: temp = romData(sprite_ID,3'b001, 1'b0 );
-                    3'b010: temp = romData(sprite_ID,3'b010, 1'b0 );
-                    3'b011: temp = romData(sprite_ID,3'b011, 1'b0 );
-                    3'b100: temp = romData(sprite_ID,3'b100, 1'b0 );
-                    3'b101: temp = romData(sprite_ID,3'b101, 1'b0 );
-                    3'b110: temp = romData(sprite_ID,3'b110, 1'b0 );
-                    3'b111: temp = romData(sprite_ID,3'b111, 1'b0 );
-                endcase
-                data[0] <= temp[7];
-                data[1] <= temp[6];
-                data[2] <= temp[5];
-                data[3] <= temp[4];
-                data[4] <= temp[3];
-                data[5] <= temp[2];
-                data[6] <= temp[1];
-                data[7] <= temp[0];
+                // case(line_index)
+                //     3'b000: temp = romData(sprite_ID,3'b000, 1'b0 );
+                //     3'b001: temp = romData(sprite_ID,3'b001, 1'b0 );
+                //     3'b010: temp = romData(sprite_ID,3'b010, 1'b0 );
+                //     3'b011: temp = romData(sprite_ID,3'b011, 1'b0 );
+                //     3'b100: temp = romData(sprite_ID,3'b100, 1'b0 );
+                //     3'b101: temp = romData(sprite_ID,3'b101, 1'b0 );
+                //     3'b110: temp = romData(sprite_ID,3'b110, 1'b0 );
+                //     3'b111: temp = romData(sprite_ID,3'b111, 1'b0 );
+                // endcase
+                // data[0] <= temp[7];
+                // data[1] <= temp[6];
+                // data[2] <= temp[5];
+                // data[3] <= temp[4];
+                // data[4] <= temp[3];
+                // data[5] <= temp[2];
+                // data[6] <= temp[1];
+                // data[7] <= temp[0];
+                data <= romData(sprite_ID,line_index, 1'b0 );
             end 
 
            else if (orientation == RIGHT) begin                        // (Rotate 90 degrees clockwise around the center point)
@@ -254,17 +255,18 @@ module SpriteROM(
             end
 
             else if(orientation == DOWN) begin                           // Top row to bottom row (Reflection on the line y = 0)
-                case(line_index)
-                    3'b000: temp = romData(sprite_ID,3'b000, 1'b1 );
-                    3'b001: temp = romData(sprite_ID,3'b001, 1'b1 );
-                    3'b010: temp = romData(sprite_ID,3'b010, 1'b1 );
-                    3'b011: temp = romData(sprite_ID,3'b011, 1'b1 );
-                    3'b100: temp = romData(sprite_ID,3'b100, 1'b1 );
-                    3'b101: temp = romData(sprite_ID,3'b101, 1'b1 );
-                    3'b110: temp = romData(sprite_ID,3'b110, 1'b1 );
-                    3'b111: temp = romData(sprite_ID,3'b111, 1'b1 );
-                endcase
-                data <= temp;
+                // case(line_index)
+                //     3'b000: temp = romData(sprite_ID,3'b000, 1'b1 );
+                //     3'b001: temp = romData(sprite_ID,3'b001, 1'b1 );
+                //     3'b010: temp = romData(sprite_ID,3'b010, 1'b1 );
+                //     3'b011: temp = romData(sprite_ID,3'b011, 1'b1 );
+                //     3'b100: temp = romData(sprite_ID,3'b100, 1'b1 );
+                //     3'b101: temp = romData(sprite_ID,3'b101, 1'b1 );
+                //     3'b110: temp = romData(sprite_ID,3'b110, 1'b1 );
+                //     3'b111: temp = romData(sprite_ID,3'b111, 1'b1 );
+                // endcase
+                // data <= temp;
+                data <= romData(sprite_ID,line_index, 1'b1 );
             end
 
   
