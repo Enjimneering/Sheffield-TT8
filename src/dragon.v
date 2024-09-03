@@ -210,8 +210,8 @@ module dragon_head (
                 reg [7:0] random_target;
 
                 // Generate a random target location on the grid
-                    random_target[7:4] = timer[7:4];  // Random Y coordinate
-                    random_target[3:0] = timer[3:0];   // Random X coordinate
+                random_target[7:4] = timer[7:4];  // Random X coordinate
+                random_target[3:0] = timer[3:0];   // Random Y coordinate
 
                 SelectTarget = random_target;  // Set the random target as the next location
             end
@@ -220,75 +220,47 @@ module dragon_head (
     endfunction  
 
 
-    // TODO - ABED - consider that the dragon cannot move diagonally, please change this functiion so that the dragon will 
-    // only move in one axis at a time.
 
     function [7:0] NextLocation;    // Decide the next tile the dragon's head will move to
         
         input [7:0] _currentLocation;
         input [7:0] _targetTile;
-        reg [3:0] current_x, current_y, target_x, target_y , next_x, next_y;
+
+        reg signed [3:0] dx, dy;       // Differences between target and current positions
+        reg  [3:0] next_x, next_y;
+        reg  [3:0] current_x, current_y;
+        reg  [3:0] sx, sy;       // Steps in the X and Y directions
    
         begin
             // Extract current X and Y coordinates
-            current_y = _currentLocation[7:4];
-            current_x = _currentLocation[3:0];
+            current_x = _currentLocation[7:4];
+            current_y = _currentLocation[3:0];
 
             // Extract target X and Y coordinates
-            target_y = _targetTile[7:4];
-            target_x = _targetTile[3:0];
+            target_x = _targetTile[7:4];
+            target_y = _targetTile[3:0];
 
-            // Determine next X coordinate
-            if (current_x < target_x)
-                next_x = current_x + 1;
-            else if (current_x > target_x)
-                next_x = current_x - 1;
-            else
-                next_x = current_x;  // No change in X coordinate
+        // Calculate the differences between target and current positions
+        dx = (target_x > current_x) ? (target_x - current_x) : (current_x - target_x);
+        dy = (target_y > current_y) ? (target_y - current_y) : (current_y - target_y);
+        sx = (current_x < target_x) ? 1 : -1;
+        sy = (current_y < target_y) ? 1 : -1;
 
-            // Determine next Y coordinate
-            if (current_y < target_y)
-                next_y = current_y + 1;
-            else if (current_y > target_y)
-                next_y = current_y - 1;
-            else
-                next_y = current_y;  // No change in Y coordinate
-
-            // Combine next X and Y coordinates into the next location
-            NextLocation = {next_y, next_x};
+        // Movement based on which axis is closer (larger difference)
+        if (dx >= dy) begin
+            // Move in the X direction
+            next_x = current_x + sx;
+            next_y = current_y;  // No change in Y
+        end else begin
+            // Move in the Y direction
+            next_x = current_x;  // No change in X
+            next_y = current_y + sy;
         end
-    
-    endfunction
 
-
-        function [1:0] NextDirection;   // Decide on the location the dragon is facing depening on the locations of the tiles it moved from
-        input [7:0] _lastLocation;
-        input [7:0] _newLocation;
-        
-        reg [3:0] last_x, last_y, new_x, new_y;
-
-        begin
-
-            // Extract last and new X and Y coordinates
-            last_y = _lastLocation[7:4];
-            last_x = _lastLocation[3:0];
-            new_y = _newLocation[7:4];
-            new_x = _newLocation[3:0];
-
-            // Determine direction based on movement
-            if (new_x > last_x)
-                NextDirection = RIGHT;
-
-            else if (new_x < last_x)
-                NextDirection = LEFT;
-
-            else if (new_y > last_y)
-                NextDirection = DOWN;
-
-            else if (new_y < last_y)
-                NextDirection = UP;
-        end
-        endfunction
+        // Combine next X and Y coordinates into the next location
+            NextLocation = {next_x, next_y};
+    end
+endfunction
 
 
     always @(posedge frame_clk) begin
