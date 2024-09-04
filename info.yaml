@@ -18,7 +18,10 @@ project:
   # Don't forget to also update `PROJECT_SOURCES` in test/Makefile.
   source_files:
     - "tt_um_Enjimneering_STT8.v"
-    - "full_adder.v"
+    - "VGA_Top.v"
+    - "VGA_Sync.v"
+    - "vertical_counter.v"
+    - "horizontal_counter.v"
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
