@@ -10,21 +10,6 @@ This README provides instructions for users on how to edit button states in the 
 - **GTKWave**: Make sure GTKWave is installed for waveform viewing.
 - **Shell Environment**: The `test_controller.sh` script is written for a Unix-like shell environment.
 
-## Directory Structure
-
-The test files are located in the `test_nes_controller` directory. You must navigate to this directory before running the tests.
-
-```
-test_nes_controller/
-├── nes_controller_tb.v
-├── test_controller.sh
-└── dump.vcd
-```
-
-## Editing Button States
-
-To simulate different button presses, you will need to modify the `data` signal within the `nes_controller_tb.v` file. The `data` signal represents the serial input from the NES controller, and each bit corresponds to the state of a specific button. Set `data = 0;` to press a button or `data = 1;` for the opposite.
-
 ## Running the Test Bench
 
 1. **Navigate to the Test Directory**:
@@ -44,6 +29,10 @@ To simulate different button presses, you will need to modify the `data` signal 
 3. **Analyze the Results**:
    - The terminal will display the button states based on your test scenario.
    - GTKWave will open, allowing you to visually inspect the waveform for the simulated NES controller signals.
+
+## Editing Button States
+
+To simulate different button presses, you will need to modify the `data` signal within the `nes_controller_tb.v` file. The `data` signal represents the serial input from the NES controller, and each bit corresponds to the state of a specific button. Set `data = 0;` to press a button or `data = 1;` for the opposite.
 
 ## Customization
 
