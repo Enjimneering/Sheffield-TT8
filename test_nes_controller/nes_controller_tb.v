@@ -82,7 +82,7 @@ module nes_controller_tb;
         #18000 data = 1; // B 
         #12000 data = 1; // Select 
         #12000 data = 1; // Start 
-        #12000 data = 1; // Up 
+        #12000 data = 0; // Up 
         #12000 data = 1; // Down 
         #12000 data = 1; // Left 
         #12000 data = 1; // Right 

@@ -12,13 +12,17 @@ Description =========================================
 
 */
 
+`include "../src/nes_input_buffer.v"
 
 module nes_controller
-	(
+	( 
 		input wire clk, reset, 
 		input wire data,                                        // input data from nes controller to FPGA
 		output reg latch, nes_clk,                              // outputs from FPGA to nes controller
-		output wire A, B, select, start, up, down, left, right  // output states of nes controller buttons
+		output wire A, B, select, start, up, down, left, right,  // output states of nes controller buttons
+		
+		output wire A_pulse, B_pulse, select_pulse, start_pulse, // output pulses for button releases
+    	output wire up_pulse, down_pulse, left_pulse, right_pulse
         );
 	
 	// FSM symbolic states
@@ -302,5 +306,51 @@ module nes_controller
 	assign down   = ~down_reg;
 	assign left   = ~left_reg;
 	assign right  = ~right_reg;
+
+	// FALLING EDGE DETECTION 
+
+	// Generate enable signal
+    reg [26:0] counter; // 27 bits can count up to 134,217,727 ns at 50 MHz
+    wire enable;
+
+    assign enable = (counter >= 5105);  // Enable after 102,100,000 ns (5,105,000 clock cycles at 50 MHz)
+
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            counter <= 0;
+        end else if (!enable) begin
+            counter <= counter + 1;
+        end
+    end
+
+    // Use generate blocks for conditional instantiation
+    genvar i;
+    generate
+        for (i = 0; i < 8; i = i + 1) begin : gen_pulse
+            wire button_in;
+            wire pulse_out;
+            reg button_reg;
+
+            case (i)
+                0: begin assign button_in = A; assign A_pulse = pulse_out; always @(posedge clk) button_reg <= A_reg; end
+                1: begin assign button_in = B; assign B_pulse = pulse_out; always @(posedge clk) button_reg <= B_reg; end
+                2: begin assign button_in = select; assign select_pulse = pulse_out; always @(posedge clk) button_reg <= select_reg; end
+                3: begin assign button_in = start; assign start_pulse = pulse_out; always @(posedge clk) button_reg <= start_reg; end
+                4: begin assign button_in = up; assign up_pulse = pulse_out; always @(posedge clk) button_reg <= up_reg; end
+                5: begin assign button_in = down; assign down_pulse = pulse_out; always @(posedge clk) button_reg <= down_reg; end
+                6: begin assign button_in = left; assign left_pulse = pulse_out; always @(posedge clk) button_reg <= left_reg; end
+                7: begin assign button_in = right; assign right_pulse = pulse_out; always @(posedge clk) button_reg <= right_reg; end
+            endcase
+
+            button_release_pulse pulse_inst (
+                .clk(clk),
+                .reset(reset),
+                .enable(enable),  // Pass the enable signal to each instance
+                .button_in(button_in),
+                .pulse_out(pulse_out)
+            );
+        end
+    endgenerate
+
 	
 endmodule
