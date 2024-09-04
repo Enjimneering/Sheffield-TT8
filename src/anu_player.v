@@ -95,7 +95,7 @@ module player (
     end
 
     // State machine for player actions
-    always @(*) begin
+    always @( clk ) begin
         case (current_state)
             IDLE_STATE: begin
                 sword <= 14'b1111_01_0000_0000;  // Hide sword outside the grid

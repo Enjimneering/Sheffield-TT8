@@ -2,6 +2,10 @@
 `include "anu_player.v"
 
 module player_tb;
+
+
+    integer output_file;
+
     // Inputs
     reg clk = 0;
     reg reset = 0;
@@ -31,10 +35,18 @@ module player_tb;
     );
 
     // Clock generation
-    always #40 clk = ~clk;
+    always #10 clk = ~clk;
 
     // Testbench logic
     initial begin
+        
+        // Dump waveforms for GTKWave
+        $dumpfile("player_tb.vcd");
+        $dumpvars(0, player_tb);
+
+        output_file = $fopen("playerStateOutput.txt", "w");  
+
+
         // Initialize inputs
         clk = 0;
         reset = 1;
@@ -46,67 +58,113 @@ module player_tb;
         down = 0;
         left = 0;
         right = 0;
-
-        // Dump waveforms for GTKWave
-        $dumpfile("player_tb.vcd");
-        $dumpvars(0, player_tb);
-
+        
         // Wait for reset
         #20;
         reset = 0;
 
-        // Test 1: Move up
-        up = 1; #20; up = 0;
-        #20; // Wait for state to update
+        #20
+
         
-        // Test 2: Move down
-        down = 1; #20; down = 0;
-        #20; // Wait for state to update
         
+
+        // Test 1: Move down
+        up = 1; 
+        #40; 
+      
+       up = 0;
+        #40; // Wait for state to update
+        
+
+        // Test 2: Move up
+        down = 1; 
+        #40; 
+
+
+        down = 0;
+        #40; // Wait for state to update
+        
+        
+
         // Test 3: Move left
-        left = 1; #20; left = 0;
-        #20; // Wait for state to update
+        left = 1; 
+        #40; 
+
+
+        left = 0;
+        #40; // Wait for state to update
         
+
         // Test 4: Move right
-        right = 1; #20; right = 0;
-        #20; // Wait for state to update
+        right = 1; 
+        #40; 
+
         
+        right = 0;
+        #40; // Wait for state to update
+        
+
         // Test 5: Attack while facing up
         up = 1; A = 1; 
-        #20; 
-        A = 0; up = 0;
-        #20; // Wait for state to update
+        #40; 
 
+
+        A = 0; up = 0;
+        #40; // Wait for state to update
+
+        
+
+        
         // Test 6: Attack while facing down
         down = 1; B = 1; 
-        #20; 
+        #40; 
+
+
         B = 0; down = 0;
-        #20; // Wait for state to update
+        #40; // Wait for state to update
+
         
         // Test 7: Attack while facing left
         left = 1; A = 1; 
-        #20; 
-        A = 0; left = 0;
-        #20; // Wait for state to update
+        #40; 
 
+
+        A = 0; left = 0;
+        #40; // Wait for state to update
+
+        
+
+        
         // Test 8: Attack while facing right
         right = 1; A = 1; 
-        #20; 
-        A = 0; right = 0;
-        #20; // Wait for state to update
+        #40; 
 
-        // Test 9: reset the game
-        reset = 1; #20; reset = 0;
-        #20; // Wait for reset to complete
+        A = 0; right = 0;
+        #40; // Wait for state to update
+
         
+        // Test 9: reset the game
+        reset = 1; #40; reset = 0;
+        #40; // Wait for reset to complete
+        
+
         // Stop simulation
         $stop;   
+        
+        $fclose(output_file);
     end
 
     // Monitor changes
     initial begin
         $monitor("Time=%0t | Player=%b | Sword=%b | Player Health=%b | Up=%b Down=%b Left=%b Right=%b A=%b B=%b",
         $time, player, sword, player_health, up, down, left, right, A, B);
+    end
+
+    always begin
+        
+        #20 $fdisplay(output_file,"Time=%0t | Player=%b | Sword=%b | Player Health=%b | Up=%b Down=%b Left=%b Right=%b A=%b B=%b",
+        $time, player, sword, player_health, up, down, left, right, A, B);
+
     end
 endmodule
 
