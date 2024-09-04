@@ -46,31 +46,31 @@ module nes_controller
 	always @(posedge clk, posedge reset)
 		if (reset)
 			begin
-			count_reg  <= 0;
-			state_reg  <= 0;
-			A_reg      <= 0;
-			B_reg      <= 0;
-			select_reg <= 0;
-			start_reg  <= 0;
-			up_reg     <= 0;
-			down_reg   <= 0;
-			left_reg   <= 0;
-			right_reg  <= 0;
+				count_reg  <= 0;
+				state_reg  <= 0;
+				A_reg      <= 0;
+				B_reg      <= 0;
+				select_reg <= 0;
+				start_reg  <= 0;
+				up_reg     <= 0;
+				down_reg   <= 0;
+				left_reg   <= 0;
+				right_reg  <= 0;
 			end
 	    else
 			begin
 		        count_reg  <= count_next;
-			state_reg  <= state_next;
-			A_reg      <= A_next;
-			B_reg      <= B_next;
-			select_reg <= select_next;
-			start_reg  <= start_next;
-			up_reg     <= up_next;
-			down_reg   <= down_next;
-			left_reg   <= left_next;
-			right_reg  <= right_next;
+				state_reg  <= state_next;
+				A_reg      <= A_next;
+				B_reg      <= B_next;
+				select_reg <= select_next;
+				start_reg  <= start_next;
+				up_reg     <= up_next;
+				down_reg   <= down_next;
+				left_reg   <= left_next;
+				right_reg  <= right_next;
 			end
-			
+
 	// FSM next-state logic and data path
 	always@*
 		begin
@@ -109,7 +109,8 @@ module nes_controller
 			
 			read_A_wait:
 					begin
-					A_next = data; // read A
+					if(count_reg == 0)
+						A_next = data; // read A
 					
 					if(count_reg < 300) // count clk cycles for 6 us
 						count_next = count_reg + 1;
