@@ -119,10 +119,10 @@ module player (
                 end else if (down && player[3:0] < 4'b1011) begin  // Check boundary for down movement
                     player[7:0] <= player [7:0] + 8'b0000_0001;  // Move down
                 end else if (left && player[7:4] > 4'b0000) begin  // Check boundary for left movement
-                    player[7:0] <= player [7:0] - 8'b0000_0001;  // Move left
+                    player[7:0] <= player [7:0] - 8'b0001_0000;  // Move left
                     player[9:8] <= 2'b11;  // Update orientation to left
                 end else if (right && player[7:4] < 4'b1111) begin  // Check boundary for right movement
-                    player[7:0] <= player [7:0] + 8'b0000_0001;  // Move right
+                    player[7:0] <= player [7:0] + 8'b0001_0000;  // Move right
                     player[9:8] <= 2'b01;  // Update orientation to right
                 end
                 next_state = IDLE_STATE;  // Return to IDLE after moving
