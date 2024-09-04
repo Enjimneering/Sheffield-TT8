@@ -31,7 +31,7 @@ module player_tb;
     );
 
     // Clock generation
-    always #20 clk = ~clk; // 25MHz clock
+    always #40 clk = ~clk;
 
     // Testbench logic
     initial begin
@@ -52,43 +52,52 @@ module player_tb;
         $dumpvars(0, player_tb);
 
         // Wait for reset
-        #40;
+        #20;
         reset = 0;
 
         // Test 1: Move up
-        up = 1; #40; up = 0;
-        #40; // Wait for state to update
+        up = 1; #20; up = 0;
+        #20; // Wait for state to update
         
         // Test 2: Move down
-        down = 1; #40; down = 0;
-        #40; // Wait for state to update
+        down = 1; #20; down = 0;
+        #20; // Wait for state to update
         
         // Test 3: Move left
-        left = 1; #40; left = 0;
-        #40; // Wait for state to update
+        left = 1; #20; left = 0;
+        #20; // Wait for state to update
         
         // Test 4: Move right
-        right = 1; #40; right = 0;
-        #40; // Wait for state to update
+        right = 1; #20; right = 0;
+        #20; // Wait for state to update
         
         // Test 5: Attack while facing up
-        up = 1; #40; up = 0; 
-        A = 1; #40; A = 0;
-        #40; // Wait for state to update
+        up = 1; A = 1; 
+        #20; 
+        A = 0; up = 0;
+        #20; // Wait for state to update
 
         // Test 6: Attack while facing down
-        down = 1; #40; down = 0; 
-        B = 1; #40; B = 0;
-        #40; // Wait for state to update
+        down = 1; B = 1; 
+        #20; 
+        B = 0; down = 0;
+        #20; // Wait for state to update
         
-        // Test 7: Move left, then attack
-        left = 1; #40; left = 0; 
-        A = 1; #40; A = 0;
-        #40; // Wait for state to update
+        // Test 7: Attack while facing left
+        left = 1; A = 1; 
+        #20; 
+        A = 0; left = 0;
+        #20; // Wait for state to update
 
-        // Test 8: reset the game
-        reset = 1; #40; reset = 0;
-        #40; // Wait for reset to complete
+        // Test 8: Attack while facing right
+        right = 1; A = 1; 
+        #20; 
+        A = 0; right = 0;
+        #20; // Wait for state to update
+
+        // Test 9: reset the game
+        reset = 1; #20; reset = 0;
+        #20; // Wait for reset to complete
         
         // Stop simulation
         $stop;   

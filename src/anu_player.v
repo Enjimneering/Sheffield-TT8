@@ -76,9 +76,9 @@ module player (
 
     
     // Calculate XOR logic for direction buttons
-    wire one_direction_pressed = (up ^ down ^ left ^ right) &&
-                                !(up && down) && !(up && left) && !(up && right) &&
-                                !(down && left) && !(down && right) && !(left && right);
+    // wire one_direction_pressed = (up ^ down ^ left ^ right) &&
+    //                             !(up && down) && !(up && left) && !(up && right) &&
+    //                             !(down && left) && !(down && right) && !(left && right);
 
     // State transition logic
     always @(posedge clk or posedge reset) begin
@@ -102,7 +102,7 @@ module player (
                 sword_visible <= 1'b0;
                 if (player_health == 0) begin
                     next_state = DEAD;  // Transition to DEAD state if health is 0
-                end else if (one_direction_pressed) begin
+                end else if (up || down || left || right) begin
                     if (A || B)
                         next_state = ATTACK_STATE;  // Attack if A or B is pressed
                     else 
