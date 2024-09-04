@@ -140,7 +140,7 @@ SpriteROM Rom(
 //     $display("buffer = %b", buffer);
 // end
 
-always@(counter_H) begin
+always@(posedge clk) begin
     colour <= currentColour(buffer, out_entity, counter_H);
 end
 
