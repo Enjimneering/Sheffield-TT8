@@ -40,17 +40,17 @@ module DetectionCombinationUnit(
     
     input clk,
     input reset,
-    input wire  [13:0]  entity_1,  
-    input wire  [13:0]  entity_2,  
-    input wire  [13:0]  entity_3,  
-    input wire  [13:0]  entity_4,
-    input wire  [13:0]  entity_5,
-    input wire  [13:0]  entity_6,
-    input wire  [17:0]  entity_7_Array, //[17:4] General entity. [3:0] length of array, array direction is opposite with orientation.
-    input wire  [13:0]  entity_8_Flip,
-    input wire  [13:0]  entity_9_Flip,
-    input wire  [9:0]   counter_V,
-    input wire  [9:0]   counter_H,
+    input [13:0]  entity_1,  
+    input [13:0]  entity_2,  
+    input [13:0]  entity_3,  
+    input [13:0]  entity_4,
+    input [13:0]  entity_5,
+    input [13:0]  entity_6,
+    input [17:0]  entity_7_Array, //[17:4] General entity. [3:0] length of array, array direction is opposite with orientation.
+    input [13:0]  entity_8_Flip,
+    input [13:0]  entity_9_Flip,
+    input [9:0]   counter_V,
+    input [9:0]   counter_H,
 
     output reg [8:0]  out_entity,
 
@@ -80,11 +80,11 @@ module DetectionCombinationUnit(
         case (entity_Counter)
             4'd0: begin 
                 general_Entity[17:4] <= entity_9_Flip;   //position is XXYY!!!!!
-                if (counter_H == 559)begin
-                    local_Counter_V <= counter_V + 1;
+                if (counter_H > 600)begin
                     local_Counter_H <= 0;
+                    local_Counter_V <= counter_V + 1;
                 end else begin
-                    local_Counter_H <= counter_H + 39;
+                    local_Counter_H <= counter_H + 40;
                     local_Counter_V <= counter_V;
                 end
                  $display("X = %b",  local_Counter_H);
@@ -137,7 +137,7 @@ module DetectionCombinationUnit(
     reg [6:0] inRange;
     reg [5:0] temp_Entity_1;
     reg [5:0] temp_Entity_2;
-    reg [5:0] temp_Entity_3;
+
     always @(posedge clk) begin
         if (!reset) begin
         entity_Position_Pixel_H <= general_Entity[11:8] * TILE_LEN_PIXEL;
@@ -160,39 +160,50 @@ module DetectionCombinationUnit(
         
         inRange_Right_H <= local_Counter_H  < (entity_Position_Pixel_H + TILE_LEN_PIXEL);
         temp_Entity_2 <= temp_Entity_1;
-        temp_Entity_3 <= temp_Entity_2;
+        
 
         inRange_Top_V <= local_Counter_V >= entity_Position_Pixel_V;
         inRange_Bottom_V <= local_Counter_V < (entity_Position_Pixel_V + TILE_LEN_PIXEL);
         
-        inRange <= {inRange_Top_V && inRange_Bottom_V && inRange_Left_H && inRange_Right_H, temp_Entity_3};
+        inRange <= {inRange_Top_V && inRange_Bottom_V && inRange_Left_H && inRange_Right_H, temp_Entity_2};
          
         end else begin
             inRange_Left_H <= 0;
             inRange_Right_H <= 0;
             inRange_Top_V <= 0;
             inRange_Bottom_V <= 0;
-            inRange <= 0;
+            inRange <= 7'b1111111;
             temp_Entity_2 <= 6'b111111;
-            temp_Entity_3 <= 6'b111111;
+        
         end
     end
 
     reg [8:0] detector;
     reg [5:0] relative_Position;
     reg [5:0] temp_Entity_4;
+    reg effe_Flag;
     always @(posedge clk) begin
         if (!reset) begin
-        if (inRange[6] && inRange[5:0] != 4'b1111) begin
+        if (inRange[6] && (inRange[5:2] != 4'b1111)) begin
             $display("Display = %b",  inRange[4] && inRange[5:0] != 4'b1111 );
             relative_Position <= local_Counter_V % TILE_LEN_PIXEL;
             temp_Entity_4 <= inRange[5:0];
-            detector <= {3'b111&(relative_Position/UPSCALE_FACTOR),temp_Entity_4};
+            effe_Flag <= 1;
+        end else begin
+            effe_Flag <= 0;
+            relative_Position <= 6'b111111;
+            temp_Entity_4 <= 9'b111111111;
+        end
+
+        if (effe_Flag)begin
+            detector <= {(3'b111&(relative_Position/UPSCALE_FACTOR)),temp_Entity_4};
         end else begin
             detector <= 9'b111111111;
         end
+
         end else begin
-            detector <= 3'b111;
+            effe_Flag <= 0;
+            detector <= 9'b111111111;
             relative_Position <= 0;
             temp_Entity_4 <= 6'b111111;
         end
@@ -209,8 +220,8 @@ module DetectionCombinationUnit(
                     holder <= holder;
                 end
             end else begin
-                delay <= 9'b111111111;
-                holder <= delay;
+
+                holder <= 9'b111111111;
             end
         end else begin
             holder <= 9'b111111111;

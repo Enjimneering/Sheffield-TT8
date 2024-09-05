@@ -21,12 +21,12 @@ module FrameBufferController_Top(
     output reg [8:0] buffer_O // 0-black 1-white
     );
 
-localparam BUFFERLEN = 8;
-localparam UPSCALE = 5;
-localparam TILESIZE = 8;
-localparam TILE_LEN_PIXEL = 40;
-localparam SCREENSIZE_H = 16;
-localparam SCREENSIZE_V = 12;
+localparam [3:0] BUFFERLEN = 8;
+localparam [2:0] UPSCALE = 5;
+localparam [3:0] TILESIZE = 8;
+localparam [5:0] TILE_LEN_PIXEL = 40;
+localparam [4:0] SCREENSIZE_H = 16;
+localparam [3:0] SCREENSIZE_V = 12;
 
 
 wire [7:0] buffer;
@@ -144,21 +144,27 @@ SpriteROM Rom(
 //     $display("buffer = %b", buffer);
 // end
 //reg [3:0] tile_Counter_H;
-reg currentColour;
+
 reg [5:0] buf_Index_L;
 reg [2:0] buf_Index_S;
 
 always@(posedge clk) begin
     if (!reset) begin
-    if(out_entity[5:2] != 4'b1111) begin
-        buf_Index_L <= counter_H % TILE_LEN_PIXEL;
+        //buf_Index_L <= counter_H % {4'b0000,TILE_LEN_PIXEL};
+        
+        if (buf_Index_L==(TILE_LEN_PIXEL -1) || counter_H == 0)begin
+            buf_Index_L <= 0;
+        end else begin
+            buf_Index_L <= buf_Index_L + 1;
+        end
         buf_Index_S <= (buf_Index_L)/UPSCALE;
-        currentColour <= buffer[buf_Index_S]; // 1 - White 0 - black
+        if(out_entity[5:2] != 4'b1111) begin
+            colour <= buffer[buf_Index_S]; // 1 - White 0 - black
+        end else begin
+            colour <= 1;
+        end
     end else begin
-        currentColour = 1;
-    end
-    end else begin
-        currentColour <= 1;
+        colour <= 1'b1;
         buf_Index_L <= 6'b111111;
         buf_Index_S <= 3'b111;
     end
@@ -169,9 +175,7 @@ always@(posedge clk) begin
     if (!reset)begin
     buffer_O <= buffer; 
     //colour <= buffer[4];//(out_entity[5:2] != 4'b1111)?(buffer[(counter_H % TILE_LEN_PIXEL)/UPSCALE]) : (1'b1); // 1 - White 0 - black
-    colour <= currentColour;
     end else begin
-        colour <= 1'b1;
         buffer_O <= 0;
     end
     $display("!!!!!!!!!!!!!!!!!!!!!Inside module: a = %b",  out_entity);

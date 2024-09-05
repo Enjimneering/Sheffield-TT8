@@ -49,9 +49,9 @@ module SpriteROM(
     input            clk,
     input            reset,
     // input wire       read_enable,
-    input wire [1:0] orientation,
-    input wire [3:0] sprite_ID,
-    input wire [2:0] line_index,
+    input [1:0] orientation,
+    input [3:0] sprite_ID,
+    input [2:0] line_index,
     
     output reg [7:0] data
 );
