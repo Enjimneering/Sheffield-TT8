@@ -80,7 +80,7 @@ module DetectionCombinationUnit(
         if (!reset) begin
         case (entity_Counter)
             4'd0: begin 
-                general_Entity[17:4] <= entity_9_Flip;   //position is XXYY!!!!!
+                general_Entity <= {entity_9_Flip,4'b0000};   //position is XXYY!!!!!
                 if (counter_H > 600)begin
                     local_Counter_H <= 0;
                     local_Counter_V <= counter_V + 1;
@@ -93,7 +93,7 @@ module DetectionCombinationUnit(
                 flip_Or_Array_Flag <= 2'b01;
                 end
             4'd1:begin
-                general_Entity[17:4] <= entity_8_Flip;  
+                general_Entity <= {entity_8_Flip,4'b0000}; 
                 flip_Or_Array_Flag <= 2'b01;
             end   
             4'd2:begin
@@ -101,33 +101,33 @@ module DetectionCombinationUnit(
                 flip_Or_Array_Flag <= 2'b10;
             end
             4'd3:begin 
-                general_Entity[17:4] <= entity_6;
+                general_Entity <= {entity_6,4'b0000};
                 flip_Or_Array_Flag <= 2'b00;
             end
             4'd4:begin 
-                general_Entity[17:4] <= entity_5;
+                general_Entity <= {entity_5,4'b0000};
                 flip_Or_Array_Flag <= 2'b00;
             end
             4'd5:begin 
-                general_Entity[17:4] <= entity_4;
+                general_Entity <= {entity_4,4'b0000};
                 flip_Or_Array_Flag <= 2'b00;
             end
             4'd6:begin 
-                general_Entity[17:4] <= entity_3;
+                general_Entity <= {entity_3,4'b0000};
                 flip_Or_Array_Flag <= 2'b00;
             end
             4'd7:begin 
-                general_Entity[17:4] <= entity_2;
+                general_Entity <= {entity_2,4'b0000};
                 flip_Or_Array_Flag <= 2'b00;
             end
             4'd8: begin
-                general_Entity[17:4] <= entity_1;
+                general_Entity <= {entity_1,4'b0000};
                 flip_Or_Array_Flag <= 2'b00;
             end
             
             default: begin
                 general_Entity <= 18'b111100000000000000;
-                flip_Or_Array_Flag <= 2'b00;
+                flip_Or_Array_Flag <= 2'b11;
             end
         endcase
            
@@ -160,20 +160,26 @@ module DetectionCombinationUnit(
 
     reg [9:0] entity_Position_Pixel_H;
     reg [9:0] entity_Position_Pixel_V;
+    reg [9:0] entity_Position_Pixel_H_1;
+    reg [9:0] entity_Position_Pixel_V_1;
     reg inRange_Left_H, inRange_Right_H;
     reg inRange_Top_V, inRange_Bottom_V;
     reg [6:0] inRange;
-    reg [5:0] temp_Entity_1;
-    reg [5:0] temp_Entity_2;
+    reg [9:0] temp_Entity_1;
+    reg [9:0] temp_Entity_1_5;
+    reg [9:0] temp_Entity_2;
     reg [1:0] flip_Or_Array_Flag_1;
+    reg [1:0] flip_Or_Array_Flag_1_5;
     reg [1:0] flip_Or_Array_Flag_2;
     reg [1:0] flip_Or_Array_Flag_3;
+    reg [10:0] array_Len;
+
 
     always @(posedge clk) begin
         if (!reset) begin
             entity_Position_Pixel_H <= general_Entity[11:8] * TILE_LEN_PIXEL;
             entity_Position_Pixel_V <= general_Entity[7:4] * TILE_LEN_PIXEL;
-            temp_Entity_1 <= general_Entity[17:12];
+            temp_Entity_1 <= {general_Entity[17:12], general_Entity[3:0]};
             flip_Or_Array_Flag_1 <= flip_Or_Array_Flag;
         
         // $display("Position_X = %b",  entity_Position_Pixel_H);
@@ -183,48 +189,60 @@ module DetectionCombinationUnit(
             flip_Or_Array_Flag_1 <= 2'b11;
             entity_Position_Pixel_H <= 0;
             entity_Position_Pixel_V <= 0;
-            temp_Entity_1 <= 6'b111111;
+            temp_Entity_1 <= 10'b1111110000;
         end
     end
 
     always @(posedge clk) begin
         if (!reset) begin
-            if (flip_Or_Array_Flag_1 != 2'b10) begin
-                inRange_Left_H <= local_Counter_H  >= entity_Position_Pixel_H;
+            // if (flip_Or_Array_Flag_1 != 2'b10) begin
+            //     inRange_Left_H <= local_Counter_H  >= entity_Position_Pixel_H;
+            //     inRange_Right_H <= local_Counter_H  < (entity_Position_Pixel_H + TILE_LEN_PIXEL);
                 
-                inRange_Right_H <= local_Counter_H  < (entity_Position_Pixel_H + TILE_LEN_PIXEL);
-                
-                temp_Entity_2 <= temp_Entity_1;
-                flip_Or_Array_Flag_2 <= flip_Or_Array_Flag_1;
-                flip_Or_Array_Flag_3 <= flip_Or_Array_Flag_2;
+            //     //temp_Entity_2 <= temp_Entity_1;
+            //     // flip_Or_Array_Flag_2 <= flip_Or_Array_Flag_1;
+            //     // flip_Or_Array_Flag_3 <= flip_Or_Array_Flag_2;
 
-                inRange_Top_V <= local_Counter_V >= entity_Position_Pixel_V;
-                inRange_Bottom_V <= local_Counter_V < (entity_Position_Pixel_V + TILE_LEN_PIXEL);
-                
-                inRange <= {inRange_Top_V && inRange_Bottom_V && inRange_Left_H && inRange_Right_H, temp_Entity_2};
-            end else begin
-                inRange_Left_H <= ($signed(local_Counter_H)  >= ($signed({1'b0,entity_Position_Pixel_H})-((entity_7_Array[13:12] == 2'b01)? (entity_7_Array[7:0] * TILE_LEN_PIXEL) :0)));
-                
-                inRange_Right_H <= local_Counter_H  < ({1'b0,entity_Position_Pixel_H} + ((entity_7_Array[13:12] == 2'b11)? (entity_7_Array[7:0] * TILE_LEN_PIXEL) : TILE_LEN_PIXEL));
-                
-                temp_Entity_2 <= temp_Entity_1;
-                flip_Or_Array_Flag_2 <= flip_Or_Array_Flag_1;
-                flip_Or_Array_Flag_3 <= flip_Or_Array_Flag_2;
+            //     inRange_Top_V <= local_Counter_V >= entity_Position_Pixel_V;
+            //     inRange_Bottom_V <= local_Counter_V < (entity_Position_Pixel_V + TILE_LEN_PIXEL);
+            //     //inRange <= {inRange_Top_V && inRange_Bottom_V && inRange_Left_H && inRange_Right_H, temp_Entity_2};
+            // end else begin
+            //     // signed_Array_Len <= $signed({1'b0, 10'b1111111111&(entity_7_Array[3:0] * TILE_LEN_PIXEL)});
+            //     inRange_Left_H <= ($signed({1'b0,local_Counter_H})  >= ($signed({1'b0,entity_Position_Pixel_H}) - ((temp_Entity_1[5:4] == 2'b01) ? ($signed({1'b0, 10'b1111111111&(temp_Entity_1[3:0] * TILE_LEN_PIXEL)})) : 0)));
+            //     inRange_Right_H <= {1'b0,local_Counter_H}  < ({1'b0,entity_Position_Pixel_H} + ((temp_Entity_1[5:4] == 2'b11)? ((temp_Entity_1[3:0] + 1) * TILE_LEN_PIXEL) : TILE_LEN_PIXEL));
+    
+            //     inRange_Top_V <= ($signed({1'b0,local_Counter_V})  >= ($signed({1'b0,entity_Position_Pixel_V}) - ((temp_Entity_1[5:4] == 2'b10) ? ($signed({1'b0, 10'b1111111111&(temp_Entity_1[3:0] * TILE_LEN_PIXEL)})) : 0)));
+            //     inRange_Bottom_V <= {1'b0,local_Counter_V}  < ({1'b0,entity_Position_Pixel_V} + ((temp_Entity_1[5:4] == 2'b00)? ((temp_Entity_1[3:0] + 1) * TILE_LEN_PIXEL) : TILE_LEN_PIXEL));
+            // end
+            array_Len <= {1'b0, 10'b1111111111&(temp_Entity_1[3:0] * TILE_LEN_PIXEL)};
+            entity_Position_Pixel_H_1 <= entity_Position_Pixel_H;
+            entity_Position_Pixel_V_1 <= entity_Position_Pixel_V;
 
-                inRange_Top_V <= ($signed(local_Counter_V)  >= ($signed({1'b0,entity_Position_Pixel_V})-((entity_7_Array[13:12] == 2'b10)? (entity_7_Array[7:0] * TILE_LEN_PIXEL) :0)));
-                inRange_Bottom_V <= local_Counter_V  < ({1'b0,entity_Position_Pixel_V} + ((entity_7_Array[13:12] == 2'b00)? (entity_7_Array[7:0] * TILE_LEN_PIXEL) : TILE_LEN_PIXEL));
-                
-                inRange <= {inRange_Top_V && inRange_Bottom_V && inRange_Left_H && inRange_Right_H, temp_Entity_2};
-            end
+            inRange_Left_H <= ($signed({1'b0,local_Counter_H})  >= ($signed({1'b0,entity_Position_Pixel_H_1}) - ((temp_Entity_1_5[5:4] == 2'b01) ? ($signed(array_Len)) : 0)));
+            inRange_Right_H <= {1'b0,local_Counter_H}  < ({1'b0,entity_Position_Pixel_H_1} + ((temp_Entity_1_5[5:4] == 2'b11)? (array_Len + TILE_LEN_PIXEL) : TILE_LEN_PIXEL));
+
+            inRange_Top_V <= ($signed({1'b0,local_Counter_V})  >= ($signed({1'b0, entity_Position_Pixel_V_1}) - ((temp_Entity_1_5[5:4] == 2'b10) ? ($signed(array_Len)) : 0)));
+            inRange_Bottom_V <= {1'b0,local_Counter_V}  < ({1'b0, entity_Position_Pixel_V_1} + ((temp_Entity_1_5[5:4] == 2'b00)? (array_Len + TILE_LEN_PIXEL) : TILE_LEN_PIXEL));
+            
+            //delay
+            temp_Entity_1_5 <= temp_Entity_1;
+            temp_Entity_2 <= temp_Entity_1_5;
+            flip_Or_Array_Flag_1_5 <= flip_Or_Array_Flag_1;
+            flip_Or_Array_Flag_2 <= flip_Or_Array_Flag_1_5;
+            flip_Or_Array_Flag_3 <= flip_Or_Array_Flag_2;
+
+            inRange <= {inRange_Top_V && inRange_Bottom_V && inRange_Left_H && inRange_Right_H, temp_Entity_2[9:4]};
         end else begin
             flip_Or_Array_Flag_2 <= 2'b11;
             flip_Or_Array_Flag_3 <= 2'b11;
+            entity_Position_Pixel_H_1 <= 0;
+            entity_Position_Pixel_V_1 <= 0;
             inRange_Left_H <= 0;
             inRange_Right_H <= 0;
             inRange_Top_V <= 0;
             inRange_Bottom_V <= 0;
             inRange <= 7'b1111111;
-            temp_Entity_2 <= 6'b111111;
+            temp_Entity_2 <= 10'b1111110000;
         
         end
     end
