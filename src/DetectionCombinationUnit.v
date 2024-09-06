@@ -195,40 +195,39 @@ module DetectionCombinationUnit(
 
     always @(posedge clk) begin
         if (!reset) begin
-            // if (flip_Or_Array_Flag_1 != 2'b10) begin
-            //     inRange_Left_H <= local_Counter_H  >= entity_Position_Pixel_H;
-            //     inRange_Right_H <= local_Counter_H  < (entity_Position_Pixel_H + TILE_LEN_PIXEL);
+            if (flip_Or_Array_Flag_1 != 2'b10) begin
+                inRange_Left_H <= local_Counter_H  >= entity_Position_Pixel_H;
+                inRange_Right_H <= local_Counter_H  < (entity_Position_Pixel_H + TILE_LEN_PIXEL);
                 
-            //     //temp_Entity_2 <= temp_Entity_1;
-            //     // flip_Or_Array_Flag_2 <= flip_Or_Array_Flag_1;
-            //     // flip_Or_Array_Flag_3 <= flip_Or_Array_Flag_2;
+                //temp_Entity_2 <= temp_Entity_1;
+                // flip_Or_Array_Flag_2 <= flip_Or_Array_Flag_1;
+                // flip_Or_Array_Flag_3 <= flip_Or_Array_Flag_2;
 
-            //     inRange_Top_V <= local_Counter_V >= entity_Position_Pixel_V;
-            //     inRange_Bottom_V <= local_Counter_V < (entity_Position_Pixel_V + TILE_LEN_PIXEL);
-            //     //inRange <= {inRange_Top_V && inRange_Bottom_V && inRange_Left_H && inRange_Right_H, temp_Entity_2};
-            // end else begin
-            //     // signed_Array_Len <= $signed({1'b0, 10'b1111111111&(entity_7_Array[3:0] * TILE_LEN_PIXEL)});
-            //     inRange_Left_H <= ($signed({1'b0,local_Counter_H})  >= ($signed({1'b0,entity_Position_Pixel_H}) - ((temp_Entity_1[5:4] == 2'b01) ? ($signed({1'b0, 10'b1111111111&(temp_Entity_1[3:0] * TILE_LEN_PIXEL)})) : 0)));
-            //     inRange_Right_H <= {1'b0,local_Counter_H}  < ({1'b0,entity_Position_Pixel_H} + ((temp_Entity_1[5:4] == 2'b11)? ((temp_Entity_1[3:0] + 1) * TILE_LEN_PIXEL) : TILE_LEN_PIXEL));
+                inRange_Top_V <= local_Counter_V >= entity_Position_Pixel_V;
+                inRange_Bottom_V <= local_Counter_V < (entity_Position_Pixel_V + TILE_LEN_PIXEL);
+                //inRange <= {inRange_Top_V && inRange_Bottom_V && inRange_Left_H && inRange_Right_H, temp_Entity_2};
+            end else begin
+                // signed_Array_Len <= $signed({1'b0, 10'b1111111111&(entity_7_Array[3:0] * TILE_LEN_PIXEL)});
+                inRange_Left_H <= ($signed({1'b0,local_Counter_H})  >= ($signed({1'b0,entity_Position_Pixel_H}) - ((temp_Entity_1[5:4] == 2'b01) ? ($signed({1'b0, 10'b1111111111&(temp_Entity_1[3:0] * TILE_LEN_PIXEL)})) : 0)));
+                inRange_Right_H <= {1'b0,local_Counter_H}  < ({1'b0,entity_Position_Pixel_H} + ((temp_Entity_1[5:4] == 2'b11)? ((temp_Entity_1[3:0] + 1) * TILE_LEN_PIXEL) : TILE_LEN_PIXEL));
     
-            //     inRange_Top_V <= ($signed({1'b0,local_Counter_V})  >= ($signed({1'b0,entity_Position_Pixel_V}) - ((temp_Entity_1[5:4] == 2'b10) ? ($signed({1'b0, 10'b1111111111&(temp_Entity_1[3:0] * TILE_LEN_PIXEL)})) : 0)));
-            //     inRange_Bottom_V <= {1'b0,local_Counter_V}  < ({1'b0,entity_Position_Pixel_V} + ((temp_Entity_1[5:4] == 2'b00)? ((temp_Entity_1[3:0] + 1) * TILE_LEN_PIXEL) : TILE_LEN_PIXEL));
-            // end
-            array_Len <= {1'b0, 10'b1111111111&(temp_Entity_1[3:0] * TILE_LEN_PIXEL)};
-            entity_Position_Pixel_H_1 <= entity_Position_Pixel_H;
-            entity_Position_Pixel_V_1 <= entity_Position_Pixel_V;
+                inRange_Top_V <= ($signed({1'b0,local_Counter_V})  >= ($signed({1'b0,entity_Position_Pixel_V}) - ((temp_Entity_1[5:4] == 2'b10) ? ($signed({1'b0, 10'b1111111111&(temp_Entity_1[3:0] * TILE_LEN_PIXEL)})) : 0)));
+                inRange_Bottom_V <= {1'b0,local_Counter_V}  < ({1'b0,entity_Position_Pixel_V} + ((temp_Entity_1[5:4] == 2'b00)? ((temp_Entity_1[3:0] + 1) * TILE_LEN_PIXEL) : TILE_LEN_PIXEL));
+            end
 
-            inRange_Left_H <= ($signed({1'b0,local_Counter_H})  >= ($signed({1'b0,entity_Position_Pixel_H_1}) - ((temp_Entity_1_5[5:4] == 2'b01) ? ($signed(array_Len)) : 0)));
-            inRange_Right_H <= {1'b0,local_Counter_H}  < ({1'b0,entity_Position_Pixel_H_1} + ((temp_Entity_1_5[5:4] == 2'b11)? (array_Len + TILE_LEN_PIXEL) : TILE_LEN_PIXEL));
+            // // array_Len <= {1'b0, 10'b1111111111&(temp_Entity_1[3:0] * TILE_LEN_PIXEL)};
+            // // entity_Position_Pixel_H_1 <= entity_Position_Pixel_H;
+            // // entity_Position_Pixel_V_1 <= entity_Position_Pixel_V;
 
-            inRange_Top_V <= ($signed({1'b0,local_Counter_V})  >= ($signed({1'b0, entity_Position_Pixel_V_1}) - ((temp_Entity_1_5[5:4] == 2'b10) ? ($signed(array_Len)) : 0)));
-            inRange_Bottom_V <= {1'b0,local_Counter_V}  < ({1'b0, entity_Position_Pixel_V_1} + ((temp_Entity_1_5[5:4] == 2'b00)? (array_Len + TILE_LEN_PIXEL) : TILE_LEN_PIXEL));
+            // // inRange_Left_H <= ($signed({1'b0,local_Counter_H})  >= ($signed({1'b0,entity_Position_Pixel_H_1}) - ((temp_Entity_1_5[5:4] == 2'b01) ? ($signed(array_Len)) : 0)));
+            // // inRange_Right_H <= {1'b0,local_Counter_H}  < ({1'b0,entity_Position_Pixel_H_1} + ((temp_Entity_1_5[5:4] == 2'b11)? (array_Len + TILE_LEN_PIXEL) : TILE_LEN_PIXEL));
+
+            // // inRange_Top_V <= ($signed({1'b0,local_Counter_V})  >= ($signed({1'b0, entity_Position_Pixel_V_1}) - ((temp_Entity_1_5[5:4] == 2'b10) ? ($signed(array_Len)) : 0)));
+            // // inRange_Bottom_V <= {1'b0,local_Counter_V}  < ({1'b0, entity_Position_Pixel_V_1} + ((temp_Entity_1_5[5:4] == 2'b00)? (array_Len + TILE_LEN_PIXEL) : TILE_LEN_PIXEL));
             
             //delay
-            temp_Entity_1_5 <= temp_Entity_1;
-            temp_Entity_2 <= temp_Entity_1_5;
-            flip_Or_Array_Flag_1_5 <= flip_Or_Array_Flag_1;
-            flip_Or_Array_Flag_2 <= flip_Or_Array_Flag_1_5;
+            temp_Entity_2 <= temp_Entity_1;
+            flip_Or_Array_Flag_2 <= flip_Or_Array_Flag_1;
             flip_Or_Array_Flag_3 <= flip_Or_Array_Flag_2;
 
             inRange <= {inRange_Top_V && inRange_Bottom_V && inRange_Left_H && inRange_Right_H, temp_Entity_2[9:4]};
