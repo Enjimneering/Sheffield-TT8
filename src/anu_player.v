@@ -28,7 +28,6 @@ Inputs:
         Dragon Head Direction
 
 Outputs:
-
     Next State Information:
         New player location
     
@@ -54,7 +53,7 @@ module player (
 
     output reg [13:0] player,         // Player's current visibility, orientation and position
     output reg [1:0] player_health,   // Player's health (3 states: 11, 10, 01, 00)
-    output reg [13:0] sword           // Sword's current visibility, orientation and position
+    output reg [13:0] sword          // Sword's current visibility, orientation and position
 );
     // State register
     reg [1:0] current_state;
@@ -67,18 +66,12 @@ module player (
     localparam DEAD         = 2'b11;  // End game - player dies
 
     // Gameplay Flags
-    reg dragon_hurt;   // Flag indicating dragon was hit (not used in this module)
-    reg player_hurt;   // Flag indicating player was hit (not used in this module)
-    reg dragon_dead;   // Flag indicating dragon is dead (not used in this module)
-    reg player_dead;   // Flag indicating player is dead (not used in this module)
-    reg sword_visible; // Sword visibility flag
-    reg game_over;     // Game over flag
-
-    
-    // Calculate XOR logic for direction buttons
-    // wire one_direction_pressed = (up ^ down ^ left ^ right) &&
-    //                             !(up && down) && !(up && left) && !(up && right) &&
-    //                             !(down && left) && !(down && right) && !(left && right);
+    reg dragon_hurt;     // Flag indicating dragon was hit (not used in this module)
+    reg player_hurt;     // Flag indicating player was hit (not used in this module)
+    reg dragon_dead;     // Flag indicating dragon is dead (not used in this module)
+    reg player_dead;     // Flag indicating player is dead (not used in this module)
+    reg sword_visible;   // Sword visibility flag
+    reg game_over;       // Game over flag
 
     // State transition logic
     always @(posedge clk or posedge reset) begin
@@ -102,10 +95,10 @@ module player (
                 sword_visible <= 1'b0;
                 if (player_health == 0) begin
                     next_state = DEAD;  // Transition to DEAD state if health is 0
-                end else if (up || down || left || right) begin
+                end else if (up ^ down ^ left ^ right) begin
                     if (A || B)
                         next_state = ATTACK_STATE;  // Attack if A or B is pressed
-                    else 
+                    else
                         next_state = MOVE_STATE;  // Move if directional button is pressed
                 end else begin
                     next_state = IDLE_STATE;  // Stay idle if no input
