@@ -2,7 +2,7 @@
 
 
 module FrameBufferController_Top(
-    input clk,  
+    input clk_in,  
     input reset,    
     input wire [13:0] entity_1,  //entity input form: ([13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
     input wire [13:0] entity_2,  //Simultaneously supports up to 9 objects in the scene.
@@ -30,6 +30,17 @@ localparam [3:0] SCREENSIZE_V = 12;
 
 
 wire [7:0] buffer;
+
+wire clk;
+wire locked;
+// Clock
+clk_wiz_0 inst(
+    .clk_in1(clk_in),
+    .reset(reset),
+
+    .clk_out1(clk),
+    .locked(locked)
+);
 
 
 // function [9:0] entity_Position_Pixel_H; //Calculate the entity horizontal position in pixel
