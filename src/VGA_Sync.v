@@ -1,3 +1,6 @@
+`include "vertical_counter.v"       
+`include "horizontal_counter.v"     
+
 /*
 
 Project: TinyTapeStation
@@ -41,12 +44,6 @@ The sync pulses are enabled when the current pixel is in the retrace or active a
 */
     
 
-
-// TODO: Create Buffer System to previent glitches??
-
-//`include "vertical_counter.v" - removed for TT Build
-//`include "horizontal_counter.v" - removed for TT Build
-
 module VGA_Sync(
     
     //CONTROL SIGNALS
@@ -57,8 +54,8 @@ module VGA_Sync(
     output reg         h_sync,        // H_SYNC PULSE
     output reg         v_sync,        // V_SYNC PULSE
     output reg         enable_pixel,  // VIDEO ENABLE
-    output reg  [9:0]  pixel_x,       // PIXEL_X
-    output reg  [9:0]  pixel_y        // PIXEL_Y
+    output reg  [9:0]  pixel_x,       // PIXEL_X - debug
+    output reg  [9:0]  pixel_y        // PIXEL_Y - debug
 
 );
 
@@ -79,38 +76,39 @@ module VGA_Sync(
     parameter V_MAX = V_RETRACE + V_BACK_PORCH + V_WIDTH + V_FRONT_PORCH - 1;       // 523
 
     //Position Counters and buffers
-    reg  [9:0] h_count_reg, v_count_reg;
+
     wire [9:0] h_count_next, v_count_next;
 
     //Output registers and buffers
-    reg   v_sync_reg , h_sync_reg;
+
     wire  v_sync_next, h_sync_next;
     
     //Video enable signal
-    wire enable_vsync;
-    
-   Horizontal_Counter hc(
-    .pixel_clk(clk),
-    .reset(reset),
-    .h_count_value(h_count_next),
-    .enable_v_counter(enable_vsync)
-   );
 
-   Vertical_Counter vc(
-    .pixel_clk(clk),
-    .reset(reset),
-    .enable(enable_vsync),
-    .v_count_value(v_count_next)
-   );
+    wire enable_v_count;
+    
+    Horizontal_Counter hc(
+        .pixel_clk(clk),
+        .reset(reset),
+        .enable_v_counter(enable_v_count),
+        .h_count_value(h_count_next)
+    );
+
+    Vertical_Counter vc(
+        .pixel_clk(clk),
+        .reset(reset),
+        .enable(enable_v_count),
+        .v_count_value(v_count_next)
+    );
          
     // Set SYNC PULSES LOW  when either counters is in the retrace period.
+    
     assign  h_sync_next = (h_count_next < H_RETRACE) ? 0:1;
     assign  v_sync_next = (v_count_next < V_RETRACE) ? 0:1; 
+         
+    always @(posedge clk) begin 
 
-   always @(posedge clk ) begin 
-
-
-         // Enable video output when both counters are in the active region.
+        // Enable video output when both counters are in the active region.
 
          enable_pixel <= 
          (
@@ -119,14 +117,14 @@ module VGA_Sync(
           && (v_count_next >= V_RETRACE + V_BACK_PORCH)
           && (v_count_next <= V_MAX - V_FRONT_PORCH) 
          
-         ) ? 1:0 ;  
-
-
+         ) ? 1:0;  
+         
          //Output Assignments
-         pixel_x = h_count_next;
-         pixel_y = v_count_next;     
-         h_sync = h_sync_next;
-         v_sync = v_sync_next;
+
+         pixel_x <= h_count_next;
+         pixel_y <= v_count_next;     
+         h_sync <= h_sync_next;
+         v_sync <= v_sync_next;
 
    end
           

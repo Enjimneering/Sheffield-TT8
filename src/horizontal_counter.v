@@ -4,7 +4,7 @@ Project: TinyTapeStation
 Engineer(s) : James Ashie Kotey
 Module: VGA Horizontal Pixel Counter
 
-Summary: 
+Summary: Moduluo 800 counter that with active high reset. Used to count the horizontal position of the current pixel in the VGA Sync Unit.
 
 Description =========================================
 
@@ -18,7 +18,12 @@ module Horizontal_Counter(
 );
     
     parameter H_MAX = 799;
-    
+
+    initial begin
+        h_count_value = 0;
+        enable_v_counter = 0;
+    end
+
     // CAN only use a single event as a condition in an always block- otherwise, it won't synthesize.
     always @(posedge pixel_clk) begin
     

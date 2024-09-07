@@ -4,10 +4,11 @@ Project: TinyTapeStation
 Engineer(s) : James Ashie Kotey
 Module: VGA Vertical Pixel Counter
 
-Summary: 
+Summary: Moduluo 524 counter that with active high reset. Used to count the vertical position of the current pixel in the VGA Sync Unit.
 
 Description =========================================
 
+    
 */
 
 module Vertical_Counter(
@@ -18,7 +19,12 @@ module Vertical_Counter(
 
 );
 
-    parameter V_MAX = 524;
+    initial begin
+        v_count_value = 0;
+    end
+
+
+    parameter V_MAX = 523;
     
     // CAN only use a single event as a condition in an always block- otherwise, it won't synthesize.
     always @(posedge pixel_clk) begin
