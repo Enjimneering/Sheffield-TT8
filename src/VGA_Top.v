@@ -24,13 +24,20 @@ module VGA_Top(
     output reg          v_sync,       // VSYNC OUT
     output wire         video_enable
 );
-
+    
+    wire pixel_clk_node;
+        
+    BUFG pixel_clk_buf (
+    .I(pixel_clk),
+    .O(pixel_clk_node)
+    );
+    
     //Internal signals 
 
     wire h_sync_in, v_sync_in;
 
     VGA_Sync sync(
-        .clk(pixel_clk),
+        .clk(pixel_clk_node),
         .reset(reset),  
         .enable_pixel(video_enable),
         .h_sync(h_sync_in),
@@ -39,15 +46,14 @@ module VGA_Top(
 
     //Color Logic
 
-    always @(posedge pixel_clk) begin
-    
+    always @(posedge pixel_clk_node) begin
 
-        if (video_enable) begin
+        if (video_enable & !reset) begin
             rgb_out <= color_data;
         end
 
         else begin
-            rgb_out <= 12'b0000_0000_0000;
+            rgb_out <= 0;
         end
 
         h_sync <= h_sync_in;

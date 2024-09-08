@@ -59,6 +59,13 @@ module VGA_Sync(
 
 );
 
+    //Clock Node
+    
+    BUFG pixel_clk_buf_2 (
+    .I(clk),
+    .O(pixel_clk)
+    );
+    
     // VGA SPECIFICATION PARAMETERS
 
     // HORIZONTAL TIMING
@@ -88,14 +95,14 @@ module VGA_Sync(
     wire enable_v_count;
     
     Horizontal_Counter hc(
-        .pixel_clk(clk),
+        .pixel_clk(pixel_clk),
         .reset(reset),
         .enable_v_counter(enable_v_count),
         .h_count_value(h_count_next)
     );
 
     Vertical_Counter vc(
-        .pixel_clk(clk),
+        .pixel_clk(pixel_clk),
         .reset(reset),
         .enable(enable_v_count),
         .v_count_value(v_count_next)
