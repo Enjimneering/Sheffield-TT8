@@ -346,7 +346,9 @@ module DragonHead (
                     target_tile = SelectTarget(player_location, sheep_location, CONTEST_STATE);
                     next_dragon_head_location <= NextLocation(dragon_head_location, target_tile);
                     next_dragon_head_direction <= NextDirection(dragon_head_location, next_dragon_head_location);
-
+                
+                    behaviour_state <= CONTEST_STATE;
+                
                     if (next_dragon_head_location == target_tile) begin
                         if (dragon_win) begin
                             current_state <= SCATTER_STATE;
@@ -364,6 +366,8 @@ module DragonHead (
                     next_dragon_head_location <= NextLocation(dragon_head_location, target_tile);
                     next_dragon_head_direction <= NextDirection(dragon_head_location, next_dragon_head_location);
 
+                    behaviour_state <= RETREAT_STATE;
+
                     if (next_dragon_head_location == target_tile) begin
                         current_state <= CONTEST_STATE;
                     end
@@ -375,13 +379,15 @@ module DragonHead (
                     next_dragon_head_location <= NextLocation(dragon_head_location, target_tile);
                     next_dragon_head_direction <= NextDirection(dragon_head_location, next_dragon_head_location);
 
+                    behaviour_state <= SCATTER_STATE;
+
                     if (next_dragon_head_location == target_tile) begin
                         current_state <= CONTEST_STATE;
                     end
                 end
 
                 DEAD: begin
-                    // Work in progress
+                    behaviour_state <= DEAD;
                 end
             endcase
         end
