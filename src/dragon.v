@@ -39,11 +39,11 @@ module DragonHead (
     input wire  [7:0]  sheep_location,
 
     input wire  [7:0]  dragon_head_location,
-    input wire  [2:0]  dragon_head_direction,
+    input wire  [1:0]  dragon_head_direction,
     input wire  [3:0]  dragon_body_length,
 
     output reg  [7:0]  next_dragon_head_location,
-    output reg  [2:0]  next_dragon_head_direction,
+    output reg  [1:0]  next_dragon_head_direction,
     output reg  [3:0]  next_dragon_body_length,
     output reg  [1:0]  behaviour_state
 
