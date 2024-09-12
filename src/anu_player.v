@@ -83,7 +83,7 @@ module player (
             sword_visible <= 1'b0;
             game_over <= 1'b0;
         end else if (!game_over) begin
-            current_state <= next_state;      // Update state if game is not over
+            current_state = next_state;      // Update state if game is not over
         end
     end
 
