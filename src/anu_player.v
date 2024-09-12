@@ -88,20 +88,20 @@ module player (
     end
 
     // State machine for player actions
-    always @( clk ) begin
+    always @(posedge clk) begin
         case (current_state)
             IDLE_STATE: begin
                 sword <= 14'b1111_01_0000_0000;  // Hide sword outside the grid
                 sword_visible <= 1'b0;
                 if (player_health == 0) begin
-                    next_state = DEAD;  // Transition to DEAD state if health is 0
+                    next_state <= DEAD;  // Transition to DEAD state if health is 0
                 end else if (up ^ down ^ left ^ right) begin
                     if (A || B)
-                        next_state = ATTACK_STATE;  // Attack if A or B is pressed
+                        next_state <= ATTACK_STATE;  // Attack if A or B is pressed
                     else
-                        next_state = MOVE_STATE;  // Move if directional button is pressed
+                        next_state <= MOVE_STATE;  // Move if directional button is pressed
                 end else begin
-                    next_state = IDLE_STATE;  // Stay idle if no input
+                    next_state <= IDLE_STATE;  // Stay idle if no input
                 end
             end
 
@@ -118,7 +118,7 @@ module player (
                     player[7:0] <= player [7:0] + 8'b0001_0000;  // Move right
                     player[9:8] <= 2'b01;  // Update orientation to right
                 end
-                next_state = IDLE_STATE;  // Return to IDLE after moving
+                next_state <= IDLE_STATE;  // Return to IDLE after moving
             end
 
             ATTACK_STATE: begin   
@@ -138,7 +138,7 @@ module player (
                     sword [7:0] <= player [7:0] + 8'b0001_0000;
                     sword [9:8] <= 2'b01;
                 end
-                next_state = IDLE_STATE;  // Return to IDLE after attacking
+                next_state <= IDLE_STATE;  // Return to IDLE after attacking
             end
 
             DEAD: begin
@@ -146,7 +146,7 @@ module player (
             end
 
             default: begin
-                next_state = IDLE_STATE;  // Default case, stay in IDLE state
+                next_state <= IDLE_STATE;  // Default case, stay in IDLE state
             end
         endcase
     end

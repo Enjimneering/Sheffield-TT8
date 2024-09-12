@@ -65,61 +65,63 @@ module player_tb;
         
         // Test ?: Two direction buttons
         up = 1; down = 1;
-        #40;
+        #60;
         up = 0; down = 0; 
-        #40
+        #20
 
         // Test 1: Move down
         up = 1; 
-        #40; 
+        #60; 
         up = 0;
-        #40; // Wait for state to update
+        #20; // Wait for state to update
         
         // Test 2: Move up
         down = 1; 
-        #40; 
+        #60; 
         down = 0;
-        #40; // Wait for state to update
+        #20; // Wait for state to update
         
         // Test 3: Move left
         left = 1; 
-        #40; 
+        #60; 
         left = 0;
-        #40; // Wait for state to update
+        #20; // Wait for state to update
 
         // Test 4: Move right
         right = 1; 
-        #40;         
+        #60;         
         right = 0;
-        #40; // Wait for state to update
+        #20; // Wait for state to update
         
         // Test 5: Attack while facing up
         up = 1; A = 1; 
-        #40; 
+        #60; 
         A = 0; up = 0;
-        #40; // Wait for state to update
+        #20; // Wait for state to update
 
         // Test 6: Attack while facing down
         down = 1; B = 1; 
-        #40; 
+        #60; 
         B = 0; down = 0;
-        #40; // Wait for state to update
+        #20; // Wait for state to update
         
         // Test 7: Attack while facing left
         left = 1; A = 1; 
-        #40; 
+        #60; 
         A = 0; left = 0;
-        #40; // Wait for state to update
+        #20; // Wait for state to update
         
         // Test 8: Attack while facing right
         right = 1; A = 1; 
-        #40; 
+        #60; 
         A = 0; right = 0;
-        #40; // Wait for state to update
+        #20; // Wait for state to update
         
         // Test 9: reset the game
-        reset = 1; #40; reset = 0;
-        #40; // Wait for reset to complete
+        reset = 1; 
+        #60; 
+        reset = 0;
+        #20; // Wait for reset to complete
         
         // Stop simulation
         $stop;   
