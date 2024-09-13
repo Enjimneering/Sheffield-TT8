@@ -376,6 +376,7 @@ module DragonHead (
                 end
 
                 DEAD: begin
+                    game_over <= 1;
                     current_state <= DEAD;
                 end
             endcase
