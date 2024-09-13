@@ -45,7 +45,6 @@ module DragonHead (
     output reg  [7:0]  next_dragon_head_location,
     output reg  [1:0]  next_dragon_head_direction,
     output reg  [3:0]  next_dragon_body_length,
-    output reg  [1:0]  behaviour_state
 
 );
 
@@ -132,22 +131,13 @@ module DragonHead (
             reg [9:0]   distance_dragon_player_y;
 
 
-            
-            //README
-
-
-            /* Anu -  I  wrote this logic that uses manhatten distances to calculate which entity is closest to the dragon, 
-            if you find a way that is simpler/ will use less logic, feel free to change it - if not, please add the variables 
-            to try and make this work. */
-
-
-            case (_currentState)
+            case (current_state)
 
 
             CONTEST_STATE:
             begin  
                 
-                if ( _currentState == CONTEST_STATE ) begin
+                if ( current_state == CONTEST_STATE ) begin
 
                     // Extract Y and X coordinates
 
@@ -259,7 +249,7 @@ module DragonHead (
 
             DEAD:
             begin
-                //work in progress
+
             end
         endcase
 
@@ -338,7 +328,6 @@ module DragonHead (
     always @(posedge frame_clk or posedge rst) begin
         if (rst) begin
             current_state <= CONTEST_STATE;
-            behaviour_state <= CONTEST_STATE;
         end else begin
             case (current_state)
                 CONTEST_STATE: begin
@@ -347,7 +336,7 @@ module DragonHead (
                     next_dragon_head_location <= NextLocation(dragon_head_location, target_tile);
                     next_dragon_head_direction <= NextDirection(dragon_head_location, next_dragon_head_location);
                 
-                    behaviour_state <= CONTEST_STATE;
+                    current_state <= CONTEST_STATE;
                 
                     if (next_dragon_head_location == target_tile) begin
                         if (dragon_win) begin
@@ -366,7 +355,7 @@ module DragonHead (
                     next_dragon_head_location <= NextLocation(dragon_head_location, target_tile);
                     next_dragon_head_direction <= NextDirection(dragon_head_location, next_dragon_head_location);
 
-                    behaviour_state <= RETREAT_STATE;
+                    current_state <= RETREAT_STATE;
 
                     if (next_dragon_head_location == target_tile) begin
                         current_state <= CONTEST_STATE;
@@ -379,7 +368,7 @@ module DragonHead (
                     next_dragon_head_location <= NextLocation(dragon_head_location, target_tile);
                     next_dragon_head_direction <= NextDirection(dragon_head_location, next_dragon_head_location);
 
-                    behaviour_state <= SCATTER_STATE;
+                    current_state <= SCATTER_STATE;
 
                     if (next_dragon_head_location == target_tile) begin
                         current_state <= CONTEST_STATE;
@@ -387,7 +376,7 @@ module DragonHead (
                 end
 
                 DEAD: begin
-                    behaviour_state <= DEAD;
+                    current_state <= DEAD;
                 end
             endcase
         end
