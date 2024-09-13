@@ -85,7 +85,7 @@ module DragonHead (
 
 
     reg target_tile;
-    reg state_complete; //Signal to move to next state?
+
     reg game_over;          
     
 
