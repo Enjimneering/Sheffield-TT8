@@ -1,12 +1,11 @@
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
 
-# Tiny Tapeout 8 Test Project
+# Tiny Tapeout 9 Submission: Gnome Knight
 
-## What is Tiny Tapeout?
+## The Aim of the Project
 
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
-
-To learn more and get started, visit https://tinytapeout.com.
+The Sheffield TT9 Project aims to use the open-source Tiny-Tapeout platform to develop its members understanding of digital design concepts 
+and to gain real-life design, testing and debugging experience by developing a game console embedded system from scratch.
 
 ## Set up your Verilog project
 
