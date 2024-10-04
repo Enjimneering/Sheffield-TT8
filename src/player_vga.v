@@ -6,6 +6,7 @@
 
 
 `define COLOR_WHITE 3'd7
+`timescale 1ms/1ms
 
 // top module
 
@@ -36,9 +37,9 @@ module tt_um_vga_example (
     reg [1:0] next_state;
 
     // State definitions
-    localparam MOVE_STATE   = 2'b00;  // Move when there is input from the controller
+    localparam IDLE_STATE   = 2'b00;  // Move when there is input from the controller
     localparam ATTACK_STATE = 2'b01;  // Sword appears where the player is facing
-    localparam IDLE_STATE   = 2'b10;  // Wait for input and stay idle
+    localparam MOVE_STATE   = 2'b10;  // Wait for input and stay idle
 
     InputController ic(  // change these mappings to change the controls in the simulastor
         .clk(clk),
@@ -100,93 +101,132 @@ module tt_um_vga_example (
 
 
     // game logic (fsm)
+
+
     initial begin
-      current_state <= IDLE_STATE;
+      current_state <= 0;
       player_orientation <= 2'b01;
       player_pos <= 8'b0001_0001;
       sword_visible <= 4'b1111; 
     end
+
     always @(posedge clk) begin
-      current_state = next_state;      // Update state if game is not over
+      current_state <= next_state;      // Update state
     end
     
     always @(posedge clk) begin
-      case (current_state)
-        IDLE_STATE: begin
-            sword_pos <= 0;
-            sword_visible <= 4'b1111;
-            if (input_data[0] ^ input_data[1] ^ input_data[2] ^ input_data[3]) begin // if up, down, left, or right is pressed
-                if (input_data[4] || input_data[5])
-                  next_state <= ATTACK_STATE;  // Attack if A or B is pressed
-                else
-                  next_state <= MOVE_STATE;  // Move if directional button is pressed
-            end else
-                next_state <= IDLE_STATE;  // Stay idle if no input
-        end
+        case (current_state)
+            
+            IDLE_STATE: begin
+                sword_pos <= 0;
+                sword_visible <= 4'b1111;
+                
+                case (input_data[4]) 
+                    1 : begin // attack
+                        next_state <= ATTACK_STATE;
+                    end
 
-        MOVE_STATE: begin
-            // Move player based on direction inputs and update orientation
-            if (input_data[0] == 1 && player_pos[3:0] > 4'b0001)   // Check boundary for up movement
-                player_pos <= player_pos - 1;  // Move up
+                    0: begin // no attack
 
-            if (input_data[1] == 1 && player_pos[3:0] < 4'b1011)   // Check boundary for down movement
-                player_pos <= player_pos + 1;  // Move down
+                    if (input_data[3:0] != 0 ) // directional buttons
+                        next_state <= MOVE_STATE;  // Default case, stay in IDLE state
+                    end
 
-            if (input_data[2] == 1 && player_pos[7:4] > 4'b0000) begin  // Check boundary for left movement
-                player_pos <= player_pos - 16;  // Move left
-                player_orientation <= 2'b11;
+                    default: begin
+                        next_state <= IDLE_STATE;  // Default case, stay in IDLE state
+                    end
+
+                endcase               
+            end
+            
+            MOVE_STATE: begin
+                // Move player based on direction inputs and update orientation
+                if (input_data[0] == 1 && player_pos[3:0] > 4'b0001)   // Check boundary for up movement
+                    player_pos <= player_pos - 1;  // Move up
+
+                if (input_data[1] == 1 && player_pos[3:0] < 4'b1011)   // Check boundary for down movement
+                    player_pos <= player_pos + 1;  // Move down
+
+                if (input_data[2] == 1 && player_pos[7:4] > 4'b0000) begin  // Check boundary for left movement
+                    player_pos <= player_pos - 16;  // Move left
+                    player_orientation <= 2'b11;
+                end
+
+                if (input_data[3] == 1 && player_pos[7:4] < 4'b1111) begin  // Check boundary for right movement
+                    player_pos <= player_pos + 16;  // Move right
+                    player_orientation <= 2'b01;
+                end
+
+                next_state <= IDLE_STATE;  // Return to IDLE after moving
             end
 
-            if (input_data[3] == 1 && player_pos[7:4] < 4'b1111) begin  // Check boundary for right movement
-                player_pos <= player_pos + 16;  // Move right
-                player_orientation <= 2'b01;
+            ATTACK_STATE: begin
+                
+                sword_visible <= 4'b0001;  // Make sword visible
+
+                if (input_data[0] == 1 ) begin
+                    sword_pos <= player_pos - 1;
+                    sword_orientation <= 2'b00;
+                end else if (input_data[1] == 1 ) begin
+                    sword_pos <= player_pos + 1;
+                    sword_orientation <= 2'b10;
+                end else if (input_data[2] == 1) begin
+                    sword_pos <= player_pos - 16;
+                    sword_orientation <= 2'b11;
+                end else if (input_data[3] == 1) begin
+                    sword_pos <= player_pos + 16;
+                    sword_orientation <= 2'b01;
+                end
+              
+                next_state <= ATTACK_STATE;  // Return to IDLE after attacking
             end
 
-            next_state <= IDLE_STATE;  // Return to IDLE after moving
-        end
-
-        ATTACK_STATE: begin
-            sword_visible <= 4'b0001;  // Make sword visible
-
-            if (input_data[0] == 1 && player_pos[3:0] > 4'b0011) begin
-                sword_pos <= player_pos - 1;
-                sword_orientation <= 2'b00;
-            end else if (input_data[1] == 1 && player_pos[3:0] < 4'b1010) begin
-                sword_pos <= player_pos + 1;
-                sword_orientation <= 2'b10;
-            end else if (input_data[2] == 1 && player_pos[7:4] > 4'b0001) begin
-                sword_pos[7:0] <= player_pos - 16;
-                sword_orientation <= 2'b01;
-            end else if (input_data[3] == 1 && player_pos[7:4] < 4'b1110) begin
-                sword_pos[7:0] <= player_pos + 16;
-                sword_orientation <= 2'b11;
+            default: begin
+                next_state <= IDLE_STATE;  // Default case, stay in IDLE state
             end
-
-            next_state <= IDLE_STATE;  // Return to IDLE after attacking
-        end
-
-        default: begin
-            next_state <= IDLE_STATE;  // Default case, stay in IDLE state
-        end
-      endcase
+        endcase
     end
 
 
-
-    // color output logic (fsm)
-
-    always @(posedge clk) begin
+ 
+ 
+     always @(posedge clk) begin
         if (~rst_n) begin
         R <= 0;
         G <= 0;
         B <= 0;
         end else begin
 
+        
         if (video_active) begin // display output color from Frame controller unit
 
-            R <= pixel_value ? 2'b11 : 0;
-            G <= pixel_value ? 2'b11 : 0;
-            B <= pixel_value ? 2'b11 : 0;
+            if (current_state == 0) begin // move
+
+              R <= pixel_value ? 2'b11 : 2'b11;
+              G <= pixel_value ? 2'b11 : 0;
+              B <= pixel_value ? 2'b11 : 0;
+
+            end
+
+
+            if (current_state == 1) begin //attack
+
+              R <= pixel_value ? 2'b11 : 0;
+              G <= pixel_value ? 2'b11 : 2'b11;
+              B <= pixel_value ? 2'b11 : 0;
+
+            end
+
+            if (current_state == 2) begin // idle
+
+              R <= pixel_value ? 2'b11 : 0;
+              G <= pixel_value ? 2'b11 : 0;
+              B <= pixel_value ? 2'b11 : 2'b11;
+
+            end
+
+
+
         end else begin
             R <= 0;
             G <= 0;
