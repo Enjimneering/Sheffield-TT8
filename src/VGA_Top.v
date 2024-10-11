@@ -16,44 +16,81 @@ Description =========================================
 //`include "VGA_Sync.v" - Removed for TT Build
 
 module VGA_Top(
-
-    input wire         pixel_clk,    // CLK
-    input wire         reset,        // RESET
-    input wire  [7:0]  color_data,   // COLOR DATA - FROM GRAPHICS CONTROLLER
-    output reg  [7:0]  rgb_out,      // PIXEL COLOR OUTPUT
-    output reg         h_sync,       // HSYNC OUT
-    output reg         v_sync        // VSYNC OUT
-
+    input clk,
+    input reset,
+    output reg hsync,
+    output reg vsync,
+    output wire display_on,
+    output wire [9:0] screen_hpos,
+    output wire [9:0] screen_vpos
 );
+    reg [9:0] hpos;
+    reg [9:0] vpos;
+  // declarations for TV-simulator sync parameters
+  // horizontal constants
+  parameter H_DISPLAY = 640;  // horizontal display width
+  parameter H_BACK = 48;  // horizontal left border (back porch)
+  parameter H_FRONT = 16;  // horizontal right border (front porch)
+  parameter H_SYNC = 96;  // horizontal sync width
+  // vertical constants
+  parameter V_DISPLAY = 480;  // vertical display height
+  parameter V_TOP = 33;  // vertical top border
+  parameter V_BOTTOM = 10;  // vertical bottom border
+  parameter V_SYNC = 2;  // vertical sync # lines
+  // derived constants
+  parameter H_SYNC_START = H_DISPLAY + H_FRONT;
+  parameter H_SYNC_END = H_DISPLAY + H_FRONT + H_SYNC - 1;
+  parameter H_MAX = H_DISPLAY + H_BACK + H_FRONT + H_SYNC - 1;
+  parameter V_SYNC_START = V_DISPLAY + V_BOTTOM;
+  parameter V_SYNC_END = V_DISPLAY + V_BOTTOM + V_SYNC - 1;
+  parameter V_MAX = V_DISPLAY + V_TOP + V_BOTTOM + V_SYNC - 1;
 
-    //Internal signals 
+  wire hmaxxed = (hpos == H_MAX) || reset;  // set when hpos is maximum
+  wire vmaxxed = (vpos == V_MAX) || reset;  // set when vpos is maximum
+  assign screen_hpos = (hpos < H_DISPLAY)? hpos : 0; 
+  assign screen_vpos = (vpos < V_DISPLAY)? vpos : 0;
 
-    wire video_enable;
-    wire h_sync_in, v_sync_in;
-
-    VGA_Sync sync(
-        .clk(pixel_clk),
-        .reset(reset),  
-        .enable_pixel(video_enable),
-        .h_sync(h_sync_in),
-        .v_sync(v_sync_in),
-        .pixel_x(),
-        .pixel_y()
-    );
-
-    //Color Logic
-    always @(posedge pixel_clk ) begin
-        
-        if (video_enable) 
-            rgb_out = color_data;
-        else begin
-            rgb_out = 0;
-        end
-
-        h_sync <= h_sync_in;
-        v_sync <= v_sync_in;
-
+  // horizontal position counter
+  always @(posedge clk) begin
+    hsync <= (hpos >= H_SYNC_START && hpos <= H_SYNC_END);
+    if (hmaxxed) begin
+      hpos <= 0;
+    end else begin
+      hpos <= hpos + 1;
     end
+  end
+
+
+  // vertical position counter
+  always @(posedge clk) begin
+    vsync <= (vpos >= V_SYNC_START && vpos <= V_SYNC_END);
+    if (hmaxxed)
+      if (vmaxxed) begin
+      vpos <= 0;
+      end else begin
+        vpos <= vpos + 1;
+      end
+  end
+
+  // always @(posedge clk)begin
+  //   if (!hsync) begin
+  //     screen_hpos <= screen_hpos +1;
+  //   end else begin
+  //     screen_hpos <= 0;
+  //   end
+  // end
+  // always @(posedge clk)begin
+  //   if (hmaxxed) begin
+  //     if (!vsync) begin
+  //       screen_vpos <= screen_vpos +1;
+  //     end else begin
+  //       screen_vpos <= 0;
+  //     end
+  //   end
+  // end
+
+  // display_on is set when beam is in "safe" visible frame
+  assign display_on = (hpos < H_DISPLAY) && (vpos < V_DISPLAY);
 
 endmodule
 
