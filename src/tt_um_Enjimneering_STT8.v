@@ -24,9 +24,9 @@ module tt_um_Enjimneering_STT8 (
     wire [9:0] pix_x;
     wire [9:0] pix_y;
 
-    wire entityInput = {ui_in ,ui_in[0:5]};
-    wire entityInput2 = {ui_in[0:5] ,ui_in};
-    wire entityInput3 = {ui_in, ui_in, ui_in[0:1]};
+    wire [13:0] entityInput = {ui_in ,ui_in[0:5]};
+    wire [13:0] entityInput2 = {ui_in[0:5] ,ui_in};
+    wire [17:0] entityInput3 = {ui_in, ui_in, ui_in[0:1]};
 
     wire pixel_value;
     VGA_Top vga_sync_gen (
