@@ -29,7 +29,7 @@ module tt_um_Enjimneering_STT8 (
     wire entityInput3 = {ui_in, ui_in, ui_in[0:1]};
 
     wire pixel_value;
-    vga_sync_generator vga_sync_gen (
+    VGA_Top vga_sync_gen (
         .clk(clk),
         .reset(~rst_n),
         .hsync(hsync),
