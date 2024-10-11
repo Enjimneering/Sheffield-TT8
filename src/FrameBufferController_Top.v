@@ -236,19 +236,19 @@ end
 
 wire [7:0] buffer;
 
-// SpriteROM Rom(
-//     .clk(clk),
-//     .reset(reset),
-//     .orientation(out_entity[1:0]),
-//     .sprite_ID(out_entity[5:2]),
-//     .line_index(out_entity[8:6]),
+SpriteROM Rom(
+    .clk(clk),
+    .reset(reset),
+    .orientation(out_entity[1:0]),
+    .sprite_ID(out_entity[5:2]),
+    .line_index(out_entity[8:6]),
 
-//     .data(buffer)
-// );
+    .data(buffer)
+);
 
 always@(posedge clk)begin
     if(!reset)begin
-    colour <= out_entity[rowCounter];
+    colour <= buffer[rowCounter];
     end else begin
     colour <= 1'b1;
     end
