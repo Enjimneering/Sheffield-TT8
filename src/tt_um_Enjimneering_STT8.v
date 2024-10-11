@@ -26,7 +26,7 @@ module tt_um_Enjimneering_STT8 (
 
 
     FrameBufferController_Top frameBuffer (
-    .clk(clk),  
+    .clk_in(clk),  
     .reset(rst_n),   
      
     .entity_2(entityInput),  //Simultaneously supports up to 9 objects in the scene.
