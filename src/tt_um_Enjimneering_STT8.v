@@ -46,8 +46,8 @@ module tt_um_Enjimneering_STT8 (
 
     wire [7:0] unused;
 
-    wire [7:0] inPos;
-    assign inPos = ui_in;
+    // wire [7:0] inPos;
+    // assign inPos = ui_in;
 
     FrameBufferController_Top FBC(
     .clk_in                  ( clk                   ),
