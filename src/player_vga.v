@@ -26,12 +26,16 @@ module tt_um_vga_example (
     
     // input logic 
 
+    // orientation and direction: 00 - up, 01 - right, 10 - down, 11 - left  
+
     wire [4:0] input_data; // register to hold the 5 possible player actions
     reg [7:0] player_pos;   // player position xxxx_yyyy
-    reg [1:0] player_orientation;   // sword orientation xxxx_yyyy
+    reg [1:0] player_orientation;   // player orientation 
+    reg [1:0] player_direction;   // player direction
     reg [7:0] sword_pos; // sword position xxxx_yyyy
     reg [3:0] sword_visible;
-    reg [1:0] sword_orientation;   // sword orientation xxxx_yyyy
+    reg [1:0] sword_orientation;   // sword orientation 
+    reg [2:0] sword_duration; // how long the sword stays visible
     // State register
     reg [1:0] current_state;
     reg [1:0] next_state;
@@ -43,6 +47,7 @@ module tt_um_vga_example (
 
     InputController ic(  // change these mappings to change the controls in the simulastor
         .clk(clk),
+        .reset(frame_end),
         .up(ui_in[0]),
         .down(ui_in[1]),
         .left(ui_in[2]),
@@ -86,6 +91,8 @@ module tt_um_vga_example (
     wire [9:0] pix_y;
 
     wire pixel_value;
+    wire frame_end;
+
 
     vga_sync_generator vga_sync_gen (
         .clk(clk),
@@ -94,24 +101,32 @@ module tt_um_vga_example (
         .vsync(vsync),
         .display_on(video_active),
         .screen_hpos(pix_x),
-        .screen_vpos(pix_y)
+        .screen_vpos(pix_y),
+        .frame_end(frame_end)
     );
 
     assign uo_out  = {hsync, B[0], G[0], R[0], vsync, B[1], G[1], R[1]};
 
 
     // game logic (fsm)
-
-
+    // animation stuff
+    reg [3:0] player_sprite;
+    reg [2:0] player_anim_counter;
+    
     initial begin
-      current_state <= 0;
-      player_orientation <= 2'b01;
-      player_pos <= 8'b0001_0001;
-      sword_visible <= 4'b1111; 
+        player_sprite <= 4'b0010;
+        current_state <= 0;
+        player_orientation <= 2'b01;
+        player_direction <= 2'b01;
+        player_pos <= 8'b0001_0001;
+        sword_visible <= 4'b1111; 
+        sword_duration <= 3'b111;
     end
 
-    always @(posedge clk) begin
-      current_state <= next_state;      // Update state
+    
+
+    always @(posedge frame_end) begin
+        current_state <= next_state;      // Update state
     end
     
     always @(posedge clk) begin
@@ -141,44 +156,49 @@ module tt_um_vga_example (
             
             MOVE_STATE: begin
                 // Move player based on direction inputs and update orientation
-                if (input_data[0] == 1 && player_pos[3:0] > 4'b0001)   // Check boundary for up movement
+                if (input_data[0] == 1 && player_pos[3:0] > 4'b0001) begin   // Check boundary for up movement
                     player_pos <= player_pos - 1;  // Move up
-
-                if (input_data[1] == 1 && player_pos[3:0] < 4'b1011)   // Check boundary for down movement
-                    player_pos <= player_pos + 1;  // Move down
-
-                if (input_data[2] == 1 && player_pos[7:4] > 4'b0000) begin  // Check boundary for left movement
-                    player_pos <= player_pos - 16;  // Move left
-                    player_orientation <= 2'b11;
+                    player_direction <= 2'b00;
                 end
 
-                if (input_data[3] == 1 && player_pos[7:4] < 4'b1111) begin  // Check boundary for right movement
+                else if (input_data[1] == 1 && player_pos[3:0] < 4'b1011) begin  // Check boundary for down movement
+                    player_pos <= player_pos + 1;  // Move down
+                    player_direction <= 2'b10;
+                end 
+
+
+                else if (input_data[2] == 1 && player_pos[7:4] > 4'b0000) begin  // Check boundary for left movement
+                    player_pos <= player_pos - 16;  // Move left
+                    player_orientation <= 2'b11;
+                    player_direction <= 2'b11;
+                end
+
+                else if (input_data[3] == 1 && player_pos[7:4] < 4'b1111) begin  // Check boundary for right movement
                     player_pos <= player_pos + 16;  // Move right
                     player_orientation <= 2'b01;
+                    player_direction <= 2'b01;
                 end
 
                 next_state <= IDLE_STATE;  // Return to IDLE after moving
             end
 
             ATTACK_STATE: begin
-                
-                sword_visible <= 4'b0001;  // Make sword visible
-
-                if (input_data[0] == 1 ) begin
+                sword_visible <= 4'b0001;
+                if (player_direction == 2'b00 ) begin // player facing up
                     sword_pos <= player_pos - 1;
                     sword_orientation <= 2'b00;
-                end else if (input_data[1] == 1 ) begin
+                end else if (player_direction == 2'b10 ) begin // player facing down
                     sword_pos <= player_pos + 1;
                     sword_orientation <= 2'b10;
-                end else if (input_data[2] == 1) begin
+                end else if (player_direction == 2'b11) begin // player facing left
                     sword_pos <= player_pos - 16;
                     sword_orientation <= 2'b11;
-                end else if (input_data[3] == 1) begin
+                end else if (player_direction == 2'b01) begin // player facing right
                     sword_pos <= player_pos + 16;
                     sword_orientation <= 2'b01;
                 end
-              
-                next_state <= ATTACK_STATE;  // Return to IDLE after attacking
+
+                next_state <= IDLE_STATE;  // Return to IDLE after attacking
             end
 
             default: begin
@@ -188,9 +208,7 @@ module tt_um_vga_example (
     end
 
 
- 
- 
-     always @(posedge clk) begin
+    always @(posedge clk) begin
         if (~rst_n) begin
         R <= 0;
         G <= 0;
@@ -200,28 +218,36 @@ module tt_um_vga_example (
         
         if (video_active) begin // display output color from Frame controller unit
 
-            if (current_state == 0) begin // move
+            if (player_direction == 0) begin // up
 
-              R <= pixel_value ? 2'b11 : 2'b11;
-              G <= pixel_value ? 2'b11 : 0;
-              B <= pixel_value ? 2'b11 : 0;
-
-            end
-
-
-            if (current_state == 1) begin //attack
-
-              R <= pixel_value ? 2'b11 : 0;
-              G <= pixel_value ? 2'b11 : 2'b11;
-              B <= pixel_value ? 2'b11 : 0;
+                R <= pixel_value ? 2'b11 : 2'b11;
+                G <= pixel_value ? 2'b11 : 0;
+                B <= pixel_value ? 2'b11 : 0;
 
             end
 
-            if (current_state == 2) begin // idle
 
-              R <= pixel_value ? 2'b11 : 0;
-              G <= pixel_value ? 2'b11 : 0;
-              B <= pixel_value ? 2'b11 : 2'b11;
+            if (player_direction == 1) begin // right
+
+                R <= pixel_value ? 2'b11 : 0;
+                G <= pixel_value ? 2'b11 : 2'b11;
+                B <= pixel_value ? 2'b11 : 0;
+
+            end
+
+            if (player_direction == 2) begin // down
+
+                R <= pixel_value ? 2'b11 : 0;
+                G <= pixel_value ? 2'b11 : 0;
+                B <= pixel_value ? 2'b11 : 2'b11;
+
+            end
+
+            if (player_direction == 3) begin // 
+
+                R <= pixel_value ? 2'b11 : 2'b11;
+                G <= pixel_value ? 2'b11 : 0;
+                B <= pixel_value ? 2'b11 : 2'b11;
 
             end
 
@@ -313,7 +339,7 @@ module PictureProcessingUnit(
 
 
 always@(posedge clk)begin // Tile and Pixel Counters
-   
+
     if(!reset)begin
             
         previous_vertical_pixel <= counter_V;
@@ -323,14 +349,14 @@ always@(posedge clk)begin // Tile and Pixel Counters
             if(upscale_Counter_V != 4) begin  // Upscale every pixel 5x
 
                 upscale_Counter_V <= upscale_Counter_V + 1;
-               
+            
             end 
-             
+            
             else begin
 
                     upscale_Counter_V <= 0;
                     row_Counter <= row_Counter + 1;
-             end
+            end
 
                 if (counter_V >= 40) begin // Tile Counter 
 
@@ -784,17 +810,20 @@ module SpriteROM (
 // Author: Uri Shaked
 
 module vga_sync_generator (  
-    input clk,
-    input reset,
-    output reg hsync,
-    output reg vsync,
-    output wire display_on,
-    output wire [9:0] screen_hpos,
-    output wire [9:0] screen_vpos
+
+    input              clk,
+    input              reset,
+    output reg         hsync,
+    output reg         vsync,
+    output wire        display_on,
+    output wire [9:0]  screen_hpos,
+    output wire [9:0]  screen_vpos,
+    output wire        frame_end,
+    output wire        input_enable
 );
     
-    reg [9:0] hpos;
-    reg [9:0] vpos;
+    reg [9:0] hpos = 0;
+    reg [9:0] vpos = 0;
 
 
     // declarations for TV-simulator sync parameters
@@ -824,6 +853,10 @@ module vga_sync_generator (
 
     wire hmaxxed = (hpos == H_MAX) || reset;  // set when hpos is maximum
     wire vmaxxed = (vpos == V_MAX) || reset;  // set when vpos is maximum
+    
+    wire hblanked = (hpos == H_DISPLAY);
+    wire vblanked = (vpos == V_DISPLAY);
+
     assign screen_hpos = (hpos < H_DISPLAY)? hpos : 0; 
     assign screen_vpos = (vpos < V_DISPLAY)? vpos : 0;
 
@@ -852,9 +885,10 @@ module vga_sync_generator (
 
     // display_on is set when beam is in "safe" visible frame
     assign display_on = (hpos < H_DISPLAY) && (vpos < V_DISPLAY);
+    assign frame_end = hblanked && vblanked;
+    assign input_enable = (hblanked && vpos < V_DISPLAY);
 
 endmodule
-
 
 // --------------------------------------
 
@@ -871,40 +905,50 @@ endmodule
 
 
 module InputController (
+
     input wire clk,
+    input wire reset,
     input wire up,            
     input wire down,
     input wire left,
     input wire right,
     input wire attack,
-    output reg [4:0] control_state
+    output reg [4:0] control_state 
 );
+    initial begin
+        control_state = 0;
+    end
 
-    reg [4:0] previous_state = 5'b0;
-    reg [4:0] current_state  = 5'b0;;
+    reg [4:0] previous_state  = 5'b0;
+    reg [4:0] current_state   = 5'b0;
+    reg [4:0] pressed_buttons = 5'b0 ;
+    reg [1:0] ripple_counter = 0;
+
 
     always @(posedge clk) begin
+        previous_state = current_state;
+        current_state = {attack, right, left , down , up};
+    end
 
-        current_state[0] <= up;
-        current_state[1] <= down;
-        current_state[2] <= left;
-        current_state[3] <= right;
-        current_state[4] <= attack;
+    always @(clk) begin
+
+            pressed_buttons[0] <= (current_state[0] == 1 & previous_state[0] == 0) ? 1:0;
+            pressed_buttons[1] <= (current_state[1] == 1 & previous_state[1] == 0) ? 1:0;
+            pressed_buttons[2] <= (current_state[2] == 1 & previous_state[2] == 0) ? 1:0;
+            pressed_buttons[3] <= (current_state[3] == 1 & previous_state[3] == 0) ? 1:0;
+            pressed_buttons[4] <= (current_state[4] == 1 & previous_state[4] == 0) ? 1:0;
+
+    end
+
+    always @(posedge clk) begin
         
-        previous_state <= current_state;
+        if (!reset) begin
+            control_state <= control_state | pressed_buttons;
+        end
 
+        else
+            control_state <= 0;
     end
 
-    // previous state == 0 and current state == 1 means that the button was just pressed.
-
-    always @(posedge clk) begin
-
-        control_state[0] <= (previous_state[0] == 0 & current_state[0] == 1) ;
-        control_state[1] <= (previous_state[1] == 0 & current_state[1] == 1) ;
-        control_state[2] <= (previous_state[2] == 0 & current_state[2] == 1) ;
-        control_state[3] <= (previous_state[3] == 0 & current_state[3] == 1) ;
-        control_state[4] <= (previous_state[4] == 0 & current_state[4] == 1) ;
-
-    end
 
 endmodule
