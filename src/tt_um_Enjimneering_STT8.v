@@ -28,7 +28,7 @@ module tt_um_Enjimneering_STT8 (
     wire [13:0] entityInput2 = {ui_in[5:0] ,ui_in};
     wire [17:0] entityInput3 = {ui_in, ui_in, ui_in[1:0]};
 
-    wire pixel_value;
+    wire pixel_value = pix_y;
     VGA_Top vga_sync_gen (
         .clk(clk),
         .reset(~rst_n),
@@ -46,8 +46,8 @@ module tt_um_Enjimneering_STT8 (
 
     wire [7:0] unused;
 
-    // wire [7:0] inPos;
-    // assign inPos = ui_in;
+    wire [7:0] inPos;
+    assign inPos = ui_in;
 
     // FrameBufferController_Top FBC(
     // .clk_in                  ( clk                   ),
