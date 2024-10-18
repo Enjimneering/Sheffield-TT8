@@ -130,9 +130,9 @@ wire [3:0] next_HPos = (Counter_H_Tile + 1);
 wire [3:0] curDet_Hpos = (local_Counter_H);
 wire hpos_update = next_HPos != curDet_Hpos;
 
-wire [125:0] all_Entity = {entity_1, entity_2, entity_3, entity_4, entity_5, entity_6, entity_7_Array[17:4], entity_8_Flip, entity_9_Flip};
+// wire [125:0] all_Entity = {entity_1, entity_2, entity_3, entity_4, entity_5, entity_6, entity_7_Array[17:4], entity_8_Flip, entity_9_Flip};
 
-reg [6:0] set_Pt;
+// reg [6:0] set_Pt;
 
 always@(posedge clk)begin
 
@@ -211,13 +211,10 @@ always@(posedge clk)begin
         end
 
         if (entity_Counter != 8 && entity_Counter != 4'd15)begin
-            set_Pt <= set_Pt + 14;
             entity_Counter <= entity_Counter + 1;
         end else if (hpos_update)begin
-            set_Pt <= 0;
             entity_Counter <=0;
         end else begin
-            set_Pt <= 7'b1111111;
             entity_Counter <= 4'd15;
         end
 
