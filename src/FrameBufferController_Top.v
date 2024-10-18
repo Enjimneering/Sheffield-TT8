@@ -219,7 +219,6 @@ always@(posedge clk)begin
         end
 
     end else begin
-        set_Pt <= 0;
         flip_Or_Array_Flag <= 2'b11;
         entity_Counter <= 4'b0000;
         general_Entity <=18'b111111000000000000;
