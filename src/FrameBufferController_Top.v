@@ -53,59 +53,65 @@ reg [2:0] upscale_Counter_V;
 
 always@(posedge clk)begin //Break the pixel counter into h/v tile counter and tile row/col counter 
     if(!reset)begin
-            preV <= counter_V;
-            if (preV != counter_V)begin
+            // preV <= counter_V;
+            // if (preV != counter_V)begin
                 
-                if(upscale_Counter_V != (UPSCALE_FACTOR-1)) begin
-                    upscale_Counter_V <= upscale_Counter_V + 1;
-                end else begin
-                    upscale_Counter_V <= 0;
-                    colCounter <= colCounter + 1;
-                end
+            //     if(upscale_Counter_V != (UPSCALE_FACTOR-1)) begin
+            //         upscale_Counter_V <= upscale_Counter_V + 1;
+            //     end else begin
+            //         upscale_Counter_V <= 0;
+            //         colCounter <= colCounter + 1;
+            //     end
                 
-                if (counter_V >= TILE_LEN_PIXEL)begin
-                    if(colCounter == 3'b111 && upscale_Counter_V == (UPSCALE_FACTOR-1) && Counter_V_Tile != SCREENSIZE_V_BDRY)begin
-                        Counter_V_Tile <= Counter_V_Tile + 1;
-                    end else if(colCounter == 3'b111 && upscale_Counter_V == (UPSCALE_FACTOR-1) && Counter_V_Tile == SCREENSIZE_V_BDRY) begin
-                        Counter_V_Tile <= 0;
-                    end else begin
-                        Counter_V_Tile <= Counter_V_Tile;
-                    end
-                end else begin
-                    Counter_V_Tile <= 0;
-                end
+            //     if (counter_V >= TILE_LEN_PIXEL)begin
+            //         if(colCounter == 3'b111 && upscale_Counter_V == (UPSCALE_FACTOR-1) && Counter_V_Tile != SCREENSIZE_V_BDRY)begin
+            //             Counter_V_Tile <= Counter_V_Tile + 1;
+            //         end else if(colCounter == 3'b111 && upscale_Counter_V == (UPSCALE_FACTOR-1) && Counter_V_Tile == SCREENSIZE_V_BDRY) begin
+            //             Counter_V_Tile <= 0;
+            //         end else begin
+            //             Counter_V_Tile <= Counter_V_Tile;
+            //         end
+            //     end else begin
+            //         Counter_V_Tile <= 0;
+            //     end
 
-            end else begin
-                Counter_V_Tile <= Counter_V_Tile;
-                upscale_Counter_V <= upscale_Counter_V;
-                colCounter <= colCounter;
-            end
+            // end else begin
+            //     Counter_V_Tile <= Counter_V_Tile;
+            //     upscale_Counter_V <= upscale_Counter_V;
+            //     colCounter <= colCounter;
+            // end
 
-            preH <= counter_H;
-            if (preH != counter_H )begin
+            // preH <= counter_H;
+            // if (preH != counter_H )begin
 
-                if(upscale_Counter_H != (UPSCALE_FACTOR-1))begin
-                    upscale_Counter_H <= upscale_Counter_H + 1;
-                end else begin
-                    upscale_Counter_H <= 0;
-                    rowCounter <= rowCounter + 1;
-                end
+            //     if(upscale_Counter_H != (UPSCALE_FACTOR-1))begin
+            //         upscale_Counter_H <= upscale_Counter_H + 1;
+            //     end else begin
+            //         upscale_Counter_H <= 0;
+            //         rowCounter <= rowCounter + 1;
+            //     end
                 
-                if (counter_H >= TILE_LEN_PIXEL) begin
-                    if(rowCounter == 3'b111 && upscale_Counter_H == (UPSCALE_FACTOR-1))begin
-                        Counter_H_Tile <= Counter_H_Tile + 1;
-                    end else begin
-                        Counter_H_Tile <= Counter_H_Tile;
-                    end
-                end else begin
-                    Counter_H_Tile <= 0;
-                end
+            //     if (counter_H >= TILE_LEN_PIXEL) begin
+            //         if(rowCounter == 3'b111 && upscale_Counter_H == (UPSCALE_FACTOR-1))begin
+            //             Counter_H_Tile <= Counter_H_Tile + 1;
+            //         end else begin
+            //             Counter_H_Tile <= Counter_H_Tile;
+            //         end
+            //     end else begin
+            //         Counter_H_Tile <= 0;
+            //     end
 
-            end else begin
-                Counter_H_Tile <= Counter_H_Tile;
-                upscale_Counter_H <= upscale_Counter_H;
-                rowCounter <= rowCounter;
-            end
+            // end else begin
+            //     Counter_H_Tile <= Counter_H_Tile;
+            //     upscale_Counter_H <= upscale_Counter_H;
+            //     rowCounter <= rowCounter;
+            // end
+            rowCounter <= rowCounter + 1;
+            upscale_Counter_H <= upscale_Counter_H +1;
+            Counter_H_Tile <= Counter_H_Tile + 1;
+            colCounter <= colCounter + 1;
+            upscale_Counter_V <= upscale_Counter_V + 1;
+            Counter_V_Tile <= Counter_V_Tile + 1;
 
     end else begin
         preH <= 0;
