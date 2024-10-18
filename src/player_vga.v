@@ -171,19 +171,19 @@ module tt_um_vga_example (
                     player_direction <= 2'b00;
                 end
 
-                else if (input_data[1] == 1 && player_pos[3:0] < 4'b1011) begin  // Check boundary for down movement
+                if (input_data[1] == 1 && player_pos[3:0] < 4'b1011) begin  // Check boundary for down movement
                     player_pos <= player_pos + 1;  // Move down
                     player_direction <= 2'b10;
                 end 
 
 
-                else if (input_data[2] == 1 && player_pos[7:4] > 4'b0000) begin  // Check boundary for left movement
+                if (input_data[2] == 1 && player_pos[7:4] > 4'b0000) begin  // Check boundary for left movement
                     player_pos <= player_pos - 16;  // Move left
                     player_orientation <= 2'b11;
                     player_direction <= 2'b11;
                 end
 
-                else if (input_data[3] == 1 && player_pos[7:4] < 4'b1111) begin  // Check boundary for right movement
+                if (input_data[3] == 1 && player_pos[7:4] < 4'b1111) begin  // Check boundary for right movement
                     player_pos <= player_pos + 16;  // Move right
                     player_orientation <= 2'b01;
                     player_direction <= 2'b01;
@@ -198,13 +198,13 @@ module tt_um_vga_example (
                 if (player_direction == 2'b00 ) begin // player facing up
                     sword_pos <= player_pos - 1;
                     sword_orientation <= 2'b00;
-                end else if (player_direction == 2'b10 ) begin // player facing down
+                end if (player_direction == 2'b10 ) begin // player facing down
                     sword_pos <= player_pos + 1;
                     sword_orientation <= 2'b10;
-                end else if (player_direction == 2'b11) begin // player facing left
+                end if (player_direction == 2'b11) begin // player facing left
                     sword_pos <= player_pos - 16;
                     sword_orientation <= 2'b11;
-                end else if (player_direction == 2'b01) begin // player facing right
+                end if (player_direction == 2'b01) begin // player facing right
                     sword_pos <= player_pos + 16;
                     sword_orientation <= 2'b01;
                 end
