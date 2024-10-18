@@ -18,7 +18,7 @@ module FrameBufferController_Top(
 
 localparam [2:0] UPSCALE_FACTOR = 5;
 localparam [3:0] TILE_SIZE = 8;
-localparam [9:0] TILE_LEN_PIXEL = TILE_SIZE * UPSCALE_FACTOR;
+localparam [9:0] TILE_LEN_PIXEL = 40;
 localparam [3:0] SCREENSIZE_H_BDRY = 15;
 localparam [3:0] SCREENSIZE_V_BDRY= 11;
 
