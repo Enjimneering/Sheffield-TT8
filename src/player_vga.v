@@ -35,7 +35,7 @@ module tt_um_vga_example (
     reg [7:0] sword_pos; // sword position xxxx_yyyy
     reg [3:0] sword_visible;
     reg [1:0] sword_orientation;   // sword orientation 
-    reg [2:0] sword_duration; // how long the sword stays visible
+    reg [5:0] sword_duration; // how long the sword stays visible
     // State register
     reg [1:0] current_state;
     reg [1:0] next_state;
@@ -120,13 +120,14 @@ module tt_um_vga_example (
         player_direction <= 2'b01;
         player_pos <= 8'b0001_0001;
         sword_visible <= 4'b1111; 
-        sword_duration <= 3'b111;
+        sword_duration <= 0;
     end
 
     
 
     always @(posedge frame_end) begin
         current_state <= next_state;      // Update state
+        sword_duration <= sword_duration + 1;
     end
     
     always @(posedge clk) begin
@@ -139,6 +140,7 @@ module tt_um_vga_example (
                 case (input_data[4]) 
                     1 : begin // attack
                         next_state <= ATTACK_STATE;
+                        sword_duration <= 0;
                     end
 
                     0: begin // no attack
@@ -198,7 +200,8 @@ module tt_um_vga_example (
                     sword_orientation <= 2'b01;
                 end
 
-                next_state <= IDLE_STATE;  // Return to IDLE after attacking
+                if (sword_duration == 10)
+                    next_state <= IDLE_STATE;  // Return to IDLE after attacking
             end
 
             default: begin
