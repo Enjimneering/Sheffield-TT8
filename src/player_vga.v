@@ -32,6 +32,8 @@ module tt_um_vga_example (
     reg [7:0] player_pos;   // player position xxxx_yyyy
     reg [1:0] player_orientation;   // player orientation 
     reg [1:0] player_direction;   // player direction
+    reg [3:0] player_sprite;
+    reg [5:0] player_anim_counter;
     reg [7:0] sword_pos; // sword position xxxx_yyyy
     reg [3:0] sword_visible;
     reg [1:0] sword_orientation;   // sword orientation 
@@ -63,7 +65,7 @@ module tt_um_vga_example (
 
     .clk_in                  (clk),
     .reset                   (~rst_n),
-    .entity_1                ({4'b0010, player_orientation , player_pos}), //player
+    .entity_1                ({player_sprite, player_orientation , player_pos}), //player
     .entity_2                ({sword_visible, sword_orientation, sword_pos}), //sword
     .entity_3                (14'b0100_11_0101_0000),
     .entity_4                (14'b0100_11_0110_0000),
@@ -110,8 +112,7 @@ module tt_um_vga_example (
 
     // game logic (fsm)
     // animation stuff
-    reg [3:0] player_sprite;
-    reg [2:0] player_anim_counter;
+    
     
     initial begin
         player_sprite <= 4'b0010;
@@ -128,6 +129,7 @@ module tt_um_vga_example (
     always @(posedge frame_end) begin
         current_state <= next_state;      // Update state
         sword_duration <= sword_duration + 1;
+        player_anim_counter <= player_anim_counter + 1;
     end
     
     always @(posedge clk) begin
@@ -136,7 +138,13 @@ module tt_um_vga_example (
             IDLE_STATE: begin
                 sword_pos <= 0;
                 sword_visible <= 4'b1111;
-                
+                if (player_anim_counter == 20) begin
+                    player_anim_counter <= 0;
+                    player_sprite <= 4'b0011;
+                end else if (player_anim_counter == 7) begin
+                    player_sprite <= 4'b0010;
+                end
+
                 case (input_data[4]) 
                     1 : begin // attack
                         next_state <= ATTACK_STATE;
@@ -182,6 +190,7 @@ module tt_um_vga_example (
                 end
 
                 next_state <= IDLE_STATE;  // Return to IDLE after moving
+                player_anim_counter <= 0;
             end
 
             ATTACK_STATE: begin
@@ -202,6 +211,7 @@ module tt_um_vga_example (
 
                 if (sword_duration == 10)
                     next_state <= IDLE_STATE;  // Return to IDLE after attacking
+                    player_anim_counter <= 0;
             end
 
             default: begin
