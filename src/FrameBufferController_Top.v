@@ -181,22 +181,22 @@ always@(posedge clk)begin
     //     end
     // endcase
 
-    if (set_Pt != 7'b1111111)begin
-        general_Entity[17:4] <= all_Entity[set_Pt+13:set_Pt], 
-    end else begin
-        general_Entity <= 18'b111111000000000000;
-    end
+        if (set_Pt != 7'b1111111)begin
+            general_Entity[17:4] <= all_Entity[set_Pt+13:set_Pt];
+        end else begin
+            general_Entity <= 18'b111111000000000000;
+        end
 
-    if (set_Pt < 28)begin
-        flip_Or_Array_Flag <= 2'b01;
-        general_Entity[3:0] <= 4'b0000;
-    end else if(set_Pt == 28) begin
-        flip_Or_Array_Flag <= 2'b10;
-        general_Entity[3:0] <= entity_7_Array[3:0];
-    end else begin
-        flip_Or_Array_Flag <= 2'b00;
-        general_Entity[3:0] <= 4'b0000;
-    end
+        if (set_Pt < 28)begin
+            flip_Or_Array_Flag <= 2'b01;
+            general_Entity[3:0] <= 4'b0000;
+        end else if(set_Pt == 28) begin
+            flip_Or_Array_Flag <= 2'b10;
+            general_Entity[3:0] <= entity_7_Array[3:0];
+        end else begin
+            flip_Or_Array_Flag <= 2'b00;
+            general_Entity[3:0] <= 4'b0000;
+        end
 
 
         local_Counter_H <= Counter_H_Tile + 1;
