@@ -215,26 +215,26 @@ reg [8:0] out_entity;
 always @(posedge clk) begin
     if (!reset) begin
 
-        if (!(rowCounter == 7 && upscale_Counter_H == (UPSCALE_FACTOR-2)))begin //Update the entity index one cycle in advance (ROM lookup requires one cycle)
-            out_entity <= out_entity;
+        // if (!(rowCounter == 7 && upscale_Counter_H == (UPSCALE_FACTOR-2)))begin //Update the entity index one cycle in advance (ROM lookup requires one cycle)
+        //     out_entity <= out_entity;
             
-            if ((inRange && (general_Entity[17:14] != 4'b1111)) && (flip_Or_Array_Flag != 2'b11)) begin
+        //     if ((inRange && (general_Entity[17:14] != 4'b1111)) && (flip_Or_Array_Flag != 2'b11)) begin
 
-                if (flip_Or_Array_Flag == 2'b01) begin
-                    detector <= {~(colCounter),general_Entity[17:12]};
-                end else begin
-                    detector <= {(colCounter),general_Entity[17:12]};
-                end
+        //         if (flip_Or_Array_Flag == 2'b01) begin
+        //             detector <= {~(colCounter),general_Entity[17:12]};
+        //         end else begin
+        //             detector <= {(colCounter),general_Entity[17:12]};
+        //         end
 
-            end else begin
-                detector <= detector;
-            end
-        end else begin
-            out_entity <= detector; //Update Entity index
-            detector <= 9'b111111111;
-        end
-        // detector <= inRange;
-        // out_entity <= general_Entity;
+        //     end else begin
+        //         detector <= detector;
+        //     end
+        // end else begin
+        //     out_entity <= detector; //Update Entity index
+        //     detector <= 9'b111111111;
+        // end
+        detector <= inRange;
+        out_entity <= general_Entity;
     end else begin
         detector <= 9'b111111111;
         out_entity <= 9'b111111111;
