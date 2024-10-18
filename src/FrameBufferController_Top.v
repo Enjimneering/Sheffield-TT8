@@ -133,49 +133,51 @@ wire hpos_update = next_HPos != curDet_Hpos;
 always@(posedge clk)begin
 
     if (!reset) begin
-    case (entity_Counter)
-        4'd0: begin 
-            general_Entity <= {entity_9_Flip,4'b0000};   //position is XXYY!!!!!
-            flip_Or_Array_Flag <= 2'b01;
-            end
-        4'd1:begin
-            general_Entity <= {entity_8_Flip,4'b0000}; 
-            flip_Or_Array_Flag <= 2'b01;
-        end   
-        4'd2:begin
-            general_Entity <= entity_7_Array;
-            flip_Or_Array_Flag <= 2'b10;
-        end
-        4'd3:begin 
-            general_Entity <= {entity_6,4'b0000};
-            flip_Or_Array_Flag <= 2'b00;
-        end
-        4'd4:begin 
-            general_Entity <= {entity_5,4'b0000};
-            flip_Or_Array_Flag <= 2'b00;
-        end
-        4'd5:begin 
-            general_Entity <= {entity_4,4'b0000};
-            flip_Or_Array_Flag <= 2'b00;
-        end
-        4'd6:begin 
-            general_Entity <= {entity_3,4'b0000};
-            flip_Or_Array_Flag <= 2'b00;
-        end
-        4'd7:begin 
-            general_Entity <= {entity_2,4'b0000};
-            flip_Or_Array_Flag <= 2'b00;
-        end
-        4'd8: begin
-            general_Entity <= {entity_1,4'b0000};
-            flip_Or_Array_Flag <= 2'b00;
-        end
+    // case (entity_Counter)
+    //     4'd0: begin 
+    //         general_Entity <= {entity_9_Flip,4'b0000};   //position is XXYY!!!!!
+    //         flip_Or_Array_Flag <= 2'b01;
+    //         end
+    //     4'd1:begin
+    //         general_Entity <= {entity_8_Flip,4'b0000}; 
+    //         flip_Or_Array_Flag <= 2'b01;
+    //     end   
+    //     4'd2:begin
+    //         general_Entity <= entity_7_Array;
+    //         flip_Or_Array_Flag <= 2'b10;
+    //     end
+    //     4'd3:begin 
+    //         general_Entity <= {entity_6,4'b0000};
+    //         flip_Or_Array_Flag <= 2'b00;
+    //     end
+    //     4'd4:begin 
+    //         general_Entity <= {entity_5,4'b0000};
+    //         flip_Or_Array_Flag <= 2'b00;
+    //     end
+    //     4'd5:begin 
+    //         general_Entity <= {entity_4,4'b0000};
+    //         flip_Or_Array_Flag <= 2'b00;
+    //     end
+    //     4'd6:begin 
+    //         general_Entity <= {entity_3,4'b0000};
+    //         flip_Or_Array_Flag <= 2'b00;
+    //     end
+    //     4'd7:begin 
+    //         general_Entity <= {entity_2,4'b0000};
+    //         flip_Or_Array_Flag <= 2'b00;
+    //     end
+    //     4'd8: begin
+    //         general_Entity <= {entity_1,4'b0000};
+    //         flip_Or_Array_Flag <= 2'b00;
+    //     end
         
-        default: begin
-            general_Entity <= 18'b111111000000000000;
-            flip_Or_Array_Flag <= 2'b11;
-        end
-    endcase
+    //     default: begin
+    //         general_Entity <= 18'b111111000000000000;
+    //         flip_Or_Array_Flag <= 2'b11;
+    //     end
+    // endcase
+
+    general_Entity <= entity_1;
 
         // local_Counter_H <= Counter_H_Tile + 1;
         // if(colCounter == 3'b111 && upscale_Counter_H == (UPSCALE_FACTOR-1) && Counter_H_Tile == 15 && rowCounter == 7 && upscale_Counter_H == (UPSCALE_FACTOR-1))begin
