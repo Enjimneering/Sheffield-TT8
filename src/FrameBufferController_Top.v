@@ -177,24 +177,24 @@ always@(posedge clk)begin
         end
     endcase
 
-        // local_Counter_H <= Counter_H_Tile + 1;
-        // if(colCounter == 3'b111 && upscale_Counter_H == (UPSCALE_FACTOR-1) && Counter_H_Tile == 15 && rowCounter == 7 && upscale_Counter_H == (UPSCALE_FACTOR-1))begin
-        //     if(Counter_V_Tile != SCREENSIZE_V_BDRY)begin 
-        //         local_Counter_V <= Counter_V_Tile + 1;
-        //     end else begin
-        //         local_Counter_V <= 0;
-        //     end
-        // end else begin
-        //     local_Counter_V <= Counter_V_Tile;
-        // end
+        local_Counter_H <= Counter_H_Tile + 1;
+        if(colCounter == 3'b111 && upscale_Counter_H == (UPSCALE_FACTOR-1) && Counter_H_Tile == 15 && rowCounter == 7 && upscale_Counter_H == (UPSCALE_FACTOR-1))begin
+            if(Counter_V_Tile != SCREENSIZE_V_BDRY)begin 
+                local_Counter_V <= Counter_V_Tile + 1;
+            end else begin
+                local_Counter_V <= 0;
+            end
+        end else begin
+            local_Counter_V <= Counter_V_Tile;
+        end
 
-        // if (entity_Counter != 8 && entity_Counter != 4'd15)begin
-        //     entity_Counter <= entity_Counter + 1;
-        // end else if (hpos_update)begin
-        //     entity_Counter <=0;
-        // end else begin
-        //     entity_Counter <= 4'd15;
-        // end
+        if (entity_Counter != 8 && entity_Counter != 4'd15)begin
+            entity_Counter <= entity_Counter + 1;
+        end else if (hpos_update)begin
+            entity_Counter <=0;
+        end else begin
+            entity_Counter <= 4'd15;
+        end
 
     end else begin
         flip_Or_Array_Flag <= 2'b11;
