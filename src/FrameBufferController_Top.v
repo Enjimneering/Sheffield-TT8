@@ -201,7 +201,10 @@ always@(posedge clk)begin
 end
 
 wire inRange;
-assign inRange = ((((local_Counter_H - general_Entity[11:8])) == 0) && (((local_Counter_V - general_Entity[7:4])) == 0));
+
+wire array_Direc = ~general_Entity[13]^general_Entity[12];
+
+assign inRange = ((((local_Counter_H - general_Entity[11:8])) <= (array_Direc? general_Entity[3:0]:0)) && (((local_Counter_V - general_Entity[7:4])) <= (~array_Direc? general_Entity[3:0]:0)));
 
 reg [8:0] detector;
 reg [8:0] out_entity;
