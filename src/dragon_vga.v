@@ -238,33 +238,33 @@ module tt_um_vga_example (
         endcase
     end
 
-function [1:0] NextDirection;
-    input [7:0] current_location;
-    input [7:0] target_location;
+// function [1:0] NextDirection;
+//     input [7:0] current_location;
+//     input [7:0] target_location;
 
-    reg [3:0] current_x; 
-    reg [3:0] current_y;
-    reg [3:0] target_x; 
-    reg [3:0] target_y;
+//     // reg [3:0] current_x; 
+//     // reg [3:0] current_y;
+//     // reg [3:0] target_x; 
+//     // reg [3:0] target_y;
 
-    begin
-        // Extract last and new X and Y coordinates
-        current_x = current_location[7:4];
-        current_y = current_location[3:0];
-        target_x = target_location[7:4];
-        target_y = target_location[3:0];
+//     begin
+//         // Extract last and new X and Y coordinates
+//         // current_x = current_location[7:4];
+//         // current_y = current_location[3:0];
+//         // target_x = target_location[7:4];
+//         // target_y = target_location[3:0];
 
-        // Determine direction based on movement
-        if (target_x > current_x)
-            NextDirection = 2'b01;   // Move right
-        else if (target_x < current_x)
-            NextDirection = 2'b11;   // Move left
-        else if (target_y > current_y)
-            NextDirection = 2'b10;   // Move down
-        else if (target_y < current_y)
-            NextDirection = 2'b00;   // Move up
-    end
-endfunction
+//         // Determine direction based on movement
+//         if (target_location[7:4] > current_location[7:4])
+//             NextDirection = 2'b01;   // Move right
+//         else if (target_location[7:4] < current_location[7:4])
+//             NextDirection = 2'b11;   // Move left
+//         else if (target_location[3:0] > current_location[3:0])
+//             NextDirection = 2'b10;   // Move down
+//         else if (target_location[3:0] < current_location[3:0])
+//             NextDirection = 2'b00;   // Move up
+//     end
+// endfunction
 
 
 reg [3:0] next_x;
@@ -275,12 +275,12 @@ reg [3:0] dy;
 reg [3:0] sx; //figuring out direction in axis
 reg [3:0] sy;
 reg [5:0] movement_counter = 0;  // Counter for delaying dragon's movement otherwise sticks to player
-
+reg [1:0] NextDirection;
 
 
 // Movement logic , uses bresenhams line algorithm
 always @(posedge vsync) begin
-    if (movement_counter < 6'd20) begin
+    if (movement_counter < 6'd10) begin
         movement_counter <= movement_counter + 1;
     end else begin
         movement_counter <= 0;
@@ -289,43 +289,51 @@ always @(posedge vsync) begin
         dragon_pos <= target_location;
 
         // Follow the player
+        /*
         player_y <= player_pos[3:0];
         player_x <= player_pos[7:4];
-
+    */
         // Calculate the differences between dragon and player
-        dx = player_x - dragon_x ;
-        dy = player_y - dragon_y ;
-        sx = (dragon_x< player_x) ? 1 : -1; // Direction in axis
-        sy = (dragon_y< player_y) ? 1 : -1; 
+        dx <= player_pos[7:4] - dragon_x ;
+        dy <= player_pos[3:0] - dragon_y ;
+        sx <= (dragon_x< player_pos[7:4]) ? 1 : -1; // Direction in axis
+        sy <= (dragon_y< player_pos[3:0]) ? 1 : -1; 
 
         // Move the dragon towards the player if it's not adjacent
-        if (dx > 1 || dy > 1) begin
+        if (dx >= 1 || dy >= 1) begin
             if (dx >= dy) begin //prioritize movement
                 
-                next_x = dragon_x + sx;
-                next_y = dragon_y;
+                dragon_x <= dragon_x + sx;
+                dragon_y <= dragon_y;
             end else begin
                 
-                next_x = dragon_x;
-                next_y = dragon_y + sy;
+                dragon_x <= dragon_x;
+                dragon_y <= dragon_y + sy;
             end
-
-
 
             // Update dragon position only if it actually moves , keeps flickering
-            if (next_x != dragon_x || next_y != dragon_y) begin
-                dragon_x = next_x;
-                dragon_y = next_y;
 
-                dragon_direction <= NextDirection(dragon_pos, {next_x, next_y});
+              // dragon_x = next_x;
+              // dragon_y = next_y;
+            if (dragon_x > dragon_pos[7:4])
+              NextDirection = 2'b01;   // Move right
+            else if (dragon_x < dragon_pos[7:4])
+              NextDirection = 2'b11;   // Move left
+            else if (dragon_y > dragon_pos[3:0])
+              NextDirection = 2'b10;   // Move down
+            else if (dragon_y < dragon_pos[3:0])
+              NextDirection = 2'b00;   // Move up
 
-                // Update the next location
-                target_location <= {next_x, next_y};
-            end
+              // dragon_direction <= NextDirection(dragon_pos, {dragon_x, dragon_y});
+              dragon_direction <= NextDirection;
+
+              // Update the next location
+              target_location <= {dragon_x, dragon_y};
+
         end else begin
-            // stop moving whne the dragon is adjacent to the player 
-            next_x = dragon_x; 
-            next_y = dragon_y; 
+            // stop moving when the dragon is adjacent to the player 
+            dragon_x <= dragon_x; 
+            dragon_y <= dragon_y; 
         end
 end
 end
