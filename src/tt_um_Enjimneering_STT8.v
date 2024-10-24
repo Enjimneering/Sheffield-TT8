@@ -60,7 +60,13 @@ module tt_um_Enjimneering_STT8 (
     .entity_6(entityInput),
     .entity_7_Array(entityInput3),
     .entity_8_Flip(entityInput2),
-    .entity_9_Flip(entityInput),
+    .dragon_1(entityInput),  //Simultaneously supports up to 9 objects in the scene.
+    .dragon_2(entityInput),  // entity input form: ([13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
+    .dragon_3(entityInput)  //Set the entity ID to 4'hf for unused channels.
+    .dragon_4(entityInput)
+    .dragon_5(entityInput),
+    .dragon_6(entityInput)
+    // .entity_9_Flip(entityInput),
     .counter_V               ( pix_y      [9:0]  ),
     .counter_H               ( pix_x      [9:0]  ),
 

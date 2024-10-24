@@ -11,13 +11,13 @@ module FrameBufferController_Top(
     input wire [13:0] entity_8_Flip,
     // input wire [13:0] entity_9_Flip,
 
-    input wire [14:0] Dragon_1,
-    input wire [14:0] Dragon_2,
-    input wire [14:0] Dragon_3,
-    input wire [14:0] Dragon_4,
-    input wire [14:0] Dragon_5,
-    input wire [14:0] Dragon_6,
-    input wire [14:0] Dragon_7,
+    input wire [14:0] dragon_1,
+    input wire [14:0] dragon_2,
+    input wire [14:0] dragon_3,
+    input wire [14:0] dragon_4,
+    input wire [14:0] dragon_5,
+    input wire [14:0] dragon_6,
+    input wire [14:0] dragon_7,
 
     input wire [9:0] counter_V,
     input wire [9:0] counter_H,
@@ -180,32 +180,32 @@ always@(posedge clk)begin
             flip_Or_Array_Flag <= 2'b00;
         end
         4'd8: begin
-            general_Entity <= {Dragon_1[13:0],4'b0000};
-            flip_Or_Array_Flag <= {Dragon_1[14],Dragon_1[14]};
+            general_Entity <= {dragon_1[13:0],4'b0000};
+            flip_Or_Array_Flag <= {dragon_1[14],dragon_1[14]};
         end
         4'd9: begin
-            general_Entity <= {Dragon_2[13:0],4'b0000};
-            flip_Or_Array_Flag <= {Dragon_2[14],Dragon_1[14]};
+            general_Entity <= {dragon_2[13:0],4'b0000};
+            flip_Or_Array_Flag <= {dragon_2[14],dragon_1[14]};
         end
         4'd10: begin
-            general_Entity <= {Dragon_3[13:0],4'b0000};
-            flip_Or_Array_Flag <= {Dragon_3[14],Dragon_1[14]};
+            general_Entity <= {dragon_3[13:0],4'b0000};
+            flip_Or_Array_Flag <= {dragon_3[14],dragon_1[14]};
         end
         4'd11: begin
-            general_Entity <= {Dragon_4[13:0],4'b0000};
-            flip_Or_Array_Flag <= {Dragon_4[14],Dragon_1[14]};
+            general_Entity <= {dragon_4[13:0],4'b0000};
+            flip_Or_Array_Flag <= {dragon_4[14],dragon_1[14]};
         end
         4'd12: begin
-            general_Entity <= {Dragon_5[13:0],4'b0000};
-            flip_Or_Array_Flag <= {Dragon_5[14],Dragon_1[14]};
+            general_Entity <= {dragon_5[13:0],4'b0000};
+            flip_Or_Array_Flag <= {dragon_5[14],dragon_1[14]};
         end
         4'd13: begin
-            general_Entity <= {Dragon_6[13:0],4'b0000};
-            flip_Or_Array_Flag <= {Dragon_6[14],Dragon_1[14]};
+            general_Entity <= {dragon_6[13:0],4'b0000};
+            flip_Or_Array_Flag <= {dragon_6[14],dragon_1[14]};
         end
         4'd14: begin
-            general_Entity <= {Dragon_7[13:0],4'b0000};
-            flip_Or_Array_Flag <= {Dragon_7[14],Dragon_1[14]};
+            general_Entity <= {dragon_7[13:0],4'b0000};
+            flip_Or_Array_Flag <= {dragon_7[14],dragon_1[14]};
         end
 
         
