@@ -66,6 +66,7 @@ module tt_um_Enjimneering_STT8 (
     .dragon_4(entityInput),
     .dragon_5(entityInput),
     .dragon_6(entityInput),
+    .dragon_7(entityInput),
     // .entity_9_Flip(entityInput),
     .counter_V               ( pix_y      [9:0]  ),
     .counter_H               ( pix_x      [9:0]  ),

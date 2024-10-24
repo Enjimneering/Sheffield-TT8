@@ -185,27 +185,27 @@ always@(posedge clk)begin
         end
         4'd9: begin
             general_Entity <= {dragon_2[13:0],4'b0000};
-            flip_Or_Array_Flag <= {dragon_2[14],dragon_1[14]};
+            flip_Or_Array_Flag <= {dragon_2[14],dragon_2[14]};
         end
         4'd10: begin
             general_Entity <= {dragon_3[13:0],4'b0000};
-            flip_Or_Array_Flag <= {dragon_3[14],dragon_1[14]};
+            flip_Or_Array_Flag <= {dragon_3[14],dragon_3[14]};
         end
         4'd11: begin
             general_Entity <= {dragon_4[13:0],4'b0000};
-            flip_Or_Array_Flag <= {dragon_4[14],dragon_1[14]};
+            flip_Or_Array_Flag <= {dragon_4[14],dragon_4[14]};
         end
         4'd12: begin
             general_Entity <= {dragon_5[13:0],4'b0000};
-            flip_Or_Array_Flag <= {dragon_5[14],dragon_1[14]};
+            flip_Or_Array_Flag <= {dragon_5[14],dragon_5[14]};
         end
         4'd13: begin
             general_Entity <= {dragon_6[13:0],4'b0000};
-            flip_Or_Array_Flag <= {dragon_6[14],dragon_1[14]};
+            flip_Or_Array_Flag <= {dragon_6[14],dragon_6[14]};
         end
         4'd14: begin
             general_Entity <= {dragon_7[13:0],4'b0000};
-            flip_Or_Array_Flag <= {dragon_7[14],dragon_1[14]};
+            flip_Or_Array_Flag <= {dragon_7[14],dragon_7[14]};
         end
 
         
