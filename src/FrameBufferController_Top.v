@@ -9,7 +9,16 @@ module FrameBufferController_Top(
     input wire [13:0] entity_6,
     input wire [17:0] entity_7_Array, //Array function disable
     input wire [13:0] entity_8_Flip,
-    input wire [13:0] entity_9_Flip,
+    // input wire [13:0] entity_9_Flip,
+
+    input wire [14:0] Dragon_1,
+    input wire [14:0] Dragon_2,
+    input wire [14:0] Dragon_3,
+    input wire [14:0] Dragon_4,
+    input wire [14:0] Dragon_5,
+    input wire [14:0] Dragon_6,
+    input wire [14:0] Dragon_7,
+
     input wire [9:0] counter_V,
     input wire [9:0] counter_H,
 
@@ -139,41 +148,66 @@ always@(posedge clk)begin
     if (!reset) begin
     case (entity_Counter)
         4'd0: begin 
-            general_Entity <= {entity_9_Flip,4'b0000};   //position is XXYY!!!!!
+            general_Entity <= {entity_8_Flip,4'b0000}; 
             flip_Or_Array_Flag <= 2'b01;
             end
         4'd1:begin
-            general_Entity <= {entity_8_Flip,4'b0000}; 
-            flip_Or_Array_Flag <= 2'b01;
-        end   
-        4'd2:begin
             general_Entity <= entity_7_Array;
             flip_Or_Array_Flag <= 2'b10;
-        end
-        4'd3:begin 
+        end   
+        4'd2:begin
             general_Entity <= {entity_6,4'b0000};
             flip_Or_Array_Flag <= 2'b00;
         end
-        4'd4:begin 
+        4'd3:begin 
             general_Entity <= {entity_5,4'b0000};
             flip_Or_Array_Flag <= 2'b00;
         end
-        4'd5:begin 
+        4'd4:begin 
             general_Entity <= {entity_4,4'b0000};
             flip_Or_Array_Flag <= 2'b00;
         end
-        4'd6:begin 
+        4'd5:begin 
             general_Entity <= {entity_3,4'b0000};
             flip_Or_Array_Flag <= 2'b00;
         end
-        4'd7:begin 
+        4'd6:begin 
             general_Entity <= {entity_2,4'b0000};
             flip_Or_Array_Flag <= 2'b00;
         end
-        4'd8: begin
+        4'd7:begin 
             general_Entity <= {entity_1,4'b0000};
             flip_Or_Array_Flag <= 2'b00;
         end
+        4'd8: begin
+            general_Entity <= {Dragon_1[13:0],4'b0000};
+            flip_Or_Array_Flag <= {Dragon_1[14],Dragon_1[14]};
+        end
+        4'd9: begin
+            general_Entity <= {Dragon_2[13:0],4'b0000};
+            flip_Or_Array_Flag <= {Dragon_2[14],Dragon_1[14]};
+        end
+        4'd10: begin
+            general_Entity <= {Dragon_3[13:0],4'b0000};
+            flip_Or_Array_Flag <= {Dragon_3[14],Dragon_1[14]};
+        end
+        4'd11: begin
+            general_Entity <= {Dragon_4[13:0],4'b0000};
+            flip_Or_Array_Flag <= {Dragon_4[14],Dragon_1[14]};
+        end
+        4'd12: begin
+            general_Entity <= {Dragon_5[13:0],4'b0000};
+            flip_Or_Array_Flag <= {Dragon_5[14],Dragon_1[14]};
+        end
+        4'd13: begin
+            general_Entity <= {Dragon_6[13:0],4'b0000};
+            flip_Or_Array_Flag <= {Dragon_6[14],Dragon_1[14]};
+        end
+        4'd14: begin
+            general_Entity <= {Dragon_7[13:0],4'b0000};
+            flip_Or_Array_Flag <= {Dragon_7[14],Dragon_1[14]};
+        end
+
         
         default: begin
             general_Entity <= 18'b111111000000000000;
@@ -210,7 +244,7 @@ always@(posedge clk)begin
             local_Counter_V <= Counter_V_Tile;
         end
 
-        if (entity_Counter != 8 && entity_Counter != 4'd15)begin
+        if (entity_Counter != 14 && entity_Counter != 4'd15)begin
             entity_Counter <= entity_Counter + 1;
         end else if (hpos_update)begin
             entity_Counter <=0;
