@@ -21,7 +21,7 @@ module tt_um_vga_example (
     output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
     input  wire       ena,      // always 1 when the design is powered, so you can ignore it
     input  wire       clk,      // clock
-    input  wire       rst_n     // reset_n - low to reset
+    input  wire       rst_n     // reset_n - low to reset   
 );
     
     // input logic 
@@ -79,11 +79,18 @@ module tt_um_vga_example (
     .entity_2                ({sword_visible, sword_orientation, sword_pos}), //sword
     .entity_3                (14'b0100_11_0101_0000),
     .entity_4                (14'b0100_11_0110_0000),
-    .entity_5                ({dragon_sprite, dragon_direction,dragon_pos}),
+    .entity_5                ({dragon_sprite, d_direction,d_pos}),
     .entity_6                (14'b1111_11_1111_1111),
     .entity_7_Array          (18'b0000_01_1010_0000_0111 ),
     .entity_8_Flip           (14'b1111_11_1111_1111),
-    .entity_9_Flip           (14'b1111_11_1111_1111),
+    // .entity_9_Flip           (14'b1111_11_1111_1111),
+    .dragon_1({~Display_en[0],4'b0110,Dragon_1}),  //Simultaneously supports up to 9 objects in the scene.
+    .dragon_2({~Display_en[1],4'b0101,Dragon_2}),  // entity input form: ([13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
+    .dragon_3({~Display_en[2],4'b0101,Dragon_3}),  //Set the entity ID to 4'hf for unused channels.
+    .dragon_4({~Display_en[3],4'b0101,Dragon_4}),
+    .dragon_5({~Display_en[4],4'b0101,Dragon_5}),
+    .dragon_6({~Display_en[5],4'b0101,Dragon_6}),
+    .dragon_7({~Display_en[6],4'b0101,Dragon_7}),
     .counter_V               (pix_y),
     .counter_H               (pix_x),
 
@@ -238,105 +245,53 @@ module tt_um_vga_example (
         endcase
     end
 
-// function [1:0] NextDirection;
-//     input [7:0] current_location;
-//     input [7:0] target_location;
 
-//     // reg [3:0] current_x; 
-//     // reg [3:0] current_y;
-//     // reg [3:0] target_x; 
-//     // reg [3:0] target_y;
+DragonHead HD( 
+    .clk(clk),
+    .reset(~rst_n),
+    .player_pos(player_pos),
+  
+    .vsync(vsync),
 
-//     begin
-//         // Extract last and new X and Y coordinates
-//         // current_x = current_location[7:4];
-//         // current_y = current_location[3:0];
-//         // target_x = target_location[7:4];
-//         // target_y = target_location[3:0];
+    .dragon_direction(d_direction),
+    .dragon_pos(d_pos),
+    .movement_counter(mov_C)// Counter for delaying dragon's movement otherwise sticks to player
+);
 
-//         // Determine direction based on movement
-//         if (target_location[7:4] > current_location[7:4])
-//             NextDirection = 2'b01;   // Move right
-//         else if (target_location[7:4] < current_location[7:4])
-//             NextDirection = 2'b11;   // Move left
-//         else if (target_location[3:0] > current_location[3:0])
-//             NextDirection = 2'b10;   // Move down
-//         else if (target_location[3:0] < current_location[3:0])
-//             NextDirection = 2'b00;   // Move up
-//     end
-// endfunction
+wire [1:0] d_direction;
+wire [7:0] d_pos;
+wire [5:0] mov_C;
+
+wire [9:0]   Dragon_1 ;
+wire [9:0]   Dragon_2 ;
+wire [9:0]   Dragon_3 ;
+wire [9:0]   Dragon_4 ;
+wire [9:0]   Dragon_5 ;
+wire [9:0]   Dragon_6 ;
+wire [9:0]   Dragon_7 ;
+
+wire [6:0] Display_en;
+
+Snake_Top ST(
+    .clk(clk),
+    .reset(~rst_n),
+    .States(2'b01),
+    .OrienAndPositon({d_direction,d_pos}),
+    .movement_counter(mov_C),
+    .vsync(vsync),
+
+    .Dragon_1(Dragon_1),
+    .Dragon_2(Dragon_2),
+    .Dragon_3(Dragon_3),
+    .Dragon_4(Dragon_4),
+    .Dragon_5(Dragon_5),
+    .Dragon_6(Dragon_6),
+    .Dragon_7(Dragon_7),
+
+    .Display_en(Display_en)
+);
 
 
-reg [3:0] next_x;
-reg [3:0] next_y;
-reg [7:0] target_location;
-reg [3:0] dx; //difference
-reg [3:0] dy;
-reg [3:0] sx; //figuring out direction in axis
-reg [3:0] sy;
-reg [5:0] movement_counter = 0;  // Counter for delaying dragon's movement otherwise sticks to player
-reg [1:0] NextDirection;
-
-
-// Movement logic , uses bresenhams line algorithm
-always @(posedge vsync) begin
-    if (movement_counter < 6'd10) begin
-        movement_counter <= movement_counter + 1;
-    end else begin
-        movement_counter <= 0;
-
-        // Store the current position before updating , used later
-        dragon_pos <= target_location;
-
-        // Follow the player
-        /*
-        player_y <= player_pos[3:0];
-        player_x <= player_pos[7:4];
-    */
-        // Calculate the differences between dragon and player
-        dx <= player_pos[7:4] - dragon_x ;
-        dy <= player_pos[3:0] - dragon_y ;
-        sx <= (dragon_x< player_pos[7:4]) ? 1 : -1; // Direction in axis
-        sy <= (dragon_y< player_pos[3:0]) ? 1 : -1; 
-
-        // Move the dragon towards the player if it's not adjacent
-        if (dx >= 1 || dy >= 1) begin
-            if (dx >= dy) begin //prioritize movement
-                
-                dragon_x <= dragon_x + sx;
-                dragon_y <= dragon_y;
-            end else begin
-                
-                dragon_x <= dragon_x;
-                dragon_y <= dragon_y + sy;
-            end
-
-            // Update dragon position only if it actually moves , keeps flickering
-
-              // dragon_x = next_x;
-              // dragon_y = next_y;
-            if (dragon_x > dragon_pos[7:4])
-              NextDirection = 2'b01;   // Move right
-            else if (dragon_x < dragon_pos[7:4])
-              NextDirection = 2'b11;   // Move left
-            else if (dragon_y > dragon_pos[3:0])
-              NextDirection = 2'b10;   // Move down
-            else if (dragon_y < dragon_pos[3:0])
-              NextDirection = 2'b00;   // Move up
-
-              // dragon_direction <= NextDirection(dragon_pos, {dragon_x, dragon_y});
-              dragon_direction <= NextDirection;
-
-              // Update the next location
-              target_location <= {dragon_x, dragon_y};
-
-        end else begin
-            // stop moving when the dragon is adjacent to the player 
-            dragon_x <= dragon_x; 
-            dragon_y <= dragon_y; 
-        end
-end
-end
 
 
 
@@ -420,7 +375,6 @@ endmodule
 // [3:0] number of tilesf
 
 module PictureProcessingUnit(
-
     input clk_in,  
     input reset,    
     input wire [13:0] entity_1,  //entity input form: ([13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
@@ -429,11 +383,20 @@ module PictureProcessingUnit(
     input wire [13:0] entity_4,
     input wire [13:0] entity_5,
     input wire [13:0] entity_6,
-    input wire [17:0] entity_7_Array,
+    input wire [17:0] entity_7_Array, //Array function disable
     input wire [13:0] entity_8_Flip,
-    input wire [13:0] entity_9_Flip,
-    input wire [9:0]  counter_V,
-    input wire [9:0]  counter_H,
+    // input wire [13:0] entity_9_Flip,
+
+    input wire [14:0] dragon_1,
+    input wire [14:0] dragon_2,
+    input wire [14:0] dragon_3,
+    input wire [14:0] dragon_4,
+    input wire [14:0] dragon_5,
+    input wire [14:0] dragon_6,
+    input wire [14:0] dragon_7,
+
+    input wire [9:0] counter_V,
+    input wire [9:0] counter_H,
 
     output reg colour // 0-black 1-white
     );
@@ -565,54 +528,68 @@ always@(posedge clk)begin // entity_counter works like a program counter in a CP
 
     if (!reset) begin
 
-    case (entity_Counter)  // this can be modified to add more slots
-        
-        // prints from back of screen to front of screen
-
-        4'd0: begin  
-            general_Entity <= {entity_9_Flip ,4'b0000};   
-            flip_Or_Array_Flag <= 2'b01;
-            end
-
-        4'd1:begin
+    case (entity_Counter)
+        4'd0: begin 
             general_Entity <= {entity_8_Flip,4'b0000}; 
             flip_Or_Array_Flag <= 2'b01;
-        end   
-
-        4'd2:begin
+            end
+        4'd1:begin
             general_Entity <= entity_7_Array;
             flip_Or_Array_Flag <= 2'b10;
-        end
-
-        4'd3:begin 
+        end   
+        4'd2:begin
             general_Entity <= {entity_6,4'b0000};
             flip_Or_Array_Flag <= 2'b00;
         end
-
-        4'd4:begin 
+        4'd3:begin 
             general_Entity <= {entity_5,4'b0000};
             flip_Or_Array_Flag <= 2'b00;
         end
-
-        4'd5:begin 
+        4'd4:begin 
             general_Entity <= {entity_4,4'b0000};
             flip_Or_Array_Flag <= 2'b00;
         end
-
-        4'd6:begin 
+        4'd5:begin 
             general_Entity <= {entity_3,4'b0000};
             flip_Or_Array_Flag <= 2'b00;
         end
-
-        4'd7:begin 
+        4'd6:begin 
             general_Entity <= {entity_2,4'b0000};
             flip_Or_Array_Flag <= 2'b00;
         end
-        
-        4'd8: begin
+        4'd7:begin 
             general_Entity <= {entity_1,4'b0000};
             flip_Or_Array_Flag <= 2'b00;
         end
+        4'd8: begin
+            general_Entity <= {dragon_1[13:0],4'b0000};
+            flip_Or_Array_Flag <= {dragon_1[14],dragon_1[14]};
+        end
+        4'd9: begin
+            general_Entity <= {dragon_2[13:0],4'b0000};
+            flip_Or_Array_Flag <= {dragon_2[14],dragon_2[14]};
+        end
+        4'd10: begin
+            general_Entity <= {dragon_3[13:0],4'b0000};
+            flip_Or_Array_Flag <= {dragon_3[14],dragon_3[14]};
+        end
+        4'd11: begin
+            general_Entity <= {dragon_4[13:0],4'b0000};
+            flip_Or_Array_Flag <= {dragon_4[14],dragon_4[14]};
+        end
+        4'd12: begin
+            general_Entity <= {dragon_5[13:0],4'b0000};
+            flip_Or_Array_Flag <= {dragon_5[14],dragon_5[14]};
+        end
+        4'd13: begin
+            general_Entity <= {dragon_6[13:0],4'b0000};
+            flip_Or_Array_Flag <= {dragon_6[14],dragon_6[14]};
+        end
+        4'd14: begin
+            general_Entity <= {dragon_7[13:0],4'b0000};
+            flip_Or_Array_Flag <= {dragon_7[14],dragon_7[14]};
+        end
+
         
         default: begin
             general_Entity <= 18'b111111000000000000;
@@ -641,8 +618,9 @@ always@(posedge clk)begin // entity_counter works like a program counter in a CP
         
         // cycle through all of the entity slots
 
-        if (entity_Counter != 8 && entity_Counter != 4'd15) begin
+        if (entity_Counter != 14 && entity_Counter != 4'd15) begin
             entity_Counter <= entity_Counter + 1;
+            
         end else if (new_tile) begin
             entity_Counter <=0;
         end else begin
@@ -1084,3 +1062,187 @@ module InputController (
 
 
 endmodule
+
+
+`timescale 1ns / 1ps
+
+
+module Snake_Top(
+    input clk,
+    input reset,
+    input vsync,
+    input [1:0] States, // MUST be a PULSE
+    input [9:0] OrienAndPositon, 
+    input [5:0] movement_counter,
+
+    output reg [9:0] Dragon_1, // Every 10 bit represent a body segment, Maximum of 8 segments, a queue
+    output reg [9:0] Dragon_2,
+    output reg [9:0] Dragon_3,
+    output reg [9:0] Dragon_4,
+    output reg [9:0] Dragon_5,
+    output reg [9:0] Dragon_6,
+    output reg [9:0] Dragon_7,
+
+    output reg [6:0] Display_en
+    );
+
+localparam MOVE = 2'b00;
+localparam HEAL = 2'b01;
+localparam HIT = 2'b10;
+localparam IDLE = 2'b11;
+
+always @(posedge vsync or posedge reset)begin
+    if (~reset)begin
+        if(movement_counter == 6'b10)begin
+            Dragon_1 <= OrienAndPositon;
+            Dragon_2 <= Dragon_1;
+            Dragon_3 <= Dragon_2;
+            Dragon_4 <= Dragon_3;
+            Dragon_5 <= Dragon_4;
+            Dragon_6 <= Dragon_5;
+            Dragon_7 <= Dragon_6;
+        end
+    end else begin
+        Dragon_1 <= 0;
+        Dragon_2 <= 0;
+        Dragon_3 <= 0;
+        Dragon_4 <= 0;
+        Dragon_5 <= 0;
+        Dragon_6 <= 0;
+        Dragon_7 <= 0;
+    end
+end
+
+always @(posedge clk)begin
+    if(~reset)begin
+        case(States) 
+            MOVE: begin
+                Display_en <= Display_en;
+            end
+            HEAL: begin
+                Display_en <= (Display_en << 1) | 1'b1;
+            end
+            HIT: begin
+                Display_en <= Display_en >> 1;
+            end
+            IDLE: begin
+                Display_en <= Display_en;
+            end
+        endcase
+    end else begin
+        Display_en <= 0;
+    end
+end
+
+
+
+
+
+
+endmodule
+
+
+
+/*
+ * Copyright (c) 2024 Tiny Tapeout LTD
+ * SPDX-License-Identifier: Apache-2.0
+ * Author: Uri Shaked
+ */
+
+
+`define COLOR_WHITE 3'd7
+`timescale 1ms/1ms
+
+// top module
+
+//TT Pinout (standard for TT projects - can't change this)
+
+module DragonHead ( 
+    input clk,
+    input reset,
+    input [7:0] player_pos,
+  
+    input vsync,
+
+    output reg [1:0] dragon_direction,
+    output reg [7:0] dragon_pos,
+    output reg [5:0] movement_counter// Counter for delaying dragon's movement otherwise sticks to player
+);
+
+   
+reg [3:0] dragon_x;
+reg [3:0] dragon_y;
+
+
+reg [3:0] dx; //difference
+reg [3:0] dy;
+reg [3:0] sx; //figuring out direction in axis
+reg [3:0] sy;
+// reg [5:0] movement_counter = 0;  // Counter for delaying dragon's movement otherwise sticks to player
+
+
+
+// Movement logic , uses bresenhams line algorithm
+always @(posedge vsync) begin
+  if (~reset)begin
+    if (movement_counter < 6'd10) begin
+        movement_counter <= movement_counter + 1;
+    end else begin
+        movement_counter <= 0;
+
+        // Store the current position before updating , used later
+        dragon_x <= dragon_pos[7:4];
+        dragon_y <= dragon_pos[3:0];
+
+        // Calculate the differences between dragon and player
+        dx <= player_pos[7:4] - dragon_x;
+        dy <= player_pos[3:0] - dragon_y ;
+        sx <= (dragon_x < player_pos[7:4]) ? 1 : -1; // Direction in axis
+        sy <= (dragon_y < player_pos[3:0]) ? 1 : -1; 
+
+        // Move the dragon towards the player if it's not adjacent
+        if (dx >= 1 || dy >= 1) begin
+        // Update dragon position only if it actually moves , keeps flickering
+            if (dx >= dy) begin //prioritize movement
+                dragon_x <= dragon_x + sx;
+                dragon_y <= dragon_y;
+            end else begin
+                dragon_x <= dragon_x;
+                dragon_y <= dragon_y + sy;
+            end
+
+            if (dragon_x > dragon_pos[7:4])
+              dragon_direction <= 2'b01;   // Move right
+            else if (dragon_x < dragon_pos[7:4])
+              dragon_direction <= 2'b11;   // Move left
+            else if (dragon_y > dragon_pos[3:0])
+              dragon_direction <= 2'b10;   // Move down
+            else if (dragon_y < dragon_pos[3:0])
+              dragon_direction <= 2'b00;   // Move up
+
+            // Update the next location
+            dragon_pos <= {dragon_x, dragon_y};
+
+        end else begin
+            // stop moving when the dragon is adjacent to the player 
+            dragon_x <= dragon_x; 
+            dragon_y <= dragon_y; 
+        end
+    end
+  end else begin
+    dragon_x <= 0;
+    dragon_y <= 0;
+    movement_counter <= 0;
+    dragon_pos <= 0;
+    dx <= 0; //difference
+    dy <= 0;
+    sx <= 0; //figuring out direction in axis
+    sy <= 0;
+  end
+end
+
+
+
+endmodule
+
+

@@ -38,7 +38,7 @@ reg [3:0] sy;
 
 
 // Movement logic , uses bresenhams line algorithm
-always @(posedge vsync) begin
+always @(posedge vsync or posedge reset) begin
   if (~reset)begin
     if (movement_counter < 6'd10) begin
         movement_counter <= movement_counter + 1;
