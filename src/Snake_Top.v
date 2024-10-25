@@ -27,7 +27,7 @@ localparam IDLE = 2'b11;
 
 always @(posedge vsync or posedge reset)begin
     if (~reset)begin
-        if(movement_counter < 6'b10)begin
+        if(movement_counter == 6'b10)begin
             Dragon_1 <= OrienAndPositon;
             Dragon_2 <= Dragon_1;
             Dragon_3 <= Dragon_2;
