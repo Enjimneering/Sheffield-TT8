@@ -16,11 +16,11 @@ module tt_um_vga_example (
 
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
-    input  wire [7:0] uio_in,   // IOs: Input path
-    // output wire [7:0] uio_out,  // IOs: Output path
-    // output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
+    // input  wire [7:0] uio_in,   // IOs: Input path
+    output wire [7:0] uio_out,  // IOs: Output path
+    output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
     // input  wire       ena,      // always 1 when the design is powered, so you can ignore it
-    input  wire       clkin,      // clock
+    input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset   
 );
     
@@ -62,15 +62,15 @@ module tt_um_vga_example (
     wire pixel_value;
     wire frame_end;
     
-    wire clk;
+    // wire clk;
 
     //Clock
-    clk_wiz_0 fbcCLK(
-        .clk_in1(clkin),
-        .reset(~rst_n),
+    // clk_wiz_0 fbcCLK(
+    //     .clk_in1(clkin),
+    //     .reset(~rst_n),
 
-        .clk_out1(clk)
-    );
+    //     .clk_out1(clk)
+    // );
 
 
     // State definitions
@@ -368,8 +368,8 @@ Snake_Top ST(
 
     // housekeeping to prevent errors/ warnings in synthesis.
 
-    // assign uio_out = 0;
-    // assign uio_oe  = 0;
+    assign uio_out = 0;
+    assign uio_oe  = 0;
     // wire _unused_ok = &{ena, uio_in}; // prevent warnings
     wire _unused_ok = &{uio_in}; // prevent warnings
 
