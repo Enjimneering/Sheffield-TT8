@@ -41,7 +41,7 @@ Sprite Storage:
 
 */
 
-module SpriteROM(
+module SpriteROM_ind(
     
     input            clk,
     input            reset,
