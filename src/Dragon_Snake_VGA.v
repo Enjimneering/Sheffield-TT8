@@ -34,13 +34,14 @@ module tt_um_vga_example (
     reg [3:0] sword_visible;
     reg [1:0] sword_orientation;   // sword orientation 
     reg [5:0] sword_duration; // how long the sword stays visible
-    regsword_display_end;
-    re        current_sword_frames
+    reg sword_display_end;
+    reg current_sword_frames;
     ;
 
     localparam IDLE_STATE   = 2'b00;  // Move when there is input from the controller
     localparam ATTACK_STATE = 2'b01;  // Sword appears where the player is facing
     localparam MOVE_STATE   = 2'b10;  // Wait for input and stay idle
+    
     // player state register
     reg [1:0] current_state;
     reg [1:0] next_state;
@@ -139,7 +140,7 @@ module tt_um_vga_example (
                 // Update state
                 current_state <= next_state;
                 current_sword_frames <= sword_duration; //九曲十八弯，用两个旗帜传递复位信号，来保证Sword_duration和旗帜不会多重驱动
-                if sword_duration != current_sword_frames)begin
+                if (sword_duration != current_sword_frames)begin
                   sword_duration<=0;
                 end else begin
                   sword_duration <= sword_duration + 1;
