@@ -36,7 +36,6 @@ module tt_um_vga_example (
     reg [5:0] sword_duration; // how long the sword stays visible
     reg sword_display_end;
     reg current_sword_frames;
-    ;
 
     localparam IDLE_STATE   = 2'b00;  // Move when there is input from the controller
     localparam ATTACK_STATE = 2'b01;  // Sword appears where the player is facing
@@ -94,28 +93,28 @@ module tt_um_vga_example (
 
     PictureProcessingUnit ppu (
 
-    .clk_in                  (clk),
-    .reset                   (~rst_n),
-    .entity_1                ({player_sprite, player_orientation , player_pos}), //player
-    .entity_2                ({sword_visible, sword_orientation, sword_pos}), //sword
-    .entity_3                (14'b1111_11_0101_0000),// entity input form: ([13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
-    .entity_4                (14'b1111_11_0110_0000),
-    .entity_5                (14'b1111_11_0110_0000),
-    .entity_6                (14'b1111_11_1111_1111),
-    .entity_7_Array          (18'b1111_01_1010_0000_0111 ),
-    .entity_8_Flip           (14'b1111_11_1111_1111),
-    // .entity_9_Flip           (14'b1111_11_1111_1111),
-    .dragon_1({~Display_en[0],4'b0110,Dragon_1}),  //Simultaneously supports up to 9 objects in the scene.
-    .dragon_2({~Display_en[1],4'b0100,Dragon_2}),  //Entity input form: ([15] Enable, [13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
-    .dragon_3({~Display_en[2],4'b0100,Dragon_3}),  //Set the entity ID to 4'hf for unused channels.
-    .dragon_4({~Display_en[3],4'b0100,Dragon_4}),
-    .dragon_5({~Display_en[4],4'b0100,Dragon_5}),
-    .dragon_6({~Display_en[5],4'b0100,Dragon_6}),
-    .dragon_7({~Display_en[6],4'b0100,Dragon_7}),
-    .counter_V               (pix_y),
-    .counter_H               (pix_x),
+        .clk_in                  (clk),
+        .reset                   (~rst_n),
+        .entity_1                ({player_sprite, player_orientation , player_pos}), //player
+        .entity_2                ({sword_visible, sword_orientation, sword_pos}), //sword
+        .entity_3                (14'b1111_11_0101_0000),// entity input form: ([13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
+        .entity_4                (14'b1111_11_0110_0000),
+        .entity_5                (14'b1111_11_0110_0000),
+        .entity_6                (14'b1111_11_1111_1111),
+        .entity_7_Array          (18'b1111_01_1010_0000_0111 ),
+        .entity_8_Flip           (14'b1111_11_1111_1111),
+        // .entity_9_Flip           (14'b1111_11_1111_1111),
+        .dragon_1({~Display_en[0],4'b0110,Dragon_1}), 
+        .dragon_2({~Display_en[1],4'b0100,Dragon_2}),  //Dragon Body entity slot structure: ([15] Enable, [13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
+        .dragon_3({~Display_en[2],4'b0100,Dragon_3}),  //Set the entity ID to 4'hf for unused channels.
+        .dragon_4({~Display_en[3],4'b0100,Dragon_4}),
+        .dragon_5({~Display_en[4],4'b0100,Dragon_5}),
+        .dragon_6({~Display_en[5],4'b0100,Dragon_6}),
+        .dragon_7({~Display_en[6],4'b0100,Dragon_7}),
+        .counter_V               (pix_y),
+        .counter_H               (pix_x),
 
-    .colour                  (pixel_value)
+        .colour                  (pixel_value)
     );
 
    // vga unit 
