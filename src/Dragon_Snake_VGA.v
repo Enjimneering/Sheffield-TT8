@@ -1,35 +1,31 @@
 /*
  * Copyright (c) 2024 Tiny Tapeout LTD
  * SPDX-License-Identifier: Apache-2.0
- * Author: Uri Shaked
+ * Authors: James Ashie Kotey, Bowen Shi, Anubhav Avinash, Kwashie Andoh, 
+ * Abdulatif Babli, K Arjunav, Cameron Brizland
+ * Adapted from Logo.v by Uri Shaked
  */
 
-
-`define COLOR_WHITE 3'd7
-`timescale 1ms/1ms
-
 // top module
-
 //TT Pinout (standard for TT projects - can't change this)
 
 module tt_um_vga_example ( 
 
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
-    // input  wire [7:0] uio_in,   // IOs: Input path
+    input  wire [7:0] uio_in,   // IOs: Input path
     output wire [7:0] uio_out,  // IOs: Output path
     output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
-    // input  wire       ena,      // always 1 when the design is powered, so you can ignore it
+    input  wire       ena,      // always 1 when the design is powered, so you can ignore it
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset   
 );
     
-    // input logic 
-
-    // orientation and direction: 00 - up, 01 - right, 10 - down, 11 - left  
-
+    // input signals
     wire [4:0] input_data; // register to hold the 5 possible player actions
+    //player logic
     reg [7:0] player_pos;   // player position xxxx_yyyy
+    // orientation and direction: 00 - up, 01 - right, 10 - down, 11 - left  
     reg [1:0] player_orientation;   // player orientation 
     reg [1:0] player_direction;   // player direction
     reg [3:0] player_sprite;
@@ -38,18 +34,26 @@ module tt_um_vga_example (
     reg [3:0] sword_visible;
     reg [1:0] sword_orientation;   // sword orientation 
     reg [5:0] sword_duration; // how long the sword stays visible
-    // State register
+    regsword_display_end;
+    re        current_sword_frames
+    ;
+
+    localparam IDLE_STATE   = 2'b00;  // Move when there is input from the controller
+    localparam ATTACK_STATE = 2'b01;  // Sword appears where the player is facing
+    localparam MOVE_STATE   = 2'b10;  // Wait for input and stay idle
+    // player state register
     reg [1:0] current_state;
     reg [1:0] next_state;
 
+    //dragon logic
     reg [7:0] dragon_pos;
-
     reg [3:0] dragon_sprite;
     reg [3:0] player_y;
     reg [3:0] player_x;
     reg [3:0] dragon_x;
     reg [3:0] dragon_y;
 
+    //display signals
     wire hsync;
     wire vsync;
     reg [1:0] R;
@@ -59,24 +63,11 @@ module tt_um_vga_example (
     wire [9:0] pix_x;
     wire [9:0] pix_y;
 
+    //timing signals
     wire pixel_value;
     wire frame_end;
-    
-    // wire clk;
 
-    //Clock
-    // clk_wiz_0 fbcCLK(
-    //     .clk_in1(clkin),
-    //     .reset(~rst_n),
-
-    //     .clk_out1(clk)
-    // );
-
-
-    // State definitions
-    localparam IDLE_STATE   = 2'b00;  // Move when there is input from the controller
-    localparam ATTACK_STATE = 2'b01;  // Sword appears where the player is facing
-    localparam MOVE_STATE   = 2'b10;  // Wait for input and stay idle
+    // Player state definitions
 
     InputController ic(  // change these mappings to change the controls in the simulastor
         .clk(clk),
@@ -88,8 +79,6 @@ module tt_um_vga_example (
         .attack(ui_in[4]),
         .control_state(input_data)
     );
-
-
 
     // Frame Control Unit
     wire [9:0]   Dragon_1 ;
@@ -143,21 +132,14 @@ module tt_um_vga_example (
     assign uo_out  = {hsync, B[0], G[0], R[0], vsync, B[1], G[1], R[1]};
 
     // game logic (fsm)
-    // animation stuff
 
-reg sword_duration_flag;
-reg sword_duration_flag_local;
-
-
-    always @(posedge clk) begin //<<<<<IMPORTANT<<<<<< negedge is aviable in vga playground. Probably some timing issue but not sure
+    always @(posedge clk) begin // <<<<<IMPORTANT<<<<<< negedge is aviable in vga playground. Probably some timing issue but not sure
         if(rst_n)begin           
-            
             if(frame_end)begin
-                    // Update state
+                // Update state
                 current_state <= next_state;
-
-                sword_duration_flag_local <= sword_duration_flag; //九曲十八弯，用两个旗帜传递复位信号，来保证Sword_duration和旗帜不会多重驱动
-                if(sword_duration_flag != sword_duration_flag_local)begin
+                current_sword_frames <= sword_duration; //九曲十八弯，用两个旗帜传递复位信号，来保证Sword_duration和旗帜不会多重驱动
+                if sword_duration != current_sword_frames)begin
                   sword_duration<=0;
                 end else begin
                   sword_duration <= sword_duration + 1;
@@ -180,6 +162,9 @@ reg sword_duration_flag_local;
             player_anim_counter <= 0;
         end
     end
+
+
+
     
     always @(posedge clk) begin
       if(rst_n)begin
@@ -192,7 +177,7 @@ reg sword_duration_flag_local;
                     case (input_data[4]) 
                         1 : begin // attack
                             next_state <= ATTACK_STATE;
-                            sword_duration_flag <= sword_duration_flag + 1;
+                            sword_duration <= sword_duration + 1;
                         end
 
                         0: begin // no attack
@@ -262,11 +247,12 @@ reg sword_duration_flag_local;
                     next_state <= IDLE_STATE;  // Default case, stay in IDLE state
                 end
             endcase
-      end else begin
-        sword_duration_flag <= 0;
-        next_state <= 0;
-        player_orientation <= 2'b01;
-        player_direction <= 2'b01;
+
+       end else begin
+            sword_duration <= 0;
+            next_state <= 0;
+            player_orientation <= 2'b01;
+            player_direction <= 2'b01;
       end
 end
 
@@ -285,9 +271,6 @@ DragonHead HD(
     .dragon_pos(d_pos),
     .movement_counter(mov_C)// Counter for delaying dragon's movement otherwise sticks to player
 );
-
-
-
 
 
 Snake_Top ST(
@@ -309,10 +292,6 @@ Snake_Top ST(
     .Display_en(Display_en)
 );
 
-
-
-
-
     always @(posedge clk) begin
         if (~rst_n) begin
         R <= 0;
@@ -320,7 +299,6 @@ Snake_Top ST(
         B <= 0;
         end else begin
 
-        
         if (video_active) begin // display output color from Frame controller unit
 
             if (player_direction == 0) begin // up
@@ -330,7 +308,6 @@ Snake_Top ST(
                 B <= pixel_value ? 2'b11 : 0;
 
             end
-
 
             if (player_direction == 1) begin // right
 
@@ -356,8 +333,6 @@ Snake_Top ST(
 
             end
 
-
-
         end else begin
             R <= 0;
             G <= 0;
@@ -370,8 +345,7 @@ Snake_Top ST(
 
     assign uio_out = 0;
     assign uio_oe  = 0;
-    // wire _unused_ok = &{ena, uio_in}; // prevent warnings
-    wire _unused_ok = &{uio_in}; // prevent warnings
+    wire _unused_ok = &{ena, uio_in}; // prevent warnings
 
 endmodule
 
@@ -449,43 +423,31 @@ module PictureProcessingUnit(
     reg [9:0] previous_vertical_pixel;
 
 
+    always@(posedge clk)begin // Tile and Pixel Counters
 
+        if(!reset)begin
+            previous_vertical_pixel <= counter_V; // 
 
-always@(posedge clk)begin // Tile and Pixel Counters
-
-    if(!reset)begin
-            
-        previous_vertical_pixel <= counter_V;
-
-        if (previous_vertical_pixel != counter_V )begin // if counter has incremented
-
-            if(upscale_Counter_V != 4) begin  // Upscale every pixel 5x
-
-                upscale_Counter_V <= upscale_Counter_V + 1;
-            
-            end 
-            
-            else begin
-
+            if (previous_vertical_pixel != counter_V )begin // if counter has incremented
+                if(upscale_Counter_V != 4) begin  // Upscale every pixel 5x
+                    upscale_Counter_V <= upscale_Counter_V + 1;
+                end else begin
                     upscale_Counter_V <= 0;
                     row_Counter <= row_Counter + 1;
-            end
-
-                if (counter_V >= 40) begin // Tile Counter 
-
-                    if(row_Counter == 3'b111 && upscale_Counter_V == 4 && vertical_Tile_Counter != 4'd11)begin
-                        vertical_Tile_Counter <= vertical_Tile_Counter + 1; // increment vertical tile 
-
-                    end else if(row_Counter == 3'b111 && upscale_Counter_V == 4 && vertical_Tile_Counter == 4'd11) begin
-                        vertical_Tile_Counter <= 0;
-
-                    end else begin
-                        vertical_Tile_Counter <= vertical_Tile_Counter;
-                    end
-
-                end else begin
+            end 
+            
+            if (counter_V >= 40) begin  // Tile Counter 
+                if(row_Counter == 3'b111 && upscale_Counter_V == 4 && vertical_Tile_Counter != 4'd11)begin
+                    vertical_Tile_Counter <= vertical_Tile_Counter + 1; // increment vertical tile 
+                end else if(row_Counter == 3'b111 && upscale_Counter_V == 4 && vertical_Tile_Counter == 4'd11) begin
                     vertical_Tile_Counter <= 0;
+                end else begin
+                    vertical_Tile_Counter <= vertical_Tile_Counter;
                 end
+
+            end else begin
+                vertical_Tile_Counter <= 0;
+            end
 
             end else begin
                 vertical_Tile_Counter <= vertical_Tile_Counter;
@@ -503,221 +465,218 @@ always@(posedge clk)begin // Tile and Pixel Counters
                     upscale_Counter_H <= 0;
                     column_Counter <= column_Counter + 1;
                 end 
-                
+                    
                 if (counter_H >= 40) begin
                     if(column_Counter == 3'b111 && upscale_Counter_H == 4)begin
                         horizontal_Tile_Counter <= horizontal_Tile_Counter + 1; // increment horizontal tile 
                     end else begin
                         horizontal_Tile_Counter <= horizontal_Tile_Counter;
                     end
+                    end else begin
+                        horizontal_Tile_Counter <= 0;
+                    end
+
                 end else begin
-                    horizontal_Tile_Counter <= 0;
+
+                    horizontal_Tile_Counter <= horizontal_Tile_Counter;
+                    upscale_Counter_H <= upscale_Counter_H;
+                    column_Counter <= column_Counter;
+
+                end
+
+            end else begin // reset all counters
+
+                previous_horizontal_pixel <= 0;
+                column_Counter <= 0; 
+                upscale_Counter_H <= 0;
+                horizontal_Tile_Counter <= 4'b0000;
+
+                previous_vertical_pixel <= 0;
+                row_Counter <= 0;
+                upscale_Counter_V <= 0;
+                vertical_Tile_Counter <= 4'b0000;
+            end
+    end
+
+    // detect if a new tile has been reached
+
+    wire [3:0] next_tile = (horizontal_Tile_Counter + 1);
+    wire [3:0] current_tile = (local_Counter_H);
+    wire new_tile = next_tile != current_tile;
+
+    always@(posedge clk)begin // entity_counter works like a program counter in a CPU.
+
+        if (!reset) begin
+
+        case (entity_Counter)
+            4'd0: begin 
+                general_Entity <= {entity_8_Flip,4'b0000}; 
+                flip_Or_Array_Flag <= 2'b01;
+                end
+            4'd1:begin
+                general_Entity <= entity_7_Array;
+                flip_Or_Array_Flag <= 2'b10;
+            end   
+            4'd2:begin
+                general_Entity <= {entity_6,4'b0000};
+                flip_Or_Array_Flag <= 2'b00;
+            end
+            4'd3:begin 
+                general_Entity <= {entity_5,4'b0000};
+                flip_Or_Array_Flag <= 2'b00;
+            end
+            4'd4:begin 
+                general_Entity <= {entity_4,4'b0000};
+                flip_Or_Array_Flag <= 2'b00;
+            end
+            4'd5:begin 
+                general_Entity <= {entity_3,4'b0000};
+                flip_Or_Array_Flag <= 2'b00;
+            end
+            4'd6:begin 
+                general_Entity <= {entity_2,4'b0000};
+                flip_Or_Array_Flag <= 2'b00;
+            end
+            4'd7:begin 
+                general_Entity <= {entity_1,4'b0000};
+                flip_Or_Array_Flag <= 2'b00;
+            end
+            4'd8: begin
+                general_Entity <= {dragon_1[13:0],4'b0000};
+                flip_Or_Array_Flag <= {dragon_1[14],dragon_1[14]};
+            end
+            4'd9: begin
+                general_Entity <= {dragon_2[13:0],4'b0000};
+                flip_Or_Array_Flag <= {dragon_2[14],dragon_2[14]};
+            end
+            4'd10: begin
+                general_Entity <= {dragon_3[13:0],4'b0000};
+                flip_Or_Array_Flag <= {dragon_3[14],dragon_3[14]};
+            end
+            4'd11: begin
+                general_Entity <= {dragon_4[13:0],4'b0000};
+                flip_Or_Array_Flag <= {dragon_4[14],dragon_4[14]};
+            end
+            4'd12: begin
+                general_Entity <= {dragon_5[13:0],4'b0000};
+                flip_Or_Array_Flag <= {dragon_5[14],dragon_5[14]};
+            end
+            4'd13: begin
+                general_Entity <= {dragon_6[13:0],4'b0000};
+                flip_Or_Array_Flag <= {dragon_6[14],dragon_6[14]};
+            end
+            4'd14: begin
+                general_Entity <= {dragon_7[13:0],4'b0000};
+                flip_Or_Array_Flag <= {dragon_7[14],dragon_7[14]};
+            end
+
+            
+            default: begin
+                general_Entity <= 18'b111111000000000000;
+                flip_Or_Array_Flag <= 2'b11;
+            end
+        endcase
+
+            // update tile counters
+            local_Counter_H <= horizontal_Tile_Counter + 1;
+
+            if(row_Counter == 3'b111 && upscale_Counter_H == 4 && horizontal_Tile_Counter == 15 && column_Counter == 7 && upscale_Counter_H == 4)begin
+                
+                if(vertical_Tile_Counter != 4'b1011) begin 
+                    local_Counter_V <= vertical_Tile_Counter + 1; // process the tile ahead while the current tile is being drawn.
+                end 
+
+                else begin
+                    local_Counter_V <= 0;
                 end
 
             end else begin
-
-                horizontal_Tile_Counter <= horizontal_Tile_Counter;
-                upscale_Counter_H <= upscale_Counter_H;
-                column_Counter <= column_Counter;
-
+                local_Counter_V <= vertical_Tile_Counter;
             end
 
-    end else begin // reset all counters
-
-        previous_horizontal_pixel <= 0;
-        column_Counter <= 0; 
-        upscale_Counter_H <= 0;
-        horizontal_Tile_Counter <= 4'b0000;
-
-        previous_vertical_pixel <= 0;
-        row_Counter <= 0;
-        upscale_Counter_V <= 0;
-        vertical_Tile_Counter <= 4'b0000;
-    end
-end
-
-// detect if a new tile has been reached
-
-wire [3:0] next_tile = (horizontal_Tile_Counter + 1);
-wire [3:0] current_tile = (local_Counter_H);
-wire new_tile = next_tile != current_tile;
-
-always@(posedge clk)begin // entity_counter works like a program counter in a CPU.
-
-    if (!reset) begin
-
-    case (entity_Counter)
-        4'd0: begin 
-            general_Entity <= {entity_8_Flip,4'b0000}; 
-            flip_Or_Array_Flag <= 2'b01;
+            // cycle through all of the entity slots
+            if (entity_Counter != 14 && entity_Counter != 4'd15) begin
+                entity_Counter <= entity_Counter + 1;
+                
+            end else if (new_tile) begin
+                entity_Counter <=0;
+            end else begin
+                entity_Counter <= 4'd15;
             end
-        4'd1:begin
-            general_Entity <= entity_7_Array;
-            flip_Or_Array_Flag <= 2'b10;
-        end   
-        4'd2:begin
-            general_Entity <= {entity_6,4'b0000};
-            flip_Or_Array_Flag <= 2'b00;
-        end
-        4'd3:begin 
-            general_Entity <= {entity_5,4'b0000};
-            flip_Or_Array_Flag <= 2'b00;
-        end
-        4'd4:begin 
-            general_Entity <= {entity_4,4'b0000};
-            flip_Or_Array_Flag <= 2'b00;
-        end
-        4'd5:begin 
-            general_Entity <= {entity_3,4'b0000};
-            flip_Or_Array_Flag <= 2'b00;
-        end
-        4'd6:begin 
-            general_Entity <= {entity_2,4'b0000};
-            flip_Or_Array_Flag <= 2'b00;
-        end
-        4'd7:begin 
-            general_Entity <= {entity_1,4'b0000};
-            flip_Or_Array_Flag <= 2'b00;
-        end
-        4'd8: begin
-            general_Entity <= {dragon_1[13:0],4'b0000};
-            flip_Or_Array_Flag <= {dragon_1[14],dragon_1[14]};
-        end
-        4'd9: begin
-            general_Entity <= {dragon_2[13:0],4'b0000};
-            flip_Or_Array_Flag <= {dragon_2[14],dragon_2[14]};
-        end
-        4'd10: begin
-            general_Entity <= {dragon_3[13:0],4'b0000};
-            flip_Or_Array_Flag <= {dragon_3[14],dragon_3[14]};
-        end
-        4'd11: begin
-            general_Entity <= {dragon_4[13:0],4'b0000};
-            flip_Or_Array_Flag <= {dragon_4[14],dragon_4[14]};
-        end
-        4'd12: begin
-            general_Entity <= {dragon_5[13:0],4'b0000};
-            flip_Or_Array_Flag <= {dragon_5[14],dragon_5[14]};
-        end
-        4'd13: begin
-            general_Entity <= {dragon_6[13:0],4'b0000};
-            flip_Or_Array_Flag <= {dragon_6[14],dragon_6[14]};
-        end
-        4'd14: begin
-            general_Entity <= {dragon_7[13:0],4'b0000};
-            flip_Or_Array_Flag <= {dragon_7[14],dragon_7[14]};
-        end
 
-        
-        default: begin
-            general_Entity <= 18'b111111000000000000;
-            flip_Or_Array_Flag <= 2'b11;
-        end
-    endcase
+            end else begin // reset 
 
-        // update tile counters
-
-        local_Counter_H <= horizontal_Tile_Counter + 1;
-
-        if(row_Counter == 3'b111 && upscale_Counter_H == 4 && horizontal_Tile_Counter == 15 && column_Counter == 7 && upscale_Counter_H == 4)begin
-            
-            if(vertical_Tile_Counter != 4'b1011) begin 
-                local_Counter_V <= vertical_Tile_Counter + 1; // process the tile ahead while the current tile is being drawn.
-            end 
-
-            else begin
+                flip_Or_Array_Flag <= 2'b11;
+                entity_Counter <= 4'b0000;
+                general_Entity <=18'b111111000000000000;
+                local_Counter_H <= 0;
                 local_Counter_V <= 0;
+
             end
-
-        end else begin
-            local_Counter_V <= vertical_Tile_Counter;
-        end
-
         
-        // cycle through all of the entity slots
-
-        if (entity_Counter != 14 && entity_Counter != 4'd15) begin
-            entity_Counter <= entity_Counter + 1;
-            
-        end else if (new_tile) begin
-            entity_Counter <=0;
-        end else begin
-            entity_Counter <= 4'd15;
-        end
-
-        end else begin // reset 
-
-            flip_Or_Array_Flag <= 2'b11;
-            entity_Counter <= 4'b0000;
-            general_Entity <=18'b111111000000000000;
-            local_Counter_H <= 0;
-            local_Counter_V <= 0;
-
-        end
-    
 end
 
 // checking whether the current entity should  be displayed in the tile - for each entity slot 
 
-wire inRange;
+    wire inRange;
 
-assign inRange = ((((local_Counter_H - general_Entity[11:8])) == 0) && (((local_Counter_V - general_Entity[7:4])) == 0));
+    assign inRange = ((((local_Counter_H - general_Entity[11:8])) == 0) && (((local_Counter_V - general_Entity[7:4])) == 0));
 
-reg [8:0] detector;
-reg [8:0] out_entity;
+    reg [8:0] detector;
+    reg [8:0] out_entity;
 
-always @(posedge clk) begin
+    always @(posedge clk) begin
 
-    if (!reset) begin
+        if (!reset) begin
 
-        // depending on the slot type, send the appropriate row to the Sprite ROM
+            // depending on the slot type, send the appropriate row to the Sprite ROM
 
-        if (!(column_Counter == 7 && upscale_Counter_H == 3))begin
+            if (!(column_Counter == 7 && upscale_Counter_H == 3))begin
 
-            out_entity <= out_entity;
-            
-            if ((inRange && (general_Entity[17:14] != 4'b1111)) && (flip_Or_Array_Flag != 2'b11)) begin
+                out_entity <= out_entity;
+                
+                if ((inRange && (general_Entity[17:14] != 4'b1111)) && (flip_Or_Array_Flag != 2'b11)) begin
 
-                if (flip_Or_Array_Flag == 2'b01) begin
-                    detector <= {~(row_Counter), general_Entity[17:12]};
+                    if (flip_Or_Array_Flag == 2'b01) begin
+                        detector <= {~(row_Counter), general_Entity[17:12]};
+                    end else begin
+                        detector <= {(row_Counter), general_Entity[17:12]};
+                    end
+
                 end else begin
-                    detector <= {(row_Counter), general_Entity[17:12]};
+
+                    detector <= detector;
                 end
 
             end else begin
-
-                detector <= detector;
+                out_entity <= detector;
+                detector <= 9'b111111111; // [8:6] row number, [5:2] Entity ID, [1:0] Orientation 
             end
 
         end else begin
-            out_entity <= detector;
-            detector <= 9'b111111111; // [8:6] row number, [5:2] Entity ID, [1:0] Orientation 
+            detector <= 9'b111111111;
+            out_entity <= 9'b111111111;
         end
-
-    end else begin
-        detector <= 9'b111111111;
-        out_entity <= 9'b111111111;
     end
-end
 
-wire [7:0] buffer;
+    wire [7:0] buffer;
 
-SpriteROM Rom(
-    .clk(clk),
-    .reset(reset),
-    .orientation(out_entity[1:0]),
-    .sprite_ID(out_entity[5:2]),
-    .line_index(out_entity[8:6]),
-    .data(buffer)
-);
+    SpriteROM Rom(
+        .clk(clk),
+        .reset(reset),
+        .orientation(out_entity[1:0]),
+        .sprite_ID(out_entity[5:2]),
+        .line_index(out_entity[8:6]),
+        .data(buffer)
+    );
 
-always@(posedge clk)begin
-    if(!reset)begin
-    colour <= buffer[column_Counter];
-    end else begin
-    colour <= 1'b1;
+    always@(posedge clk)begin
+        if(!reset)begin
+        colour <= buffer[column_Counter];
+        end else begin
+        colour <= 1'b1;
+        end
     end
-end
 
 endmodule
 
