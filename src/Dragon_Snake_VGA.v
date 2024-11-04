@@ -18,7 +18,7 @@ module tt_um_vga_example (
     output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
     input  wire       ena,      // always 1 when the design is powered, so you can ignore it
     input  wire       clk,      // clock
-    input  wire       rst_n     // reset_n - low to reset   
+    input  wire       rst_n    // reset_n - low to reset   
 );
     
     // input signals
@@ -133,18 +133,24 @@ module tt_um_vga_example (
 
     // game logic (fsm)
 
-    always @(posedge clk) begin // <<<<<IMPORTANT<<<<<< negedge is aviable in vga playground. Probably some timing issue but not sure
+    reg sword_duration_flag;
+    reg sword_duration_flag_local;
+
+
+    always @(posedge clk) begin //<<<<<IMPORTANT<<<<<< negedge is aviable in vga playground. Probably some timing issue but not sure
         if(rst_n)begin           
+
             if(frame_end)begin
-                // Update state
+                    // Update state
                 current_state <= next_state;
-                current_sword_frames <= sword_duration; //九曲十八弯，用两个旗帜传递复位信号，来保证Sword_duration和旗帜不会多重驱动
-                if (sword_duration != current_sword_frames)begin
+
+                sword_duration_flag_local <= sword_duration_flag; //九曲十八弯，用两个旗帜传递复位信号，来保证Sword_duration和旗帜不会多重驱动
+                if(sword_duration_flag != sword_duration_flag_local)begin
                   sword_duration<=0;
                 end else begin
                   sword_duration <= sword_duration + 1;
                 end
-                
+
                 // player_anim_counter <= player_anim_counter + 1;
                 if (player_anim_counter == 20) begin
                     player_anim_counter <= 0;
@@ -163,13 +169,10 @@ module tt_um_vga_example (
         end
     end
 
-
-
-    
     always @(posedge clk) begin
       if(rst_n)begin
             case (current_state)
-                
+
                 IDLE_STATE: begin
                     sword_pos <= 0;
                     sword_visible <= 4'b1111;
@@ -177,7 +180,7 @@ module tt_um_vga_example (
                     case (input_data[4]) 
                         1 : begin // attack
                             next_state <= ATTACK_STATE;
-                            sword_duration <= sword_duration + 1;
+                            sword_duration_flag <= sword_duration_flag + 1;
                         end
 
                         0: begin // no attack
@@ -192,7 +195,7 @@ module tt_um_vga_example (
 
                     endcase               
                 end
-                
+
                 MOVE_STATE: begin
                     // Move player based on direction inputs and update orientation
                     if (input_data[0] == 1 && player_pos[3:0] > 4'b0001) begin   // Check boundary for up movement
@@ -247,12 +250,11 @@ module tt_um_vga_example (
                     next_state <= IDLE_STATE;  // Default case, stay in IDLE state
                 end
             endcase
-
-       end else begin
-            sword_duration <= 0;
-            next_state <= 0;
-            player_orientation <= 2'b01;
-            player_direction <= 2'b01;
+      end else begin
+        sword_duration_flag <= 0;
+        next_state <= 0;
+        player_orientation <= 2'b01;
+        player_direction <= 2'b01;
       end
 end
 
