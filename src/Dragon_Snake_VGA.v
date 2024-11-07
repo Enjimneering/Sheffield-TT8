@@ -55,12 +55,10 @@ module tt_um_vga_example (
     wire [1:0] player_orientation;   // player orientation 
     wire [1:0] player_direction;   // player direction
     wire [3:0] player_sprite;
-    wire [5:0] player_anim_counter;
-    wire [7:0] sword_pos; // sword position xxxx_yyyy
+
+    wire [7:0] sword_position; // sword position xxxx_yyyy
     wire [3:0] sword_visible;
     wire [1:0] sword_orientation;   // sword orientation 
-    wire [5:0] sword_duration; // how long the sword stays visible
-
 
     PlayerLogic playlogic(
         .clk(clk),
@@ -73,7 +71,7 @@ module tt_um_vga_example (
         .player_direction(player_direction),
         .player_sprite(player_sprite),
 
-        .sword_pos(sword_pos),
+        .sword_position(sword_position),
         .sword_visible(sword_visible),
         .sword_orientation(sword_orientation)
     );
@@ -93,15 +91,14 @@ module tt_um_vga_example (
 
         .clk_in                  (clk),
         .reset                   (~rst_n),
-        .entity_1                ({player_sprite, player_orientation , player_pos}), //player
-        .entity_2                ({sword_visible, sword_orientation, sword_pos}), //sword
-        .entity_3                (14'b1111_11_0101_0000),// entity input form: ([13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
+        .entity_1                ({player_sprite, player_orientation , player_pos}),   //player
+        .entity_2                ({sword_visible, sword_orientation, sword_position}), //sword
+        .entity_3                (14'b1111_11_0101_0000), // entity input form: ([13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
         .entity_4                (14'b1111_11_0110_0000),
         .entity_5                (14'b1111_11_0110_0000),
         .entity_6                (14'b1111_11_1111_1111),
-        .entity_7_Array          (18'b1111_01_1010_0000_0111 ),
+        .entity_7_Array          (18'b1111_01_1010_0000_0111),
         .entity_8_Flip           (14'b1111_11_1111_1111),
-        // .entity_9_Flip           (14'b1111_11_1111_1111),
         .dragon_1({~Display_en[0],4'b0110,Dragon_1}), 
         .dragon_2({~Display_en[1],4'b0100,Dragon_2}),  //Dragon Body entity slot structure: ([15] Enable, [13:10] entity ID, [9:8] Orientation, [7:0] Location(tile)).
         .dragon_3({~Display_en[2],4'b0100,Dragon_3}),  //Set the entity ID to 4'hf for unused channels.
@@ -116,7 +113,7 @@ module tt_um_vga_example (
     );
 
    // vga unit 
-    vga_sync_generator vga_sync_gen (
+    sync_generator sync_gen (
         .clk(clk),
         .reset(~rst_n),
         .hsync(hsync),
@@ -127,49 +124,47 @@ module tt_um_vga_example (
         .frame_end(frame_end)
     );
 
-assign uo_out  = {hsync, B[0], G[0], R[0], vsync, B[1], G[1], R[1]};
 
-    // game logic (fsm)
+    //dragon logic 
+    wire [1:0] dragon_direction;
+    wire [7:0] dragon_position;
+    wire [5:0] movement_delay_counter;
 
+    DragonHead dragonHead( 
+        .clk(clk),
+        .reset(~rst_n),
+        .player_pos(player_pos),
+    
+        .vsync(vsync),
 
-
-wire [1:0] d_direction;
-wire [7:0] d_pos;
-wire [5:0] mov_C;
-
-DragonHead HD( 
-    .clk(clk),
-    .reset(~rst_n),
-    .player_pos(player_pos),
-  
-    .vsync(vsync),
-
-    .dragon_direction(d_direction),
-    .dragon_pos(d_pos),
-    .movement_counter(mov_C)// Counter for delaying dragon's movement otherwise sticks to player
-);
+        .dragon_direction(dragon_direction),
+        .dragon_pos(dragon_position),
+        .movement_counter(movement_delay_counter)// Counter for delaying dragon's movement otherwise sticks to player
+    );
 
 
-Snake_Top ST(
-    .clk(clk),
-    .reset(~rst_n),
-    .States(2'b01),
-    .OrienAndPositon({d_direction,d_pos}),
-    .movement_counter(mov_C),
-    .vsync(vsync),
+    DragonBody dragonBody(
+        .clk(clk),
+        .reset(~rst_n),
+        .States(2'b01),
+        .OrienAndPositon({dragon_direction,dragon_position}),
+        .movement_counter(movement_delay_counter),
+        .vsync(vsync),
 
-    .Dragon_1(Dragon_1),
-    .Dragon_2(Dragon_2),
-    .Dragon_3(Dragon_3),
-    .Dragon_4(Dragon_4),
-    .Dragon_5(Dragon_5),
-    .Dragon_6(Dragon_6),
-    .Dragon_7(Dragon_7),
+        .Dragon_1(Dragon_1),
+        .Dragon_2(Dragon_2),
+        .Dragon_3(Dragon_3),
+        .Dragon_4(Dragon_4),
+        .Dragon_5(Dragon_5),
+        .Dragon_6(Dragon_6),
+        .Dragon_7(Dragon_7),
 
-    .Display_en(Display_en)
-);
+        .Display_en(Display_en)
+    );
 
+    // display logic
     always @(posedge clk) begin
+        
         if (~rst_n) begin
         R <= 0;
         G <= 0;
@@ -202,7 +197,7 @@ Snake_Top ST(
 
             end
 
-            if (player_direction == 3) begin // 
+            if (player_direction == 3) begin // left
 
                 R <= pixel_value ? 2'b11 : 2'b11;
                 G <= pixel_value ? 2'b11 : 0;
@@ -218,11 +213,12 @@ Snake_Top ST(
         end
     end
 
-    // housekeeping to prevent errors/ warnings in synthesis.
+    assign uo_out  = {hsync, B[0], G[0], R[0], vsync, B[1], G[1], R[1]};
 
+    // housekeeping to prevent errors/ warnings in synthesis.
     assign uio_out = 0;
     assign uio_oe  = 0;
-    wire _unused_ok = &{ena, uio_in}; // prevent warnings
+    wire _unused_ok = &{ena, uio_in}; 
 
 endmodule
 
@@ -455,6 +451,7 @@ module PictureProcessingUnit(
         endcase
 
             // update tile counters
+
             local_Counter_H <= horizontal_Tile_Counter + 1;
 
             if(row_Counter == 3'b111 && upscale_Counter_H == 4 && horizontal_Tile_Counter == 15 && column_Counter == 7 && upscale_Counter_H == 4)begin
@@ -472,6 +469,7 @@ module PictureProcessingUnit(
             end
 
             // cycle through all of the entity slots
+
             if (entity_Counter != 14 && entity_Counter != 4'd15) begin
                 entity_Counter <= entity_Counter + 1;
                 
@@ -559,10 +557,9 @@ endmodule
 
 // --------------------------------------
 
-/* 
-module: SpriteROM 
+/* module: SpriteROM 
 
-description:
+description: 
 The Sprite ROM stores all of the graphicval information in the game using a bitmap.
 it outputs an 1 * 8 cross-sectional slice of the currently displayed sprite that needs to be displayed on the current tile.
 Depending on the oriAentation bits it will return a different, slice, rotating or flipping the image as appropriate.
@@ -773,7 +770,7 @@ module SpriteROM (
 // Generates Sync Pulses for VGA Monitor as well as pixel coordinates for the graphics controller
 // Author: Uri Shaked
 
-module vga_sync_generator (  
+module sync_generator (  
 
     input              clk,
     input              reset,
@@ -919,7 +916,7 @@ endmodule
 
 
 
-module Snake_Top(
+module DragonBody(
     input clk,
     input reset,
     input vsync,
@@ -1094,7 +1091,7 @@ module PlayerLogic(
     output reg [1:0] player_direction,   // player direction
     output reg [3:0] player_sprite,
 
-    output reg [7:0] sword_pos, // sword position xxxx_yyyy
+    output reg [7:0] sword_position, // sword position xxxx_yyyy
     output reg [3:0] sword_visible,
     output reg [1:0] sword_orientation   // sword orientation 
     
@@ -1154,7 +1151,7 @@ always @(posedge clk) begin
         case (current_state)
 
             IDLE_STATE: begin
-                sword_pos <= 0;
+                sword_position <= 0;
                 sword_visible <= 4'b1111;
 
                 case (input_data[4]) 
@@ -1207,16 +1204,16 @@ always @(posedge clk) begin
             ATTACK_STATE: begin
                 sword_visible <= 4'b0001;
                 if (player_direction == 2'b00 ) begin // player facing up
-                    sword_pos <= player_pos - 1;
+                    sword_position <= player_pos - 1;
                     sword_orientation <= 2'b00;
                 end if (player_direction == 2'b10 ) begin // player facing down
-                    sword_pos <= player_pos + 1;
+                    sword_position <= player_pos + 1;
                     sword_orientation <= 2'b10;
                 end if (player_direction == 2'b11) begin // player facing left
-                    sword_pos <= player_pos - 16;
+                    sword_position <= player_pos - 16;
                     sword_orientation <= 2'b11;
                 end if (player_direction == 2'b01) begin // player facing right
-                    sword_pos <= player_pos + 16;
+                    sword_position <= player_pos + 16;
                     sword_orientation <= 2'b01;
                 end
 
