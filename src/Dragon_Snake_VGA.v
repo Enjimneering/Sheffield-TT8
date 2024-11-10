@@ -230,13 +230,14 @@ endmodule
 // Description: this module takkes in entity information from the game logic and uses it to display sprites on screen with selected locations, and orientations
 /* it can easily be adapted to provide more slots to store more entities or to repeat or flip tiles using the array or flipped slots.
 
-    It works as a 6-stage partial pipeline
+    It works as a 7-stage partial pipeline
         Stage 1 - Tile Calculation
         Stage 2 - Tile Lookahead
         Stage 3 - Loading Entity Data from Slots
         Stage 4 - Sprite Detection
-        Stage 5 - Accessing ROM, Writing to The Output Pixel Buffer
-        Stage 6 - Output from pixel buffer
+        Stage 5 - Sending Sprite Data to ROM
+        Stage 6 - Reading From ROM
+        Stage 7 - Outputting pixel value from output buffer
 
 */
 
@@ -301,7 +302,7 @@ module PictureProcessingUnit(
     reg [3:0] local_Counter_H;
     reg [3:0] local_Counter_V;
     
-    // Stage 1 - Updating the current tile, row and column counterscounters using the current pixel position
+    // Stage 1 - Updating the current tile, row and column counterscounters using the current pixel position (Pre-Fetch)
     always@(posedge clk) begin 
         
         if(!reset)begin
@@ -405,7 +406,7 @@ module PictureProcessingUnit(
     wire [3:0] current_tile = (local_Counter_H);
     wire new_tile = next_tile != current_tile;
 
-    // Stage 3 - Cycling through the entity slots - loading the data into the general entity register 
+    // Stage 3 - Cycling through the entity slots - loading the data into the general entity register (Fetch)
     always@(posedge clk) begin 
         
         if (!reset) begin
@@ -495,14 +496,14 @@ module PictureProcessingUnit(
    
     end
 
-    // Stage 4 - Checking whether the Entity in the general entity register should be displayed in the Local tile
+    // Stage 4 - Checking whether the Entity in the general entity register should be displayed in the Local tile (Detect)
     wire inRange;   
     assign inRange = ((((local_Counter_H - general_Entity[11:8])) == 0) && (((local_Counter_V - general_Entity[7:4])) == 0));
     //These registers are used to address the ROM.
     reg [8:0] detector;    // Data Format: [8:6] Row number, [5:2] Entity ID, [1:0] Orientation  
     reg [8:0] out_entity;  
     
-    // Stage 5 - Send entity data to the ROM depending on the contents of the processed tile and slot type.
+    // Stage 5 - Send entity data to the ROM depending on the contents of the processed tile and slot type. 
     always @(posedge clk) begin 
 
         if (!reset) begin
@@ -536,7 +537,8 @@ module PictureProcessingUnit(
     
     end
 
-    SpriteROM Rom( // Sprite ROM
+    //Stage 6 - Read From ROM (Execute)
+    SpriteROM Rom( 
         .clk(clk),
         .reset(reset),
         .orientation(out_entity[1:0]),
@@ -545,9 +547,9 @@ module PictureProcessingUnit(
         .data(buffer)
     );
 
-    wire [7:0] buffer; // ROM output buffer
+    wire [7:0] buffer; // ROM output buffer 
     
-    // Stage 6 - Output the appropriate pixel from the output buffer.
+    // Stage 7 - Send the appropriate pixel value to the VGA output unit. (Write-Back)
     always@(posedge clk)begin 
        
         if(!reset)begin
@@ -714,6 +716,7 @@ module SpriteROM (
     always @(posedge clk) begin // impliment the 4 orientations
             
             if(!reset) begin
+                
                 if (sprite_ID != 4'b1111)begin
 
                     if (orientation == UP) begin                              // Normal Operation
@@ -729,7 +732,7 @@ module SpriteROM (
                     end 
 
                     else if (orientation == RIGHT) begin                        // (Rotate 90 degrees clockwise around the center point)   
-                        data[0] <= romData[{sprite_ID,3'b111}][~line_index];               
+                        data[0] <= romData[{sprite_ID,3'b111}][~line_index];    // romdata[bottom to top][left to right]
                         data[1] <= romData[{sprite_ID,3'b110}][~line_index];
                         data[2] <= romData[{sprite_ID,3'b101}][~line_index];
                         data[3] <= romData[{sprite_ID,3'b100}][~line_index];
@@ -744,7 +747,7 @@ module SpriteROM (
                     end
 
                     else if (orientation == LEFT) begin                         //  (Rotate 90 degrees clockwise around the center point and reflect on the line x = 0)
-                        data[0] <= romData[{sprite_ID,3'b000}][~line_index];               
+                        data[0] <= romData[{sprite_ID,3'b000}][~line_index];    //  romdata[top to bottom][left to right]
                         data[1] <= romData[{sprite_ID,3'b001}][~line_index];
                         data[2] <= romData[{sprite_ID,3'b010}][~line_index];
                         data[3] <= romData[{sprite_ID,3'b011}][~line_index];
