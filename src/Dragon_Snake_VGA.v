@@ -50,7 +50,7 @@ module tt_um_vga_example (
     );
 
     //player logic
-    reg [7:0] player_pos;   // player position xxxx_yyyy
+    wire [7:0] player_pos;   // player position xxxx_yyyy
     // orientation and direction: 00 - up, 01 - right, 10 - down, 11 - left  
     wire [1:0] player_orientation;   // player orientation 
     wire [1:0] player_direction;   // player direction
