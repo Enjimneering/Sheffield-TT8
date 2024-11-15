@@ -1077,6 +1077,7 @@ module sheepLogic (
     output reg [3:0] sheep_visible
 );
 
+// bruh.
 wire [7:0] random_value; // 8-bit random value: first 4 bits -> X, last 4 bits -> Y
 wire regenerate; // Signal to indicate that the random number needs to be regenerated
 
