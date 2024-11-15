@@ -5,8 +5,6 @@
  */
 
 
-`define COLOR_WHITE 3'd7
-`timescale 1ms/1ms
 
 // top module
 
@@ -1075,7 +1073,7 @@ module sheepLogic (
     input wire read_enable, // When high, generate random position for the sheep
     input wire [7:0] dragon_pos, // Dragon's position to avoid overlap
     input wire [7:0] player_pos,
-    output reg [7:0] sheep_pos, // 14-bit position (7 bits for X, 7 bits for Y)
+    output reg [7:0] sheep_pos, // 8-bit position (4 bits for X, 4 bits for Y)
     output reg [3:0] sheep_visible
 );
 
@@ -1090,7 +1088,7 @@ rand_num rng (
 );
 
 // Logic to check if sheep position overlaps with dragon
-assign regenerate = ((sheep_pos == dragon_pos) || (sheep_pos == player_pos) ||  ) ; // Check for overlap
+assign regenerate = ((sheep_pos == dragon_pos) || (sheep_pos == player_pos)) ; // Check for overlap
 
 always @(posedge clk) begin
     if (reset) begin
