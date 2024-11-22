@@ -439,7 +439,24 @@ module PictureProcessingUnit(
     reg [9:0] previous_horizontal_pixel;
     reg [9:0] previous_vertical_pixel;
 
+always @(posedge clk)begin
 
+    horizontal_Tile_Counter <= horizontal_Tile_Counter + 1;
+    vertical_Tile_Counter <= vertical_Tile_Counter + 1;
+
+    // the local counters are for  tiles that are currently being processed
+    local_Counter_H <= local_Counter_H + 1;
+    local_Counter_V <= local_Counter_V + 1;
+
+    // Sprite Idexing Counters
+    row_Counter <= row_Counter + 1;
+    column_Counter <= column_Counter + 1;
+
+    // Upscaling Counters
+    upscale_Counter_H <= upscale_Counter_H + 1;
+    upscale_Counter_V <= upscale_Counter_V + 1;
+
+end
 
 
 // always@(posedge clk)begin // Tile and Pixel Counters
