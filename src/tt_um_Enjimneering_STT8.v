@@ -358,7 +358,7 @@ Snake_Top ST(
 
     assign uio_out = 0;
     assign uio_oe  = 0;
-    wire _unused_ok = &{ena, uio_in, ui_in[5:7]}; // prevent warnings
+    wire _unused_ok = &{ena, uio_in, ui_in[7:5]}; // prevent warnings
     // wire _unused_ok = &{uio_in}; // prevent warnings
 
 endmodule
