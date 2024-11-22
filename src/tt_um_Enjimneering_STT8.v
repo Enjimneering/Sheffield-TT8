@@ -6,7 +6,7 @@
 //`default_nettype none
 
 module tt_um_Enjimneering_STT8 (
-input  wire [7:0] ui_in,    // Dedicated inputs
+    input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
     input  wire [7:0] uio_in,   // IOs: Input path
     output wire [7:0] uio_out,  // IOs: Output path
@@ -358,7 +358,7 @@ Snake_Top ST(
 
     assign uio_out = 0;
     assign uio_oe  = 0;
-    wire _unused_ok = &{ena, uio_in}; // prevent warnings
+    wire _unused_ok = &{ena, uio_in, ui_in[5:7]}; // prevent warnings
     // wire _unused_ok = &{uio_in}; // prevent warnings
 
 endmodule
