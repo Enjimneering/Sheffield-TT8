@@ -442,90 +442,90 @@ module PictureProcessingUnit(
 
 
 
-always@(posedge clk)begin // Tile and Pixel Counters
+// always@(posedge clk)begin // Tile and Pixel Counters
 
-    if(!reset)begin
+//     if(!reset)begin
             
-        previous_vertical_pixel <= counter_V;
+//         previous_vertical_pixel <= counter_V;
 
-        if (previous_vertical_pixel != counter_V )begin // if counter has incremented
+//         if (previous_vertical_pixel != counter_V )begin // if counter has incremented
 
-            if(upscale_Counter_V != 4) begin  // Upscale every pixel 5x
+//             if(upscale_Counter_V != 4) begin  // Upscale every pixel 5x
 
-                upscale_Counter_V <= upscale_Counter_V + 1;
+//                 upscale_Counter_V <= upscale_Counter_V + 1;
             
-            end 
+//             end 
             
-            else begin
+//             else begin
 
-                    upscale_Counter_V <= 0;
-                    row_Counter <= row_Counter + 1;
-            end
+//                     upscale_Counter_V <= 0;
+//                     row_Counter <= row_Counter + 1;
+//             end
 
-                if (counter_V >= 40) begin // Tile Counter 
+//                 if (counter_V >= 40) begin // Tile Counter 
 
-                    if(row_Counter == 3'b111 && upscale_Counter_V == 4 && vertical_Tile_Counter != 4'd11)begin
-                        vertical_Tile_Counter <= vertical_Tile_Counter + 1; // increment vertical tile 
+//                     if(row_Counter == 3'b111 && upscale_Counter_V == 4 && vertical_Tile_Counter != 4'd11)begin
+//                         vertical_Tile_Counter <= vertical_Tile_Counter + 1; // increment vertical tile 
 
-                    end else if(row_Counter == 3'b111 && upscale_Counter_V == 4 && vertical_Tile_Counter == 4'd11) begin
-                        vertical_Tile_Counter <= 0;
+//                     end else if(row_Counter == 3'b111 && upscale_Counter_V == 4 && vertical_Tile_Counter == 4'd11) begin
+//                         vertical_Tile_Counter <= 0;
 
-                    end else begin
-                        vertical_Tile_Counter <= vertical_Tile_Counter;
-                    end
+//                     end else begin
+//                         vertical_Tile_Counter <= vertical_Tile_Counter;
+//                     end
 
-                end else begin
-                    vertical_Tile_Counter <= 0;
-                end
+//                 end else begin
+//                     vertical_Tile_Counter <= 0;
+//                 end
 
-            end else begin
-                vertical_Tile_Counter <= vertical_Tile_Counter;
-                upscale_Counter_V <= upscale_Counter_V;
-                row_Counter <= row_Counter;
-            end
+//             end else begin
+//                 vertical_Tile_Counter <= vertical_Tile_Counter;
+//                 upscale_Counter_V <= upscale_Counter_V;
+//                 row_Counter <= row_Counter;
+//             end
 
-            previous_horizontal_pixel <= counter_H; // 
+//             previous_horizontal_pixel <= counter_H; // 
 
-            if (previous_horizontal_pixel != counter_H )begin
+//             if (previous_horizontal_pixel != counter_H )begin
 
-                if(upscale_Counter_H != 4)begin
-                    upscale_Counter_H <= upscale_Counter_H + 1;
-                end else begin
-                    upscale_Counter_H <= 0;
-                    column_Counter <= column_Counter + 1;
-                end 
+//                 if(upscale_Counter_H != 4)begin
+//                     upscale_Counter_H <= upscale_Counter_H + 1;
+//                 end else begin
+//                     upscale_Counter_H <= 0;
+//                     column_Counter <= column_Counter + 1;
+//                 end 
                 
-                if (counter_H >= 40) begin
-                    if(column_Counter == 3'b111 && upscale_Counter_H == 4)begin
-                        horizontal_Tile_Counter <= horizontal_Tile_Counter + 1; // increment horizontal tile 
-                    end else begin
-                        horizontal_Tile_Counter <= horizontal_Tile_Counter;
-                    end
-                end else begin
-                    horizontal_Tile_Counter <= 0;
-                end
+//                 if (counter_H >= 40) begin
+//                     if(column_Counter == 3'b111 && upscale_Counter_H == 4)begin
+//                         horizontal_Tile_Counter <= horizontal_Tile_Counter + 1; // increment horizontal tile 
+//                     end else begin
+//                         horizontal_Tile_Counter <= horizontal_Tile_Counter;
+//                     end
+//                 end else begin
+//                     horizontal_Tile_Counter <= 0;
+//                 end
 
-            end else begin
+//             end else begin
 
-                horizontal_Tile_Counter <= horizontal_Tile_Counter;
-                upscale_Counter_H <= upscale_Counter_H;
-                column_Counter <= column_Counter;
+//                 horizontal_Tile_Counter <= horizontal_Tile_Counter;
+//                 upscale_Counter_H <= upscale_Counter_H;
+//                 column_Counter <= column_Counter;
 
-            end
+//             end
 
-    end else begin // reset all counters
+//     end else begin // reset all counters
 
-        previous_horizontal_pixel <= 0;
-        column_Counter <= 0; 
-        upscale_Counter_H <= 0;
-        horizontal_Tile_Counter <= 4'b0000;
+//         previous_horizontal_pixel <= 0;
+//         column_Counter <= 0; 
+//         upscale_Counter_H <= 0;
+//         horizontal_Tile_Counter <= 4'b0000;
 
-        previous_vertical_pixel <= 0;
-        row_Counter <= 0;
-        upscale_Counter_V <= 0;
-        vertical_Tile_Counter <= 4'b0000;
-    end
-end
+//         previous_vertical_pixel <= 0;
+//         row_Counter <= 0;
+//         upscale_Counter_V <= 0;
+//         vertical_Tile_Counter <= 4'b0000;
+//     end
+// end
 
 // detect if a new tile has been reached
 
