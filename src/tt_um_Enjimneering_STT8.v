@@ -441,8 +441,8 @@ module PictureProcessingUnit(
 
 always @(posedge clk)begin
 
-    horizontal_Tile_Counter <= horizontal_Tile_Counter + 1;
-    vertical_Tile_Counter <= vertical_Tile_Counter + 1;
+    horizontal_Tile_Counter <= counter_V;
+    vertical_Tile_Counter <= counter_H;
 
     // the local counters are for  tiles that are currently being processed
     local_Counter_H <= local_Counter_H + 1;
@@ -954,8 +954,8 @@ module vga_sync_generator (
     output wire        display_on,
     output wire [9:0]  screen_hpos,
     output wire [9:0]  screen_vpos,
-    output wire        frame_end,
-    output wire        input_enable
+    output wire        frame_end
+    // output wire        input_enable
 );
     
     reg [9:0] hpos = 0;
@@ -1022,7 +1022,7 @@ module vga_sync_generator (
     // display_on is set when beam is in "safe" visible frame
     assign display_on = (hpos < H_DISPLAY) && (vpos < V_DISPLAY);
     assign frame_end = hblanked && vblanked;
-    assign input_enable = (hblanked && vpos < V_DISPLAY);
+    // assign input_enable = (hblanked && vpos < V_DISPLAY);
 
 endmodule
 
