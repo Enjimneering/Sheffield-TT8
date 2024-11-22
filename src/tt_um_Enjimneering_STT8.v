@@ -301,9 +301,6 @@ Snake_Top ST(
 );
 
 
-
-
-
     always @(posedge clk) begin
         if (~rst_n) begin
         R <= 0;
