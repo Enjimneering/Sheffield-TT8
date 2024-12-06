@@ -1117,12 +1117,14 @@ reg [5:0] sword_duration; // how long the sword stays visible
 reg [1:0] current_state;
 reg [1:0] next_state;
 
+// sword direction logic register
+reg [1:0] last_direction;
 
 reg sword_duration_flag;
 reg sword_duration_flag_local;
 
 
-always @(negedge clk) begin //<<<<<IMPORTANT<<<<<< negedge is aviable in vga playground and FPGA. Probably some timing issue but not sure
+always @(negedge clk) begin //<<<<<IMPORTANT<<<<<< negedge is available in vga playground and FPGA. Probably some timing issue but not sure
     if(~reset)begin           
 
         if(frame_end)begin
@@ -1210,22 +1212,52 @@ always @(posedge clk) begin
             end
 
             ATTACK_STATE: begin
-                sword_visible <= 4'b0001;
-                if (player_direction == 2'b00 ) begin // player facing up
-                    sword_position <= player_pos - 1;
-                    sword_orientation <= 2'b00;
-                end if (player_direction == 2'b10 ) begin // player facing down
-                    sword_position <= player_pos + 1;
-                    sword_orientation <= 2'b10;
-                end if (player_direction == 2'b11) begin // player facing left
-                    sword_position <= player_pos - 16;
-                    sword_orientation <= 2'b11;
-                end if (player_direction == 2'b01) begin // player facing right
-                    sword_position <= player_pos + 16;
-                    sword_orientation <= 2'b01;
-                end
+                last_direction <= player_direction;
 
-                if (sword_duration == 10)
+                if (input_data[4] == 1) begin
+                    // Check if the sword direction is specified by the player
+                    if (input_data[0] == 1) begin   
+                        last_direction <= 2'b00;
+                    end
+
+                    if (input_data[1] == 1) begin  
+                        last_direction <= 2'b10;
+                    end 
+
+                    if (input_data[2] == 1) begin
+                        last_direction <= 2'b11;
+                    end
+
+                    if (input_data[3] == 1) begin
+                        last_direction <= 2'b01;
+                    end
+
+                end else begin                    
+                    // Set sword orientation
+                    sword_orientation <= last_direction;
+
+                    // Set sword location
+                    if (last_direction == 2'b00 ) begin // player facing up
+                        sword_position <= player_pos - 1;
+                    end 
+
+                    if (last_direction == 2'b10 ) begin // player facing down
+                        sword_position <= player_pos + 1;
+                    end 
+
+                    if (last_direction == 2'b11) begin // player facing left
+                        sword_position <= player_pos - 16;
+                    end 
+
+                    if (last_direction == 2'b01) begin // player facing right
+                        sword_position <= player_pos + 16;
+                    end
+
+                    // Make sword visible
+                    sword_visible <= 4'b0001;
+                end 
+
+                if (sword_duration == 7)
                     next_state <= IDLE_STATE;  // Return to IDLE after attacking
                     // player_anim_counter <= 0;
             end
@@ -1243,4 +1275,3 @@ always @(posedge clk) begin
 end
 
 endmodule
-
