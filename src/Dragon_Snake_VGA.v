@@ -36,7 +36,7 @@ module tt_um_vga_example (
     wire frame_end;
 
     // input signals
-    wire [4:0] input_data; // register to hold the 5 possible player actions
+    wire [9:0] input_data; // register to hold the 5 possible player actions
 
     InputController ic(  // change these mappings to change the controls in the simulastor
         .clk(clk),
@@ -1102,7 +1102,7 @@ endmodule
 module PlayerLogic(
     input clk,
     input reset,
-    input wire [4:0] input_data,
+    input wire [9:0] input_data,
     input wire frame_end,
 
     output reg [7:0] player_pos,
@@ -1243,7 +1243,7 @@ always @(posedge clk) begin
                         last_direction <= 2'b01;
                     end
 
-                end else begin                    
+                end if (input_data[8] == 1) begin                    
                     // Set sword orientation
                     sword_orientation <= last_direction;
 
