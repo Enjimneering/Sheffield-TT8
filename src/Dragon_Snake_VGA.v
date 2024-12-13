@@ -1225,25 +1225,28 @@ always @(posedge clk) begin
             ATTACK_STATE: begin
                 last_direction <= player_direction;
 
-                if (input_data[9] == 1) begin
-                    // Check if the sword direction is specified by the player
-                    if (input_data[5] == 1) begin   
-                        last_direction <= 2'b00;
-                    end
+                // Check if the sword direction is specified by the player
+                if (input_data[5] == 1) begin   
+                    last_direction <= 2'b00;
+                    player_direction <= 2'b00;
+                end
 
-                    if (input_data[6] == 1) begin  
-                        last_direction <= 2'b10;
-                    end 
+                if (input_data[6] == 1) begin  
+                    last_direction <= 2'b10;
+                    player_direction <= 2'b10;
+                end 
 
-                    if (input_data[7] == 1) begin
-                        last_direction <= 2'b11;
-                    end
+                if (input_data[7] == 1) begin
+                    last_direction <= 2'b11;
+                    player_direction <= 2'b11;
+                end
 
-                    if (input_data[8] == 1) begin
-                        last_direction <= 2'b01;
-                    end
+                if (input_data[8] == 1) begin
+                    last_direction <= 2'b01;
+                    player_direction <= 2'b01;
+                end
 
-                end if (input_data[4] == 1) begin                    
+                if (input_data[4] == 1) begin                    
                     // Set sword orientation
                     sword_orientation <= last_direction;
 
