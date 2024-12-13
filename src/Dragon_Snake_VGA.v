@@ -1175,7 +1175,7 @@ always @(posedge clk) begin
                 sword_position <= 0;
                 sword_visible <= 4'b1111;
 
-                case (input_data[4]) 
+                case (input_data[9]) 
                     1 : begin // attack
                         next_state <= ATTACK_STATE;
                         sword_duration_flag <= sword_duration_flag + 1;
@@ -1183,7 +1183,7 @@ always @(posedge clk) begin
 
                     0: begin // no attack
 
-                    if (input_data[3:0] != 0 ) // directional buttons
+                    if (input_data[8:5] != 0 ) // directional buttons
                         next_state <= MOVE_STATE;  // Default case, stay in IDLE state
                     end
 
@@ -1196,23 +1196,23 @@ always @(posedge clk) begin
 
             MOVE_STATE: begin
                 // Move player based on direction inputs and update orientation
-                if (input_data[0] == 1 && player_pos[3:0] > 4'b0001) begin   // Check boundary for up movement
+                if (input_data[5] == 1 && player_pos[3:0] > 4'b0001) begin   // Check boundary for up movement
                     player_pos <= player_pos - 1;  // Move up
                     player_direction <= 2'b00;
                 end
 
-                if (input_data[1] == 1 && player_pos[3:0] < 4'b1011) begin  // Check boundary for down movement
+                if (input_data[6] == 1 && player_pos[3:0] < 4'b1011) begin  // Check boundary for down movement
                     player_pos <= player_pos + 1;  // Move down
                     player_direction <= 2'b10;
                 end 
 
-                if (input_data[2] == 1 && player_pos[7:4] > 4'b0000) begin  // Check boundary for left movement
+                if (input_data[7] == 1 && player_pos[7:4] > 4'b0000) begin  // Check boundary for left movement
                     player_pos <= player_pos - 16;  // Move left
                     player_orientation <= 2'b11;
                     player_direction <= 2'b11;
                 end
 
-                if (input_data[3] == 1 && player_pos[7:4] < 4'b1111) begin  // Check boundary for right movement
+                if (input_data[8] == 1 && player_pos[7:4] < 4'b1111) begin  // Check boundary for right movement
                     player_pos <= player_pos + 16;  // Move right
                     player_orientation <= 2'b01;
                     player_direction <= 2'b01;
@@ -1225,25 +1225,25 @@ always @(posedge clk) begin
             ATTACK_STATE: begin
                 last_direction <= player_direction;
 
-                if (input_data[4] == 1) begin
+                if (input_data[9] == 1) begin
                     // Check if the sword direction is specified by the player
-                    if (input_data[0] == 1) begin   
+                    if (input_data[5] == 1) begin   
                         last_direction <= 2'b00;
                     end
 
-                    if (input_data[1] == 1) begin  
+                    if (input_data[6] == 1) begin  
                         last_direction <= 2'b10;
                     end 
 
-                    if (input_data[2] == 1) begin
+                    if (input_data[7] == 1) begin
                         last_direction <= 2'b11;
                     end
 
-                    if (input_data[3] == 1) begin
+                    if (input_data[8] == 1) begin
                         last_direction <= 2'b01;
                     end
 
-                end if (input_data[8] == 1) begin                    
+                end if (input_data[4] == 1) begin                    
                     // Set sword orientation
                     sword_orientation <= last_direction;
 
