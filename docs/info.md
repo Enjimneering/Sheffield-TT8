@@ -13,7 +13,7 @@ NES input -> Game Logic ->  Graphics Controllers -> VGA output
 
 ## How to test
 
-Test the adder using the python test utility.
+plug in a NES controler and conquer the dragon!
 
 ## External hardware
 
